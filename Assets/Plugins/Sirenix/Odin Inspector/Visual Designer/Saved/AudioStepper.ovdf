@@ -1,0 +1,67 @@
+OVDF v1.1
+AudioStepper, Assembly-CSharp
+MetaGuid:f65025c7fb69bbf47af936767de76ed4
+
+# $35LttRzb43QBdaGX9CMnUW
+Position: $root:2
++ [Sirenix.OdinInspector.HorizontalGroupAttribute]
+
+# $CakSE9SGhjxLSnSPXvvkvW
+Position: $35LttRzb43QBdaGX9CMnUW:0
++ [Sirenix.OdinInspector.ColumnGroupAttribute]
+
+# $MoKpttZHbBjvSx2qf54vcL
+Position: $CakSE9SGhjxLSnSPXvvkvW:0
++ [Sirenix.OdinInspector.ColumnGroupAttribute+ColumnSubGroupAttribute]
+
+# $AmB5GDrGZLSvuGT6eBrLzt
+Position: $CakSE9SGhjxLSnSPXvvkvW:1
++ [Sirenix.OdinInspector.ColumnGroupAttribute+ColumnSubGroupAttribute]
+
+# $5ezoJDdnwbz4eudNuwBNep
+Position: $root:3
++ [Sirenix.OdinInspector.VerticalGroupAttribute]
+
+# $HsAz6u154X59vfGesKUM9s
+Position: $root:0
++ [Sirenix.OdinInspector.BoxGroupAttribute]
+	GroupName = "Readonly"
+	LabelText = "Readonly"
+
+# $CZwAxRRkh6jDrHujXfmSAF
+Position: $root
++ [Sirenix.OdinInspector.BoxGroupAttribute]
+
+# $Euvg4bPDPxRsDCLkk3KpwM
+Position: $CZwAxRRkh6jDrHujXfmSAF:1
++ [Sirenix.OdinInspector.ColumnGroupAttribute]
+
+# $Aq9FoCAxnZaGizLqQdCTgz
+Position: $Euvg4bPDPxRsDCLkk3KpwM:1
++ [Sirenix.OdinInspector.ColumnGroupAttribute+ColumnSubGroupAttribute]
+
+# linear
+Position: $MoKpttZHbBjvSx2qf54vcL:0
+
+# randomize
+Position: $AmB5GDrGZLSvuGT6eBrLzt:0
+
+# num
+Position: $HsAz6u154X59vfGesKUM9s:0
++ [Sirenix.OdinInspector.ReadOnlyAttribute]
+
+# delay
+Position: $5ezoJDdnwbz4eudNuwBNep:0
+
+# delayAmount
+Position: $5ezoJDdnwbz4eudNuwBNep:1
+
+# blocked
+Position: $HsAz6u154X59vfGesKUM9s:1
++ [Sirenix.OdinInspector.ReadOnlyAttribute]
+
+# source
+Position: $CZwAxRRkh6jDrHujXfmSAF:0
+
+# audios
+Position: $Aq9FoCAxnZaGizLqQdCTgz:0
