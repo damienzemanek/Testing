@@ -12,11 +12,10 @@ public class InputReader : ScriptableObject, IPlayerActions
     public event UnityAction<Vector2, bool> Look = delegate { };
     public event UnityAction EnableMouseControlCamera = delegate { };
     public event UnityAction DisableMouseControlCamera = delegate { };
+    public event UnityAction<bool> Jump = delegate { };
 
-    static PlayerInputActions _inputActions;
-    PlayerInputActions inputActions { get => _inputActions; set => _inputActions = value; }
-
-    public Vector3 Direction = (Vector3)_inputActions.Player.Move.ReadValue<Vector2>();
+    [SerializeField] PlayerInputActions inputActions;
+    public Vector3 Direction => inputActions != null ? (Vector3)inputActions.Player.Move.ReadValue<Vector2>() : Vector2.zero;
 
     private void OnEnable()
     {
@@ -27,8 +26,9 @@ public class InputReader : ScriptableObject, IPlayerActions
         }
     }
 
+    public void EnablePlayerActions() => inputActions.Enable();
 
-    public void OnFire(InputAction.CallbackContext context)
+    public void OnMove(InputAction.CallbackContext context)
     {
         Move.Invoke(context.ReadValue<Vector2>());
     }
@@ -50,7 +50,7 @@ public class InputReader : ScriptableObject, IPlayerActions
         }
     }
 
-    public void OnMove(InputAction.CallbackContext context)
+    public void OnFire(InputAction.CallbackContext context)
     {
         //noop
     }
@@ -62,7 +62,11 @@ public class InputReader : ScriptableObject, IPlayerActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        //noop
+        switch(context.phase)
+        {
+            case InputActionPhase.Started: Jump.Invoke(true); break;
+            case InputActionPhase.Canceled: Jump.Invoke(false); break;
+        }
     }
 
 }
