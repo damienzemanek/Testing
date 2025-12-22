@@ -4,13 +4,15 @@ using Unity.Cinemachine;
 using System;
 using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
-using Extensions;
-using static Extensions.PhysEX;
-using static TimerUtility;
+using static EMILtools.Extensions.PhysEX;
+using Timers;
+using static SignalUtility;
 using System.Collections.Generic;
+using EMILtools.Extensions;
 using NUnit.Framework.Constraints;
+using static Extensions.DelegateEX;
 
-public class PlayerController : ValidatedMonoBehaviour, ITimerUser
+public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
 {
     [Header("References")]
     [SerializeField, Self] Animator animator;
@@ -31,9 +33,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
     const float ZeroF = 0f;
 
     public bool isGrounded { get; private set; }
-
-    public List<TimerUtility.Timer> Timers { get; } = new List<TimerUtility.Timer>(2);
-
+    
     CountdownTimer timer_jumpInput;
     CountdownTimer timer_jumpCooldown;
 
@@ -59,12 +59,14 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
 
         rb.freezeRotation = true;
 
-        this.SetupTimers(
-            timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration),
-                     timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown)
-        );
-
+        timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
+        timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown);
+        this.InitializeTimers(timer_jumpInput, timer_jumpCooldown)
+            .Sub(timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);
     }
+
+    void OnDestroy() => this.ShutdownTimers();
+
 
     private void OnEnable()
     {
@@ -89,12 +91,6 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
         void StopJumping() => timer_jumpInput.Stop();
     }
 
-
-    public void SetupTimerHooks()
-    {
-        timer_jumpInput.OnTimerStop += () => timer_jumpCooldown.Start();
-    }
-
     private void Start()
     {
         input.EnablePlayerActions();
@@ -111,7 +107,6 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
     {
         HandleJump();
         HandleMovement();
-        this.TickAll(Time.deltaTime);
     }
 
     void HandleJump()
@@ -123,7 +118,6 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
             return;
         }
 
-        //ComplexJump();
         if (timer_jumpInput.isRunning)
         {
             rb.Jump(jumpSettings, timer_jumpInput.Progress);
@@ -173,5 +167,5 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser
     }
 
     bool isMoving(Vector3 adjustedDir) => adjustedDir.magnitude > ZeroF;
-
+    
 }
