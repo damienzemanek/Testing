@@ -9,6 +9,7 @@ using Timers;
 using static SignalUtility;
 using System.Collections.Generic;
 using EMILtools.Extensions;
+using Extensions;
 using NUnit.Framework.Constraints;
 using static Extensions.DelegateEX;
 
@@ -108,20 +109,23 @@ public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
         HandleJump();
         HandleMovement();
     }
-
+    int timesJumpForceApplied = 0;
     void HandleJump()
     {
         //Not jumping at all
         if(!timer_jumpInput.isRunning && isGrounded)
         {
             timer_jumpInput.Stop();
+            timesJumpForceApplied = 0;
             return;
         }
-
+    
         if (timer_jumpInput.isRunning)
-        {
             rb.Jump(jumpSettings, timer_jumpInput.Progress);
-        }
+
+        timesJumpForceApplied++;
+        this.Log($"timesJumpForceApplied: {timesJumpForceApplied}");
+
         PhysEX.FallFaster(rb, fallSettings);
     }
 
