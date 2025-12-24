@@ -18,7 +18,7 @@ $folders = @(
 # 1. SAFE CLEAN: Delete files inside, but don't delete the root folder itself
 if (Test-Path $publicPath) {
     Write-Host "Cleaning public folder contents (Safe)..." -ForegroundColor Cyan
-    Get-ChildItem -Path $publicPath -Exclude ".git" | Remove-Item -Recurse -Force
+    Get-ChildItem -Path $publicPath -Exclude ".git", "README.md", "LICENSE" | Remove-Item -Recurse -Force
 } else {
     New-Item -ItemType Directory -Path $publicPath -Force
 }
