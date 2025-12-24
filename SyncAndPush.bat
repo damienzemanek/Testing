@@ -13,4 +13,4 @@ git diff-index --quiet HEAD -- || git commit -m "Auto-sync from Private"
 git push origin main
 
 echo --- 3/3 SYNC AND PUSH COMPLETE ---
-pause
+exit /b 0
