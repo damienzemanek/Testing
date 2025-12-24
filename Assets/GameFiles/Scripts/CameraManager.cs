@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
+using EMILtools.Extensions;
 using KBCore.Refs;
 using Unity.Cinemachine;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class CameraManager : ValidatedMonoBehaviour

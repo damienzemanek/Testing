@@ -1,5 +1,5 @@
 using UnityEngine;
-using static Extensions.ColliderEX;
+using static EMILtools.Extensions.ColliderEX;
 
 public class PlatformCollisionHandler : MonoBehaviour
 {

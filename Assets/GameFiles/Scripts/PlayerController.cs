@@ -5,13 +5,8 @@ using System;
 using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
 using static EMILtools.Extensions.PhysEX;
-using Timers;
-using static SignalUtility;
-using System.Collections.Generic;
+using EMILtools.Timers;
 using EMILtools.Extensions;
-using Extensions;
-using NUnit.Framework.Constraints;
-using static Extensions.DelegateEX;
 
 public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
 {
@@ -62,8 +57,11 @@ public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
 
         timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
         timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown);
-        this.InitializeTimers(timer_jumpInput, timer_jumpCooldown)
-            .Sub(timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);
+        
+        this.InitializeTimers(
+                (timer_jumpInput, true), 
+                (timer_jumpCooldown, false))
+            .Sub (timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);
     }
 
     void OnDestroy() => this.ShutdownTimers();
