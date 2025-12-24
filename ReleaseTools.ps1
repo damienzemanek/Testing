@@ -1,5 +1,5 @@
 # Define paths relative to this script's location
-$sourcePath = "D:/Repos/EMIL/EMIL/Assets/EMILtools-Private/"
+$sourcePath = "D:/Repos/EMIL/Testing/Assets/EMILtools-Private/"
 $publicPath = "D:/Repos/EMILtools-Public/"
 
 # List of specific files to sync
