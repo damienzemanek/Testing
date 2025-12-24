@@ -15,12 +15,13 @@ $folders = @(
     "Timers"
 )
 
-# 1. Clean the target public folder first
-if (Test-Path $publicPath) { 
-    Write-Host "Cleaning target folder..." -ForegroundColor Cyan
-    Remove-Item $publicPath -Recurse -Force 
+# 1. SAFE CLEAN: Delete files inside, but don't delete the root folder itself
+if (Test-Path $publicPath) {
+    Write-Host "Cleaning public folder contents (Safe)..." -ForegroundColor Cyan
+    Get-ChildItem -Path $publicPath -Exclude ".git" | Remove-Item -Recurse -Force
+} else {
+    New-Item -ItemType Directory -Path $publicPath -Force
 }
-New-Item -ItemType Directory -Path $publicPath -Force
 
 # 2. Copy individual files logic
 Write-Host "Syncing files..." -ForegroundColor Cyan
