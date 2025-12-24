@@ -1,17 +1,22 @@
 @echo off
-echo --- SYNCING TO PUBLIC ---
+
+set PUBLIC_REPO=D:\Repos\EMILtools-Public
+set PRIVATE_REPO=D:\Repos\EMIL\EMIL
+
+echo --- 1/4 SYNCING FILES ---
 powershell -ExecutionPolicy Bypass -File "./ReleaseTools.ps1"
 
-echo --- PUSHING PUBLIC REPO ---
-cd /d "D:\Repos\EMILtools-Public\EMILtools"
-git add .
-git commit -m "Auto-sync from Private"
+echo --- 2/4 PUSHING PUBLIC REPO ---
+cd /d "%PUBLIC_REPO%"
+git add --all
+git diff-index --quiet HEAD -- || git commit -m "Auto-sync from Private"
 git push origin main
 
-echo --- PUSHING PRIVATE REPO ---
-cd /d "D:\Repos\EMIL\EMIL"
+echo --- 3/4 PUSHING PRIVATE REPO ---
+cd /d "%PRIVATE_REPO%"
 git add .
-git commit -m "Sync to public"
+git diff-index --quiet HEAD -- || git commit -m "Sync to public"
 git push origin main
 
+echo --- 4/4 SYNC AND PUSH COMPLETE ---
 pause
