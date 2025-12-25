@@ -12,10 +12,10 @@ namespace EMILtools.Extensions
         [Serializable]
         public struct MoveSettings
         {
-            public ReferenceModifiable<float> speed;
-            public ReferenceModifiable<float> maxVel;
+            public Stat<float> speed;
+            public Stat<float> maxVel;
 
-            public MoveSettings(ReferenceModifiable<float> speed, ReferenceModifiable<float> maxVel)
+            public MoveSettings(Stat<float> speed, Stat<float> maxVel)
             {
                 this.speed = speed;
                 this.maxVel = maxVel;
@@ -33,7 +33,7 @@ namespace EMILtools.Extensions
         public struct FallSettings
         {
             public ForceMode forceMode;
-            public Reference<float> mult;
+            public Stat<float> mult;
             public Vector3 dir;
         }
 
@@ -42,10 +42,10 @@ namespace EMILtools.Extensions
         {
             public ForceMode forceMode;
             public Vector3 direction;
-            public Reference<float> mult;
+            public Ref<float> mult;
             public bool complexJump;
-            public Reference<float> inputMaxDuration;
-            public Reference<float> cooldown;
+            public Ref<float> inputMaxDuration;
+            public Ref<float> cooldown;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")]
             public AnimationCurve forceCurve;
         }

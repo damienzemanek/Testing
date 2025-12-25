@@ -9,10 +9,11 @@ $files = @(
     "Extensions/EnumerateEX.cs"
 )
 
-# List of folders to sync recursively
+# Manifest of folders and everything in them to sync
 $folders = @(
     "Timers"
 	"Signals"
+	"Core"
 )
 
 # 1. SAFE CLEAN: Delete files inside, but don't delete the root folder itself
