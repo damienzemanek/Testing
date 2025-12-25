@@ -2,7 +2,7 @@ using System;
 using Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using static EMILtools.SignalUtility;
+using EMILtools.Signals;
 using static EMILtools.Extensions.NumEX;
 
 namespace EMILtools.Extensions

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using EMILtools.Timers;
-using static EMILtools.SignalUtility;
+using EMILtools.Signals;
 using static EMILtools.Timers.TimerUtility;
 
 public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser

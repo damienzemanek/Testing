@@ -4,7 +4,6 @@ $publicPath = "D:/Repos/EMILtools-Public/"
 
 # List of specific files to sync
 $files = @(
-    "Utilities/SignalUtility.cs",
     "Extensions/DelegateEX.cs",
     "Extensions/NumEX.cs",
     "Extensions/EnumerateEX.cs"
@@ -13,6 +12,7 @@ $files = @(
 # List of folders to sync recursively
 $folders = @(
     "Timers"
+	"Signals"
 )
 
 # 1. SAFE CLEAN: Delete files inside, but don't delete the root folder itself
