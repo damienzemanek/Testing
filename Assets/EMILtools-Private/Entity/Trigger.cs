@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Trigger : Entity
 {
-    SpeedModStrategy<float> speedModifier = new SpeedModStrategy<float>(x => x * 3f);
+    SpeedModifier speedModifier = new SpeedModifier(x => x * 3f);
     
 
     void OnTriggerEnter(Collider other)
