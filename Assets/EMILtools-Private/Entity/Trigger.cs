@@ -1,12 +1,13 @@
 using System;
 using EMILtools.Extensions;
 using EMILtools.Signals;
+using Sirenix.OdinInspector;
 using static EMILtools.Signals.ModifierStrategies;
 using UnityEngine;
 
 public class Trigger : Entity
 {
-    SpeedModStrategy<float> speedModifier = new SpeedModStrategy<float>(x => x * 1.5f);
+    SpeedModStrategy<float> speedModifier = new SpeedModStrategy<float>(x => x * 3f);
     
 
     void OnTriggerEnter(Collider other)

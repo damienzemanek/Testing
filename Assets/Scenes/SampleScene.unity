@@ -1479,6 +1479,10 @@ PrefabInstance:
       value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      propertyPath: fallSettings.mult
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       propertyPath: var._blockIntercepts
       value: 0
       objectReference: {fileID: 0}
