@@ -13,7 +13,7 @@ namespace EMILtools.Extensions
         [Serializable]
         public struct MoveSettings
         {
-            public Stat<float, SpeedModStrategy<float>> speed;
+            public Stat<float, SpeedModifier> speed;
         }
         [Serializable]
         public struct GroundedSettings

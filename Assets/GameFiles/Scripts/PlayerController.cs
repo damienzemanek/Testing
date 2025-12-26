@@ -161,7 +161,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
     void HandleHorizMovement(Vector3 adjustedDir)
     {
-        Vector3 vel = adjustedDir * moveSpeed * Time.fixedDeltaTime;
+        Vector3 vel = adjustedDir * moveSpeed.Value * Time.fixedDeltaTime;
         rb.linearVelocity = new Vector3(vel.x, rb.linearVelocity.y, vel.z);
     }
 
