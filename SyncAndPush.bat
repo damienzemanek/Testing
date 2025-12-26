@@ -32,6 +32,6 @@ git diff-index --quiet HEAD -- || git commit -m "Auto-sync from Private"
 git push origin main
 
 echo --- 4/4 SYNC AND PUSH COMPLETE ---
-echo Waiting 3 seconds before closing...
-timeout /t 3 /nobreak >nul
+echo Waiting 10 seconds before closing...
+timeout /t 10 /nobreak >nul
 exit /b 0
