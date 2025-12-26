@@ -18,10 +18,12 @@ public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser
     {
         base.Awake();
 
-        spawner = new EntitySpawner<Collectible>(  new EntityFactory<Collectible>(collectibleData),
-                                                   spawnPointStrategy);
+        spawner = new EntitySpawner<Collectible>(
+            new EntityFactory<Collectible>(collectibleData),
+            spawnPointStrategy);
 
         spawnTimer = new CountdownTimer(spawnInterval);
+        
         this.InitializeTimers((spawnTimer, false))
             .Sub(spawnTimer.OnTimerStop, HandleTimerStop);
     }

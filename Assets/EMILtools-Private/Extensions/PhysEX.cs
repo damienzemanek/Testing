@@ -3,6 +3,7 @@ using Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using EMILtools.Signals;
+using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
 
 namespace EMILtools.Extensions
@@ -12,14 +13,7 @@ namespace EMILtools.Extensions
         [Serializable]
         public struct MoveSettings
         {
-            public Stat<float> speed;
-            public Stat<float> maxVel;
-
-            public MoveSettings(Stat<float> speed, Stat<float> maxVel)
-            {
-                this.speed = speed;
-                this.maxVel = maxVel;
-            }
+            public Stat<float, SpeedModStrategy<float>> speed;
         }
         [Serializable]
         public struct GroundedSettings
@@ -33,7 +27,7 @@ namespace EMILtools.Extensions
         public struct FallSettings
         {
             public ForceMode forceMode;
-            public Stat<float> mult;
+            public float mult;
             public Vector3 dir;
         }
 
@@ -108,7 +102,7 @@ namespace EMILtools.Extensions
 
         public static void FallFaster(this Rigidbody rb, FallSettings fall)
         {
-            rb.AddForce(fall.dir * fall.mult.Value, fall.forceMode);
+            rb.AddForce(fall.dir * fall.mult, fall.forceMode);
         }
 
         public static void Jump(this Rigidbody rb, JumpSettings jump, float prog)

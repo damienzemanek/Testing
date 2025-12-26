@@ -7,8 +7,11 @@ using static UnityEngine.Quaternion;
 using static EMILtools.Extensions.PhysEX;
 using EMILtools.Timers;
 using EMILtools.Extensions;
+using EMILtools.Signals;
+using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Timers.TimerUtility;
 
-public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
+public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 {
     [Header("References")]
     [SerializeField, Self] Animator animator;
@@ -17,14 +20,14 @@ public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
     [SerializeField, Anywhere] InputReader input;
 
     [Header("Settings")]
-    [SerializeField] float moveSpeed = 7f;
+    [SerializeField] public Stat<float, SpeedModStrategy<float>> moveSpeed;
     [SerializeField] float rotSpeed = 15f;
     [SerializeField] float smoothTimeStart = 0.5f;
     [SerializeField] float smoothTimeEnd = 0.1f;
     [SerializeField] float moveSpeedAnimMult = 10f;
-    [SerializeField] GroundedSettings groundedSettings;
-    [SerializeField] JumpSettings jumpSettings;
-    [SerializeField] FallSettings fallSettings;
+    [SerializeField] public GroundedSettings groundedSettings;
+    [SerializeField] public JumpSettings jumpSettings;
+    [SerializeField] public FallSettings fallSettings;
 
     const float ZeroF = 0f;
 
@@ -62,6 +65,8 @@ public class PlayerController : ValidatedMonoBehaviour, TimerUtility.ITimerUser
                 (timer_jumpInput, true), 
                 (timer_jumpCooldown, false))
             .Sub (timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);
+        
+        this.CacheStatFields();
     }
 
     void OnDestroy() => this.ShutdownTimers();

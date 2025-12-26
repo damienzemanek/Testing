@@ -1,0 +1,9 @@
+OVDF v1.1
+PlayerController, Assembly-CSharp
+MetaGuid:8d8d54914ea1209459d55db67c80b410
+
+# rotSpeed
+Position: $root:7
+
+# moveSpeed
+Position: $root:5

@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4977419991388916086}
   - component: {fileID: 6406248533124044423}
   - component: {fileID: 17380895209613085}
-  - component: {fileID: 6977150900109262517}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
@@ -87,27 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6977150900109262517
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5231101570442440087}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.0000001, y: 2, z: 1.0000002}
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7109753355755928487
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,6 +96,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8126756132108470349}
   - component: {fileID: 4272368371958096040}
+  - component: {fileID: 3560027221462640181}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Untagged
@@ -164,6 +143,28 @@ MonoBehaviour:
     source: {fileID: 1117303338207660661}
     clip: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
   enlargeTime: 1
+  scoreChannel: {fileID: 11400000, guid: c2e2d5f172634844cb859c49c1e92267, type: 2}
+--- !u!135 &3560027221462640181
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7109753355755928487}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.62
+  m_Center: {x: 0, y: 0.65, z: 0}
 --- !u!1 &8617955435803154705
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +174,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5332085979358401951}
-  - component: {fileID: 3016920162284781020}
   - component: {fileID: 1117303338207660661}
   m_Layer: 0
   m_Name: Audio Follow
@@ -197,24 +197,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 8126756132108470349}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3016920162284781020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8617955435803154705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d87c5ffe2c2d4d9eb9748fe99419faf6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  follow: {fileID: 0}
-  releaseFromParentOnSpawn: 1
-  source: {fileID: 1117303338207660661}
-  startedPlaying: 0
-  disableSelfTimeThreshold: 5
-  currentTime: 0
 --- !u!82 &1117303338207660661
 AudioSource:
   m_ObjectHideFlags: 0
