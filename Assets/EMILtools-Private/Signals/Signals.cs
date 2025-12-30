@@ -129,12 +129,18 @@ namespace EMILtools.Signals
                 if (!HasModifiers) return val;
                 T beingModified = val;
 
-
+                // Weave the apply Func<T, T>s through each stored modifier
                 for (int i = 0; i < _modifiers.Count; i++)
                 {
-                    var strat = _modifiers[i] as IStatModStrategy<T> ?? throw new InvalidOperationException();
-                    beingModified = strat.Apply(beingModified);
+                    // Important: When accessing structs never save them as a var like, var strat = modifiers[i]. This will copy the ref
+                    IStatModStrategy<T> usableStrategy;
 
+                    if (_modifiers[i] is IStatModStrategyCustom)
+                        usableStrategy = (_modifiers[i] as IStatModStrategyCustom).GetStrategy<T>();
+                    else
+                        usableStrategy = _modifiers[i] as IStatModStrategy<T> ?? throw new InvalidOperationException();
+                    
+                    beingModified = usableStrategy.Apply(beingModified);
                 }
                 
                 Debug.Log("New calculated value: " + beingModified);

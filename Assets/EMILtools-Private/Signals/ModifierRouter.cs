@@ -25,13 +25,19 @@ namespace EMILtools.Signals
             public readonly Dictionary<Type, Action<IStatModStrategy>> AddModifierCache = new();
         }
         
-        public static void ModifyStatUser<T>(this IStatUser recipient, IStatModStrategy<T> strategy)
-            where T : struct, IEquatable<T>
+        public static void ModifyStatUser(this IStatUser recipient, IStatModStrategy strategy)
         {
             if (!instanceRegistry.TryGetValue(recipient, out ModifierRouter router)) return;
+            
             Debug.Log($"Retrieved Recicpient Router : {recipient}");
-            if (!router.AddModifierCache.TryGetValue(strategy.GetType(), out var AddModifier)) return;
+            
+            Type modifierType = strategy.GetType(); // Default to non-custom strategies
+            if (strategy is IStatModStrategyCustom custom) modifierType = custom.ModifierType(); // If its custom get the type of the custom modifier for routing
+            
+            if (!router.AddModifierCache.TryGetValue(modifierType, out var AddModifier)) return;
+            
             Debug.Log($"Adding Modifier Strategy : {strategy.GetType()} to Recipient : {recipient}");
+            
             AddModifier(strategy);
         }
 
@@ -45,7 +51,8 @@ namespace EMILtools.Signals
             
             Debug.Log("Caching stat fields on IStatUser: " + istatuser);
             
-            var fields = istatuser.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            var fields = 
+                istatuser.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(f => typeof(IStat).IsAssignableFrom(f.FieldType))
                 .ToList();
 

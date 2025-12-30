@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Trigger : Entity
 {
-    SpeedModifier speedModifier = new SpeedModifier(x => x * 3f).WithTimed(5);
+    private IStatModStrategy speedModifier = new SpeedModifier(x => x * 3f);
     
 
     void OnTriggerEnter(Collider other)

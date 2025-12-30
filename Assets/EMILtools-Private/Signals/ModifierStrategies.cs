@@ -1,4 +1,5 @@
 using System;
+using EMILtools.Timers;
 using UnityEngine;
 
 namespace EMILtools.Signals
@@ -9,6 +10,12 @@ namespace EMILtools.Signals
         /// Used for storage of different strategy types in a single collection
         /// </summary>
         public interface IStatModStrategy { }
+
+        public interface IStatModStrategyCustom
+        {
+            public IStatModStrategy<T> GetStrategy<T>() where T : struct;
+            public Type ModifierType();
+        }
         
         /// <summary>
         /// Used for invoke chaining
@@ -18,6 +25,7 @@ namespace EMILtools.Signals
             Func<T, T> func { get; set; }
             public T Apply(T input) => func(input);
         }
+        
         
         /// <summary>
         /// Simple struct wrapper for Func<T, T> to modify Health on IStatUser
