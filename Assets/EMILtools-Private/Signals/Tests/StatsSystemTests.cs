@@ -52,10 +52,13 @@ public class StatsSystemTests : MonoBehaviour
         var user = new TestStatUser();
         user.CacheStatFields();
 
-        var strat = new SpeedModifier(x => x * 2).WithTimed(5);
-        CountdownTimer timer = strat.timer;
+        var strat = new SpeedModifier(x => x * 2);
+        var timed = strat.WithTimed(5);
+        user.ModifyStatUser(ref strat, timed);
 
-        user.ModifyStatUser(ref strat);
+        var tm = (TimedModifier<float, SpeedModifier>)timed;
+        CountdownTimer timer = tm.timer;
+        
         
         Assert.AreEqual(20f, user.speed.Value, "The state value should be doubled by the IStatModStrategy interface modifier");
         Assert.AreEqual(true, timer.isRunning);

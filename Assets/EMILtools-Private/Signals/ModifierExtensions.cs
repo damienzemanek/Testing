@@ -1,44 +1,125 @@
 using System;
 using System.Collections.Generic;
 using EMILtools.Signals;
+using EMILtools.Timers;
 using UnityEngine;
 using static EMILtools.Signals.ModifierStrategies;
 
 public static class ModifierExtensions
 {
-    public static T ApplyAll<T, TMod>(this List<TMod> modifiers, T val)
+    
+    // Contains modifier type
+    public static bool ContainsModifierType<T, TMod>(
+        this List<Stat<T, TMod>.ModifierSlot> slots)
         where T : struct
         where TMod : struct, IStatModStrategy<T>
     {
-        foreach (var mod in modifiers)
-            val = mod.Apply(val);
+        foreach (var slot in slots)
+            if (slot.modifier.GetType() == typeof(TMod))
+                return true;
+
+        return false;
+    }
+
+    // Contains decorator instance
+    public static bool ContainsDecorator<T, TMod>(
+        this List<Stat<T, TMod>.ModifierSlot> slots,
+        IStatModCustom<T, TMod> decorator)
+        where T : struct
+        where TMod : struct, IStatModStrategy<T>
+    {
+        foreach (var slot in slots)
+            if (ReferenceEquals(slot.decorator, decorator))
+                return true;
+
+        return false;
+    }
+        
+    public static bool Remove<T, TMod>(this List<Stat<T, TMod>.ModifierSlot> modslots, TMod modifier)
+        where T : struct
+        where TMod : struct, IStatModStrategy<T>
+    {
+        for (int i = 0; i < modslots.Count; i++)
+        {
+            if (modslots[i].modifier.GetType() != modifier.GetType()) continue;
+            
+            modslots[i].decorator?.OnRemove?.Invoke();
+            modslots.RemoveAt(i);
+            return true;
+        }
+        return false;
+    }
+    
+    public static List<Stat<T, TMod>.ModifierSlot> Add<T, TMod>(this List<Stat<T, TMod>.ModifierSlot> modslots, TMod modifier)
+        where T : struct
+        where TMod : struct, IStatModStrategy<T>
+    {
+        // Contains check
+        foreach (var slot in modslots)
+            if (slot.modifier.GetType() == typeof(TMod)) return modslots;
+        
+        Stat<T,TMod>.ModifierSlot newSlot = new Stat<T, TMod>.ModifierSlot
+        {
+            modifier = modifier
+        };
+        modslots.Add(newSlot);
+        return modslots;
+    }
+    
+    public static List<Stat<T, TMod>.ModifierSlot> Add<T, TMod>(this List<Stat<T,TMod>.ModifierSlot> modslots, IStatModCustom<T, TMod> decorator)
+        where T : struct
+        where TMod : struct, IStatModStrategy<T>
+    {
+        for (int i = 0; i < modslots.Count; i++) {
+            var slot = modslots[i];
+            if (slot.modifier.GetType() == decorator.linkType)
+            {
+                slot.decorator = decorator;
+                
+                if(slot.decorator.strat == null) slot.decorator.strat = new Ref<TMod>(ref slot.modifier);
+                else Debug.Log("Slot already has decorator assigned!, only 1 allowed atm");
+                
+                slot.decorator.OnAdd?.Invoke();
+                
+                modslots[i] = slot; 
+                break;
+            }
+        }
+                
+        return modslots;
+    }
+    
+    public static T ApplyAll<T, TMod>(this List<Stat<T,TMod>.ModifierSlot> modslots, T val)
+        where T : struct
+        where TMod : struct, IStatModStrategy<T>
+    {
+        foreach (var slot in modslots)
+            if (slot.decorator == null)
+                val = slot.modifier.Apply(val);
+            else
+                val = slot.decorator.Apply(val);
 
         return val;
     }
     
-    
-    // Avoids long generic strings for StatModTimed to help with type inference through ModifierRouting.ModifyStatUser
-    public static void ModifyStatUser<T, TMod>(this IStatUser recipient, ref StatModTimed<T, TMod> timedStrat)
-        where T : struct, IEquatable<T>
-        where TMod : struct, IStatModStrategy<T>
-    {
-        recipient.ModifyStatUser<T, StatModTimed<T, TMod>>(ref timedStrat);
-    }
-
-    // Float extension for timed
-    public static StatModTimed<float, TMod> WithTimed<TMod>(this TMod modifier, float duration)
+    // Float only ext for Customs
+    public static IStatModCustom<float, TMod> WithTimed<TMod>(this TMod mod, float duration)
         where TMod : struct, IStatModStrategy<float>
     {
-        return new StatModTimed<float, TMod>(in modifier, duration);
+        IStatModCustom<float, TMod> timedMod = new TimedModifier<float, TMod>(new CountdownTimer(duration));
+        return timedMod;
     }
     
-    // Generic for timed
-    public static StatModTimed<T, TMod> WithTimed<T, TMod>(this TMod modifier, float duration)
-        where T : struct, IEquatable<T>
+    public static IStatModCustom<T, TMod> WithTimed<T, TMod>(this TMod mod, float duration)
+        where T : struct
         where TMod : struct, IStatModStrategy<T>
     {
-        return new StatModTimed<T, TMod>(in modifier, duration);
+        // Not setting the ref to the modifier strategy here
+        // that happens after sending the modifier to the IStatUser
+        IStatModCustom<T, TMod> timedMod = new TimedModifier<T, TMod>(new CountdownTimer(duration));
+        return timedMod;
     }
+    
     
     
     // Float ext for regular

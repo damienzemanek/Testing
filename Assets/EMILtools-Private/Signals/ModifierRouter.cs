@@ -15,52 +15,42 @@ namespace EMILtools.Signals
     {
         // Reference casting from Action<TMod> to object (basically free)
         // Since Action is a refernce, this doesn't box
-        public readonly Dictionary<Type, object> MethodCache_AddModifier;
-        public ModifierRouter() => MethodCache_AddModifier = new();
+        public readonly Dictionary<Type, (object AddModifier, object AddDecorator)> MethodCache_AddModifier;
+        public ModifierRouter() => MethodCache_AddModifier = new Dictionary<Type, (object AddModifier, object AddDecorator)>();
     }
     
-    // Generic meta-data pattern (Type-Safe Enum)
-    public static class StatLinker<T, TMod>
-        where T : struct, IEquatable<T>
-        where TMod : struct, IStatModStrategy<T>
-    {
-        //Action is specific to this exact TMod type
-        // no boxing occurs bc the type is baked into the class
-        public static Action<TMod> AddAction;
-    }
-
-
     public static class ModiferRouting
     {
-        public static void ModifyStatUser<T, TMod>(this IStatUser recipient, ref TMod strat)
-            where T : struct, IEquatable<T>
+        public static void ModifyStatUser<T, TMod>(this IStatUser recipient, ref TMod strat, params IStatModCustom<T, TMod>[] decorators)
+            where T : struct
             where TMod : struct, IStatModStrategy<T>
         {
-            Debug.Log($"Retrieved Recicpient : {recipient}");
+            Type modType = typeof(TMod);
+            Debug.Log($"[ModifyStatUser] Recipient={recipient?.GetType().Name}, " +
+                      $"Modifier={typeof(TMod).Name}, " +
+                      $"Decorators=[{(decorators == null || decorators.Length == 0 ? "none" : string.Join(", ", decorators.Select(d => d?.GetType().Name ?? "null")))}]"
+            );
 
             // This uses the TMod of the strat we sent in, so we save it using typeof(TMod) (no alloc, no box)
-            Type modType = typeof(TMod);
-            
-            // here we can check if its the custom one
-            if (typeof(IStatModStrategyCustom).IsAssignableFrom(modType))
+
+            if (!recipient.router.MethodCache_AddModifier.TryGetValue(modType, out var AddMethods))
             {
-                // Extract the inner TMod (e.g., SpeedModifier) from the decorator
-                Type arg = modType.GetGenericArguments()[1];
-                modType = arg; 
-                
-                 //Since all custom mod types have the TMod as the 2nd generic constraint, we can use this here
-                 Debug.Log($"Handling custom modifier... Targeted inner strategy type: {modType.Name}");
-            }
-            
-            if (recipient.router.MethodCache_AddModifier.TryGetValue(modType, out var actionObject))
-            {
-                if (actionObject is not Action<TMod> AddModifier) return;
-                AddModifier(strat);
-                Debug.Log($"Added modifier {modType}");
-            }
-            else
                 Debug.Log($"Failed to retreive, and add modifier {strat.GetType().Name}");
+                return;
+            }
+            
+                
+            if (AddMethods.AddModifier is not Action<TMod> AddModifier) return;
+            AddModifier(strat);
+            Debug.Log($"Added modifier {modType}");
+            
+            if (decorators.Length == 0) return;
+            if (decorators[0] is not IStatModCustom<T, TMod> customDecorator) return;
+            if (AddMethods.AddDecorator is not Action<IStatModCustom<T, TMod>> AddDecorator) return;
+            Debug.Log($"Custom Modifier being handled... : {recipient}");
+            AddDecorator(customDecorator);
         }
+        
 
         /// <summary>
         /// Call in Awake to cache the add modifiers for the IStatUser
@@ -80,42 +70,45 @@ namespace EMILtools.Signals
 
             foreach (var field in fields)
             {
-                var instance = field.GetValue(istatuser);
-                var method = field.FieldType.GetMethod("AddModifier");
-
-                if (instance == null || method == null) {
-                    Debug.LogWarning($"[CacheStatFields] Skipping field {field.Name}: Instance or AddModifier method not found."); continue; }
-
                 // Extract generic arguments  ex: <float, SpeedModifier>
                 var genericArgs = field.FieldType.GetGenericArguments();
                 var valueType = genericArgs[0];
                 var stratType = genericArgs[1];
+                var decoratorType = typeof(IStatModCustom<,>).MakeGenericType(valueType, stratType);
+                
+                // Extract required methods
+                var instance = field.GetValue(istatuser);
+                var addModifierMethod = field.FieldType.GetMethod("AddModifier");
+                var addDecoratorMethod = field.FieldType.GetMethod(
+                    "AddDecorator",
+                    new[] { decoratorType }
+                );
 
+                if (instance == null || addModifierMethod == null || addDecoratorMethod == null) {
+                    Debug.LogWarning($"[CacheStatFields] Skipping field {field.Name}: Instance or AddModifier method not found."); continue; }
+                
                 Debug.Log($"[CacheStatFields] Processing field '{field.Name}' -> ValueType: {valueType.Name}, StratType: {stratType.Name}");
 
-                // 1. Update the Static StatLinker (Global type-safe access)
                 try 
                 {
-                    // Get a refernece to the generic meta data pattern provider
-                    Type specificLinker = typeof(StatLinker<,>).MakeGenericType(valueType, stratType);
-                    
-                    // Get a reference to the GMDPP's AddAction method field
-                    var addActionField = specificLinker.GetField("AddAction", BindingFlags.Public | BindingFlags.Static);
+                    // Create delegates
+                    var addModCb = Delegate.CreateDelegate(
+                        typeof(Action<>).MakeGenericType(stratType),
+                        instance,
+                        addModifierMethod
+                    );
 
-                    // Create a direct delegate to avoid boxing/ExpressionTree overhead
-                    var cb = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(stratType), instance, method);
-                    
-                    // Set the Value of the action field to the correct callback
-                    addActionField.SetValue(null, cb);
-                    
-                    
-                    Debug.Log($"[CacheStatFields] Successfully populated StatLinker<{valueType.Name}, {stratType.Name}>.AddAction");
+                    var addDecCb = Delegate.CreateDelegate(
+                        typeof(Action<>).MakeGenericType(decoratorType),
+                        instance,
+                        addDecoratorMethod
+                    );
 
-                    // 2. Update the Instance-specific Router (Multi-entity safety)
+                    // Update the Instance-specific Router (Multi-entity safety)
                     if (istatuser.router.MethodCache_AddModifier != null)
                     {
                         // We use the stratType (e.g. SpeedModifier) as the key
-                        istatuser.router.MethodCache_AddModifier[stratType] = cb;
+                        istatuser.router.MethodCache_AddModifier[stratType] = (addModCb, addDecCb);
                         Debug.Log($"[CacheStatFields] Added {stratType.Name} callback to {istatuser.GetType().Name}.router.MethodCache");
                     }
                     else

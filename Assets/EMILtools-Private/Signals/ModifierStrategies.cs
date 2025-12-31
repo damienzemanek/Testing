@@ -6,8 +6,6 @@ namespace EMILtools.Signals
 {
     public static class ModifierStrategies
     {
-        public interface IStatModStrategyCustom { }
-        
         public interface IStatModStrategy<T> where T : struct
         {
             Func<T, T> func { get; set; }
@@ -22,7 +20,11 @@ namespace EMILtools.Signals
         public struct SpeedModifier : IStatModStrategy<float>
         {
             public Func<float, float> func { get; set; }
-            public SpeedModifier(Func<float, float> func) => this.func = func;
+
+            public SpeedModifier(Func<float, float> func)
+            {
+                this.func = func;
+            }
         }
         
         
