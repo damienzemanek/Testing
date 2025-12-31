@@ -161,7 +161,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            public Stat<T, TMod> AddModifier(TMod modifier)
+            public Stat<T, TMod> AddModifierC(TMod modifier)
             {
                 Debug.Log("Adding Modifier: " + modifier);
                 if(Modifiers == null) _modifiers = new List<TMod>();
@@ -173,17 +173,35 @@ namespace EMILtools.Signals
                 Calculate();
                 return this;
             }
+            
+            public void AddModifier(TMod modifier)
+            {
+                Debug.Log("Adding Modifier: " + modifier);
+                if(Modifiers == null) _modifiers = new List<TMod>();
+                if (_modifiers.Contains(modifier)) return;
+                
+                _modifiers.Add(modifier);
+                Debug.Log($"Added Modifier : {modifier}. Total Modifiers now: {_modifiers.Count}");
+
+                Calculate();
+            }
 
             /// <summary>
             /// Order of modifiers removed matters
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            public Stat<T, TMod> RemoveModifier(TMod modifier)
+            public Stat<T, TMod> RemoveModifierC(TMod modifier)
             {
                 if (!_modifiers.Remove(modifier)) return this;
                 Calculate();
                 return this;
+            }
+            public void RemoveModifier(TMod modifier)
+            {
+                if (!_modifiers.Remove(modifier)) return;
+                Calculate();
+                return;
             }
 
             /// <summary>

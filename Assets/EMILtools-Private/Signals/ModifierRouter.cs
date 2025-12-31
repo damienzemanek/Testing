@@ -11,11 +11,12 @@ using static EMILtools.Signals.ModifierStrategies;
 namespace EMILtools.Signals
 {
     [Serializable]
-    public readonly struct ModifierRouter
+    public class ModifierRouter
     {
         // Reference casting from Action<TMod> to object (basically free)
         // Since Action is a refernce, this doesn't box
         public readonly Dictionary<Type, object> MethodCache_AddModifier;
+        public ModifierRouter() => MethodCache_AddModifier = new();
     }
     
     // Generic meta-data pattern (Type-Safe Enum)
@@ -57,9 +58,9 @@ namespace EMILtools.Signals
         public static void CacheStatFields(this IStatUser istatuser)
         {
             if (istatuser == null) return;
-
+            
             Debug.Log($"[CacheStatFields] Starting cache for IStatUser: {istatuser.GetType().Name}");
-
+            
             var fields = istatuser.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(f => typeof(IStat).IsAssignableFrom(f.FieldType))
                 .ToList();
@@ -71,13 +72,10 @@ namespace EMILtools.Signals
                 var instance = field.GetValue(istatuser);
                 var method = field.FieldType.GetMethod("AddModifier");
 
-                if (instance == null || method == null)
-                {
-                    Debug.LogWarning($"[CacheStatFields] Skipping field {field.Name}: Instance or AddModifier method not found.");
-                    continue;
-                }
+                if (instance == null || method == null) {
+                    Debug.LogWarning($"[CacheStatFields] Skipping field {field.Name}: Instance or AddModifier method not found."); continue; }
 
-                // Extract generic arguments (e.g., <float, SpeedModifier>)
+                // Extract generic arguments  ex: <float, SpeedModifier>
                 var genericArgs = field.FieldType.GetGenericArguments();
                 var valueType = genericArgs[0];
                 var stratType = genericArgs[1];
@@ -110,14 +108,10 @@ namespace EMILtools.Signals
                         Debug.Log($"[CacheStatFields] Added {stratType.Name} callback to {istatuser.GetType().Name}.router.MethodCache");
                     }
                     else
-                    {
                         Debug.LogError($"[CacheStatFields] Router Dictionary is NULL on {istatuser.GetType().Name}. Ensure it is initialized in the constructor or Awake.");
-                    }
+
                 }
-                catch (Exception e)
-                {
-                    Debug.LogError($"[CacheStatFields] Failed to bind field {field.Name}: {e.Message}");
-                }
+                catch (Exception e) { Debug.LogError($"[CacheStatFields] Failed to bind field {field.Name}: {e.Message}");}
             }
             
             Debug.Log($"[CacheStatFields] Completed caching for {istatuser.GetType().Name}");

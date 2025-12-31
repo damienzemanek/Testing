@@ -31,30 +31,21 @@ public class StatsSystemTests : MonoBehaviour
         Assert.AreEqual(20f, user.speed.Value, "The state value should be doubled by the modifier");
     }
 
-    // [Test]
-    // public void ModifyStatUser_MultipleModifiers_CalculateCorrectly()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStatFields();
-    //     
-    //     user.ModifyStatUser(new SpeedModifier(x => x + 5f));
-    //     user.ModifyStatUser(new SpeedModifier(x => x * 2f));
-    //     
-    //     Assert.AreEqual(30f, user.speed.Value, "Multiple modifiers should stack in order");
-    // }
-    //
-    // [Test]
-    // public void ModifyStatUser_WithInterfaceVariable_CalculateCorrectly()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStatFields();
-    //     
-    //     IStatModStrategy strat = new SpeedModifier(x => x * 2f);
-    //     user.ModifyStatUser(strat);
-    //     
-    //     Assert.AreEqual(20f, user.speed.Value, "The state value should be doubled by the IStatModStrategy interface modifier");
-    // }
-    //
+    [Test]
+    public void ModifyStatUser_MultipleModifiers_CalculateCorrectly()
+    {
+        var user = new TestStatUser();
+        user.CacheStatFields();
+        var strat1 = new SpeedModifier(x => x + 5);
+        var strat2 = new SpeedModifier(x => x * 2);
+
+        user.ModifyStatUser<float, SpeedModifier>(ref strat1);
+        user.ModifyStatUser<float, SpeedModifier>(ref strat2);
+        
+        Assert.AreEqual(30f, user.speed.Value, "Multiple modifiers should stack in order");
+    }
+    
+    
     // [Test]
     // public void ModifyStatUser_WithInterfaceVariable_Timed_CalculateCorrectly()
     // {
