@@ -174,5 +174,6 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
     }
 
     bool isMoving(Vector3 adjustedDir) => adjustedDir.magnitude > ZeroF;
-    
+
+    public ModifierRouter router { get; set; } = new();
 }

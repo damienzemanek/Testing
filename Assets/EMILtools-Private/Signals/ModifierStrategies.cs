@@ -11,15 +11,9 @@ namespace EMILtools.Signals
         /// </summary>
         public interface IStatModStrategy { }
 
-        public interface IStatModStrategyCustom
-        {
-            public IStatModStrategy<T> GetStrategy<T>() where T : struct;
-            public Type ModifierType();
-        }
+        public interface IStatModStrategyCustom { }
+
         
-        /// <summary>
-        /// Used for invoke chaining
-        /// </summary>
         public interface IStatModStrategy<T> : IStatModStrategy where T : struct
         {
             Func<T, T> func { get; set; }

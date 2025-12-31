@@ -4,11 +4,15 @@ using System.Reflection;
 using EMILtools.Core;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
 
 namespace EMILtools.Signals
 {
-        public interface IStatUser { }
+    public interface IStatUser
+    {
+        public ModifierRouter router { get; set; }
+    }
     
         [Serializable]
         [InlineProperty]
@@ -45,11 +49,10 @@ namespace EMILtools.Signals
         /// <typeparam name="T"></typeparam>
         [Serializable]
         [InlineProperty]
-        public sealed class Stat<T, TModStrategy> : Ref<T>, IStat 
+        public sealed class Stat<T, TMod> : Ref<T>, IStat 
             where T : struct, IEquatable<T>
-            where TModStrategy : IStatModStrategy<T>
+            where TMod : struct, IStatModStrategy<T>
         {
-            
             /// <summary>
             /// Used for INTERCEPTS when changed but before NOTIFY.
             /// Validates and Mutates the base value when changed to subscribed specifications
@@ -90,11 +93,11 @@ namespace EMILtools.Signals
             }
 
             // Not initialized here to save on memory, When using lazy initialize
-            private List<IStatModStrategy> _modifiers;
+            private List<TMod> _modifiers;
             private List<Func<T, T>> _intercepts;
             
             // Access for Configurations
-            public IReadOnlyList<IStatModStrategy> Modifiers => _modifiers;
+            public IReadOnlyList<TMod> Modifiers => _modifiers;
             public IReadOnlyList<Func<T, T>> Intercepts => _intercepts;
             public event Action<T> Reactions; //Kept as event so outside scripts can't invoke it directly
             
@@ -132,15 +135,8 @@ namespace EMILtools.Signals
                 // Weave the apply Func<T, T>s through each stored modifier
                 for (int i = 0; i < _modifiers.Count; i++)
                 {
-                    // Important: When accessing structs never save them as a var like, var strat = modifiers[i]. This will copy the ref
-                    IStatModStrategy<T> usableStrategy;
-
-                    if (_modifiers[i] is IStatModStrategyCustom)
-                        usableStrategy = (_modifiers[i] as IStatModStrategyCustom).GetStrategy<T>();
-                    else
-                        usableStrategy = _modifiers[i] as IStatModStrategy<T> ?? throw new InvalidOperationException();
-                    
-                    beingModified = usableStrategy.Apply(beingModified);
+                    // Important: When accessing structs that are interfaced never save them as a var like, var strat = modifiers[i]. This will copy the ref
+                    beingModified = _modifiers[i].Apply(beingModified);  // no cast, no boxing
                 }
                 
                 Debug.Log("New calculated value: " + beingModified);
@@ -165,10 +161,10 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            public Stat<T, TModStrategy> AddModifier(IStatModStrategy modifier)
+            public Stat<T, TMod> AddModifier(TMod modifier)
             {
                 Debug.Log("Adding Modifier: " + modifier);
-                if(Modifiers == null) _modifiers = new List<IStatModStrategy>();
+                if(Modifiers == null) _modifiers = new List<TMod>();
                 if (_modifiers.Contains(modifier)) return this;
                 
                 _modifiers.Add(modifier);
@@ -183,7 +179,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            public Stat<T, TModStrategy> RemoveModifier(IStatModStrategy modifier)
+            public Stat<T, TMod> RemoveModifier(TMod modifier)
             {
                 if (!_modifiers.Remove(modifier)) return this;
                 Calculate();
@@ -197,7 +193,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="intercept"></param>
             /// <returns></returns>
-            public Stat<T, TModStrategy> AddIntercept(Func<T, T> intercept)
+            public Stat<T, TMod> AddIntercept(Func<T, T> intercept)
             {
                 if(Intercepts == null) _intercepts = new List<Func<T, T>>();
                 if (_intercepts.Contains(intercept)) return this;
@@ -207,7 +203,7 @@ namespace EMILtools.Signals
 
             }
             
-            public Stat<T, TModStrategy> RemoveIntercept(Func<T, T> intercept)
+            public Stat<T, TMod> RemoveIntercept(Func<T, T> intercept)
             {
                 _intercepts.Remove(intercept);
                 RefreshIntercept();
@@ -223,14 +219,14 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="reaction"></param>
             /// <returns></returns>
-            public Stat<T, TModStrategy> AddReaction(Action<T> reaction)
+            public Stat<T, TMod> AddReaction(Action<T> reaction)
             {
                 if(Reactions == null) Reactions = reaction;
                 Reactions += reaction;
                 return this;
             }
 
-            public Stat<T, TModStrategy> RemoveReaction(Action<T> reaction)
+            public Stat<T, TMod> RemoveReaction(Action<T> reaction)
             {
                 Reactions -= reaction;
                 return this;
@@ -242,7 +238,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="r"></param>
             /// <returns></returns>
-            public static implicit operator T(Stat<T, TModStrategy> r) => (r != null) ? r.Value : default;
+            public static implicit operator T(Stat<T, TMod> r) => (r != null) ? r.Value : default;
             
         }
     

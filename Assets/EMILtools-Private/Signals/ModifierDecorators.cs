@@ -6,31 +6,25 @@ using static EMILtools.Timers.TimerUtility;
 
 namespace EMILtools.Signals
 {
-    public interface ITimedModifier : IStatModStrategyCustom
-    {
-        CountdownTimer timer { get; set; }
-        public IStatModStrategy modifier { get; set; }
-
-        IStatModStrategy<T> IStatModStrategyCustom.GetStrategy<T>() where T : struct
-        {
-            timer.Start();
-            Debug.Log($"Starting timer {timer.isRunning}");
-            return modifier as IStatModStrategy<T>;
-        }
-        
-        Type IStatModStrategyCustom.ModifierType() => modifier.GetType();
-    }
     
-    public struct TimedStatModStrategy : ITimedModifier, IStatModStrategy
+    public struct StatModTimed<T, TMod> : IStatModStrategy<T>, IStatModStrategyCustom
+        where T : struct, IEquatable<T>
+        where TMod : struct, IStatModStrategy<T>
     {
-        public CountdownTimer timer { get; set; }
-        public IStatModStrategy modifier { get; set; }
-        
-        public TimedStatModStrategy(IStatModStrategy modifier, float duration)
+        public readonly CountdownTimer timer;
+        public TMod modifier;
+
+        // keyword 'in' avoids copying into the param list. Avoids an extra copy for value-types when initilly storing them
+        public StatModTimed(float duration, in TMod _modifier)
         {
-            this.modifier = modifier;
-            timer = new CountdownTimer(duration);
+            timer = new  CountdownTimer(duration);
+            modifier = _modifier; // Copy still occurs here (but this is okay since this is the only storage spot)
         }
-        
+
+        public Func<T, T> func
+        {
+            get => modifier.func;
+            set { throw new NotImplementedException("Modifier not settable from Decorator, use ctor"); }
+        }
     }
 }
