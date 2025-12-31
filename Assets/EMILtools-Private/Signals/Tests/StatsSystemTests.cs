@@ -17,7 +17,7 @@ public class StatsSystemTests : MonoBehaviour
     }
 
     [Test]
-    public void ModifyStatUser_ApplyingSpeedModifier()
+    public void ModifyStatUser_ApplyModifier()
     {
         var user = new TestStatUser();
         user.CacheStatFields();
@@ -32,34 +32,34 @@ public class StatsSystemTests : MonoBehaviour
     }
 
     [Test]
-    public void ModifyStatUser_MultipleModifiers_CalculateCorrectly()
+    public void ModifyStatUser_ApplyMultipleModifiers()
     {
         var user = new TestStatUser();
         user.CacheStatFields();
         var strat1 = new SpeedModifier(x => x + 5);
         var strat2 = new SpeedModifier(x => x * 2);
 
-        user.ModifyStatUser<float, SpeedModifier>(ref strat1);
-        user.ModifyStatUser<float, SpeedModifier>(ref strat2);
+        user.ModifyStatUser(ref strat1);
+        user.ModifyStatUser(ref strat2);
         
         Assert.AreEqual(30f, user.speed.Value, "Multiple modifiers should stack in order");
     }
     
     
-    // [Test]
-    // public void ModifyStatUser_WithInterfaceVariable_Timed_CalculateCorrectly()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStatFields();
-    //     
-    //     IStatModStrategy strat = new SpeedModifier(x => x * 2f).WithTimed(5f);
-    //     CountdownTimer timer = (strat as ITimedModifier).timer;
-    //     
-    //     user.ModifyStatUser(strat);
-    //     
-    //     Assert.AreEqual(20f, user.speed.Value, "The state value should be doubled by the IStatModStrategy interface modifier");
-    //     Assert.AreEqual(true, timer.isRunning);
-    // }
-    //
+    [Test]
+    public void ModifyStatUser_ApplyModifier_Timed()
+    {
+        var user = new TestStatUser();
+        user.CacheStatFields();
+
+        var strat = new SpeedModifier(x => x * 2).WithTimed(5);
+        CountdownTimer timer = strat.timer;
+
+        user.ModifyStatUser(ref strat);
+        
+        Assert.AreEqual(20f, user.speed.Value, "The state value should be doubled by the IStatModStrategy interface modifier");
+        Assert.AreEqual(true, timer.isRunning);
+    }
+    
     
 }

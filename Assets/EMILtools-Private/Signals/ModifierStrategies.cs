@@ -6,20 +6,13 @@ namespace EMILtools.Signals
 {
     public static class ModifierStrategies
     {
-        /// <summary>
-        /// Used for storage of different strategy types in a single collection
-        /// </summary>
-        public interface IStatModStrategy { }
-
         public interface IStatModStrategyCustom { }
-
         
-        public interface IStatModStrategy<T> : IStatModStrategy where T : struct
+        public interface IStatModStrategy<T> where T : struct
         {
             Func<T, T> func { get; set; }
             public T Apply(T input) => func(input);
         }
-        
         
         /// <summary>
         /// Simple struct wrapper for Func<T, T> to modify Health on IStatUser

@@ -38,17 +38,28 @@ namespace EMILtools.Signals
         {
             Debug.Log($"Retrieved Recicpient : {recipient}");
 
-            if (recipient.router.MethodCache_AddModifier.TryGetValue(typeof(TMod), out var actionObject))
+            // This uses the TMod of the strat we sent in, so we save it using typeof(TMod) (no alloc, no box)
+            Type modType = typeof(TMod);
+            
+            // here we can check if its the custom one
+            if (typeof(IStatModStrategyCustom).IsAssignableFrom(modType))
+            {
+                // Extract the inner TMod (e.g., SpeedModifier) from the decorator
+                Type arg = modType.GetGenericArguments()[1];
+                modType = arg; 
+                
+                 //Since all custom mod types have the TMod as the 2nd generic constraint, we can use this here
+                 Debug.Log($"Handling custom modifier... Targeted inner strategy type: {modType.Name}");
+            }
+            
+            if (recipient.router.MethodCache_AddModifier.TryGetValue(modType, out var actionObject))
             {
                 if (actionObject is not Action<TMod> AddModifier) return;
                 AddModifier(strat);
+                Debug.Log($"Added modifier {modType}");
             }
-            
-            // Type tmodtype = strat.GetType(); // Default to non-custom strategies
-            // if (strat.GetType().IsAssignableFrom(typeof(IStatModStrategyCustom)))
-            //     tmodtype = strat.GetType().GetGenericArguments()[1];
-
-
+            else
+                Debug.Log($"Failed to retreive, and add modifier {strat.GetType().Name}");
         }
 
         /// <summary>
