@@ -1,9 +1,7 @@
 using UnityEngine;
-using TMPro;
 
 public class TimeIncrease : MonoBehaviour
 {
-    public TextMeshProUGUI text;
     float _speed = 1f;
     public float speed
     {
@@ -25,6 +23,5 @@ public class TimeIncrease : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.KeypadPlus)) Incr();
         if (Input.GetKey(KeyCode.KeypadMinus)) Decr();
         Time.timeScale = _speed;
-        text.text = _speed.ToString("0.0");
     }
 }
