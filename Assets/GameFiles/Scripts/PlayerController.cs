@@ -2,17 +2,21 @@ using UnityEngine;
 using KBCore.Refs;
 using Unity.Cinemachine;
 using System;
+using System.Collections.Generic;
 using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
 using static EMILtools.Extensions.PhysEX;
 using EMILtools.Timers;
 using EMILtools.Extensions;
 using EMILtools.Signals;
+using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Timers.TimerUtility;
 
 public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 {
+    public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
+
     [Header("References")]
     [SerializeField, Self] Animator animator;
     [SerializeField, Self] Rigidbody rb;
@@ -66,7 +70,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
                 (timer_jumpCooldown, false))
             .Sub (timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);
         
-        this.CacheStatFields();
+        this.CacheStats();
     }
 
     void OnDestroy() => this.ShutdownTimers();
@@ -174,6 +178,4 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
     }
 
     bool isMoving(Vector3 adjustedDir) => adjustedDir.magnitude > ZeroF;
-
-    public ModifierRouter router { get; set; } = new();
 }

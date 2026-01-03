@@ -4,12 +4,54 @@ using EMILtools.Extensions;
 using EMILtools.Signals;
 using EMILtools.Timers;
 using UnityEngine;
+using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
 
 namespace EMILtools.Signals
 { 
     public static class ModifierExtensions
     {
+        public interface IStat { }
+
+        // Float specific overload
+        public static TMod Modify<TMod>(this IStatUser user, TMod mod)
+            where TMod : struct, IStatModStrategy<float>
+        {
+            IStat stat = user.Stats[typeof(TMod)];
+            (stat as Stat<float, TMod>).AddModifier(mod);
+            return mod;
+        }
+        
+        // Generic base Modify
+        public static TMod Modify<T, TMod>(this IStatUser user, TMod mod)
+            where T : struct
+            where TMod : struct, IStatModStrategy<T>
+        {
+            Stat<T, TMod> stat = (user.Stats[typeof(TMod)] as Stat<T, TMod>);
+            stat.AddModifier(mod);
+            return mod;
+        }
+        
+        // float override
+        public static TMod RemoveModifier<TMod>(this IStatUser user, TMod mod)
+            where TMod : struct, IStatModStrategy<float>
+        {
+            IStat stat = user.Stats[typeof(TMod)];
+            (stat as Stat<float, TMod>).RemoveModifier(mod.hash);
+            return mod;
+        }
+        
+        // Generic base Modify
+        public static TMod RemoveModifier<T, TMod>(this IStatUser user, TMod mod)
+            where T : struct
+            where TMod : struct, IStatModStrategy<T>
+        {
+            IStat stat = user.Stats[typeof(TMod)];
+            (stat as Stat<T, TMod>).RemoveModifier(mod.hash);
+            return mod;
+        }
+        
+        
             
         public static bool RemoveModifier<T, TMod>(this List<Stat<T, TMod>.ModifierSlot> modslots, ulong hash)
             where T : struct
@@ -62,18 +104,8 @@ namespace EMILtools.Signals
             return false;
         }
         
-        public static List<Stat<T, TMod>.ModifierSlot> Add<T, TMod>(this List<Stat<T, TMod>.ModifierSlot> modslots, ref TMod modifier)
-            where T : struct
-            where TMod : struct, IStatModStrategy<T>
-        {
-            Stat<T,TMod>.ModifierSlot newSlot = new Stat<T, TMod>.ModifierSlot { modifier = modifier, };
-            
-            modslots.Add(newSlot);
-            return modslots;
-        }
-        
         public static List<Stat<T, TMod>.ModifierSlot> AddDecorator<T, TMod>(this List<Stat<T,TMod>.ModifierSlot> modslots,
-            List<IStatModCustom<T, TMod>> decorators,
+            IStatModCustom<T, TMod>[] decorators,
             Stat<T, TMod> stat
         )
             where T : struct
@@ -121,52 +153,39 @@ namespace EMILtools.Signals
             where T : struct
             where TMod : struct, IStatModStrategy<T>
         {
-            foreach (var dec in decorators) val = dec.Apply(val);
+            foreach (var dec in decorators) val = dec.ApplyThruDecoratorFirst(val);
             return val;
         }
         
-        // Float only ext for Customs
-        public static IStatModCustom<float, TMod> WithTimed<TMod>(this TMod mod, float duration)
+        
+        // float timer call
+         
+        public static IStatModCustom<float, TMod> WithTimer<TMod>(this TMod mod, float duration)
             where TMod : struct, IStatModStrategy<float>
         {
+            // Not setting the ref to the modifier strategy here
+            // that happens after sending the modifier to the IStatUser
             IStatModCustom<float, TMod> timedMod = new TimedModifier<float, TMod>(
-                mod.func, 
                 mod.hash,
                 new CountdownTimer(duration));
             
             return timedMod;
         }
         
-        public static IStatModCustom<T, TMod> WithTimed<T, TMod>(this TMod mod, float duration)
+        
+        // base geneirc timer 
+        
+        public static IStatModCustom<T, TMod> WithTimer<T, TMod>(this TMod mod, float duration)
             where T : struct
             where TMod : struct, IStatModStrategy<T>
         {
             // Not setting the ref to the modifier strategy here
             // that happens after sending the modifier to the IStatUser
             IStatModCustom<T, TMod> timedMod = new TimedModifier<T, TMod>(
-                mod.func,
                 mod.hash,
                 new CountdownTimer(duration));
             
             return timedMod;
-        }
-        
-        
-        
-        // Float ext for regular
-        public static void ModifyStatUser<TMod>(this IStatUser recipient, ref TMod strat)
-            where TMod : struct, IStatModStrategy<float>
-        {
-            // Redirects to the main method with float explicitly set
-            recipient.ModifyStatUser<float, TMod>(ref strat);
-        }
-        
-        // Float ext for regular
-        public static void RemoveModifier<TMod>(this IStatUser recipient, ref TMod strat)
-            where TMod : struct, IStatModStrategy<float>
-        {
-            // Redirects to the main method with float explicitly set
-            recipient.RemoveModifier<float, TMod>(ref strat);
         }
     }
 }

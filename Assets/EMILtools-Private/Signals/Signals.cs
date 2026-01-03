@@ -5,14 +5,11 @@ using EMILtools.Core;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using static EMILtools.Signals.ModiferRouting;
+using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Signals.ModifierStrategies;
 
 namespace EMILtools.Signals
 {
-        public interface IStatUser
-        {
-            public ModifierRouter router { get; set; }
-        }
     
         [Serializable]
         [InlineProperty]
@@ -40,8 +37,7 @@ namespace EMILtools.Signals
             public Ref(T initialValue) => val = initialValue;
             public Ref(ref T initialValue) => val = initialValue;
         }
-
-        public interface IStat { }
+    
         
         /// <summary>
         /// A Multi-configurable event bus variable
@@ -195,8 +191,11 @@ namespace EMILtools.Signals
             public void AddModifier(TMod modifier)
             {
                 Debug.Log("Adding Modifier: " + modifier);
-                if(Modifiers == null) _modifiers = new List<ModifierSlot>();
-                _modifiers.Add(ref modifier);
+                
+                if(Modifiers == null) _modifiers = new List<ModifierSlot>(); // Lazy init for the list
+                ModifierSlot newSlot = new ModifierSlot { modifier = modifier, }; // create the slot, put in the mod
+                _modifiers.Add(newSlot); // add the slot to the list
+                
                 Debug.Log($"Added Modifier : {modifier}. Total Modifiers now: {_modifiers.Count}");
                 Calculate();
             }
@@ -214,11 +213,11 @@ namespace EMILtools.Signals
             }
             
             // Class
-            public void AddDecorators(List<IStatModCustom<T, TMod>> decorators)
+            public void AddDecorators(IStatModCustom<T, TMod>[] decorators)
             {
-                Debug.Log("Appending Decorators: " + decorators.Count);
+                Debug.Log("Appending Decorators: " + decorators.Length);
                 _modifiers.AddDecorator(decorators, this);
-                Debug.Log($"Added Decorators : {decorators.Count}. Total Modifiers now: {_modifiers.Count}");
+                Debug.Log($"Added Decorators : {decorators.Length}. Total Modifiers now: {_modifiers.Count}");
 
                 Calculate();
             }
