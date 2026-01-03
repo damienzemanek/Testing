@@ -56,7 +56,7 @@ namespace EMILtools.Signals
             public struct ModifierSlot
             {
                 public TMod modifier;
-                public List<IStatModCustom<T, TMod>> decorators;
+                public List<IStatModDecorator<T, TMod>> decorators;
                 public bool hasDecorators => (decorators != null) && (decorators.Count > 0);
 
                 /// <summary>
@@ -64,7 +64,7 @@ namespace EMILtools.Signals
                 /// </summary>
                 /// <param name="val"></param>
                 /// <returns></returns>
-                public T Apply(T val)
+                public T SlotApply(T val)
                 {
                     if (hasDecorators)
                         return modifier.Apply(decorators.ApplyDecorators(val));
@@ -72,7 +72,7 @@ namespace EMILtools.Signals
                         return modifier.Apply(val);
                 }
                 
-                public bool RemoveDecorator(IStatModCustom<T, TMod> deco, Stat<T, TMod> stat)
+                public bool RemoveDecorator(IStatModDecorator<T, TMod> deco, Stat<T, TMod> stat)
                 {
                     if (decorators == null) return false;
                     bool removed = decorators.Remove(deco);
@@ -80,9 +80,10 @@ namespace EMILtools.Signals
                     {
                         deco.stat = stat;
                         deco.OnRemove?.Invoke();
+                        return true;
                     }
 
-                    return removed;
+                    return false;
                 }
             }
             
@@ -177,7 +178,9 @@ namespace EMILtools.Signals
             }
             
             
-            
+            //--------------------------------------------------
+            //                  Modifiers
+            //--------------------------------------------------
             /// <summary>
             /// Modifiers are functions that modify the base value and replace the Value getter with the calcualted value
             /// Example: Player picked up "Speed" ability. Player speed is increased
@@ -186,7 +189,6 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            
             // Struct
             public void AddModifier(TMod modifier)
             {
@@ -202,37 +204,40 @@ namespace EMILtools.Signals
             
             public void RemoveModifier(ulong hash)
             {
-                Debug.Log("Removing Modifier with hash: " + hash);
-                if (!_modifiers.RemoveModifier(hash))
-                {
-                    Debug.Log("Removal failed. Could not find modifier with that func");
-                    return;
-                }
-                Debug.Log("Modifier & Modifier Slot Removal Success.");
+                if (!_modifiers.RemoveModifierSlot(hash)) {
+                    Debug.Log("[RemoveModifier] Removal failed. Could not find modifier with that func"); return; }
+                
+                Debug.Log("[RemoveModifier] Modifier Slot Removal Success. (Which includes the modifiers and decorators)");
                 Calculate();
             }
             
-            // Class
-            public void AddDecorators(IStatModCustom<T, TMod>[] decorators)
+            //--------------------------------------------------
+            //                  Decorators
+            //--------------------------------------------------
+            
+            public void AddDecorator(IStatModDecorator<T, TMod> decorator)
             {
-                Debug.Log("Appending Decorators: " + decorators.Length);
-                _modifiers.AddDecorator(decorators, this);
-                Debug.Log($"Added Decorators : {decorators.Length}. Total Modifiers now: {_modifiers.Count}");
+                Debug.Log("Appending Decorators: " + decorator);
+                _modifiers.AddDecorator(decorator, this);
+                Debug.Log($"Added Decorators : {decorator}. Total Modifiers now: {_modifiers.Count}");
 
                 Calculate();
             }
             
-            public void RemoveDecorator(ulong hash, IStatModCustom<T, TMod> deco)
+            public void RemoveDecorator(ulong hash, IStatModDecorator<T, TMod> deco)
             {
-                Debug.Log("Removing Decorator: " + deco);
-                if (!_modifiers.RemoveDecoOnMod(this, hash, deco))
-                {
-                    Debug.Log("Removal failed. Could not find modifier with that func");
-                    return;
-                }
-                Debug.Log($"Decorator Removal Success on hash {hash}");
+                if (!_modifiers.RemoveDecoOnMod(this, hash, deco)) {
+                    Debug.Log("[Removing Decorator] Removal failed. Could not find modifier with that func");
+                    return; }
+                
+                Debug.Log($"[Removing Decorator] Decorator Removal Success on hash {hash}");
                 Calculate();
             }
+            
+            
+            //--------------------------------------------------
+            //                  Interecepts
+            //--------------------------------------------------
 
             /// <summary>
             /// Intercepts are called before the base value is changed.

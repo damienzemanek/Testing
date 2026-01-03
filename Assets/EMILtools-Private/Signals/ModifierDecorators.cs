@@ -8,7 +8,7 @@ using static EMILtools.Timers.TimerUtility;
 
 namespace EMILtools.Signals
 {
-    public interface IStatModCustom<T, TMod>
+    public interface IStatModDecorator<T, TMod>
         where T : struct
         where TMod : struct, IStatModStrategy<T>
     {
@@ -20,7 +20,7 @@ namespace EMILtools.Signals
         public Action OnRemove{ get; set; }
     }
     
-    public abstract class ModifierDecorator<T, TMod> : IStatModCustom<T, TMod>
+    public abstract class StatModDecorator<T, TMod> : IStatModDecorator<T, TMod>
         where T : struct
         where TMod : struct, IStatModStrategy<T>
     {
@@ -31,7 +31,7 @@ namespace EMILtools.Signals
         public Action OnAdd { get; set; } = delegate { };
         public Action OnRemove { get; set; } = delegate { };
 
-        public ModifierDecorator(ulong hash)
+        public StatModDecorator(ulong hash)
         {
             removable = false;
             this.hash = hash;
@@ -45,14 +45,14 @@ namespace EMILtools.Signals
 
     }
     
-    public class TimedModifier<T, TMod> : ModifierDecorator<T, TMod>, ITimerUser
+    public class StatModDecTimed<T, TMod> : StatModDecorator<T, TMod>, ITimerUser
         where T : struct
         where TMod : struct, IStatModStrategy<T>
     {
         public CountdownTimer timer;
         public override T ApplyThruDecoratorFirst(T input) => input;
         
-        public TimedModifier(ulong hash, CountdownTimer timer, Action add = null, Action rm = null) : base(hash)
+        public StatModDecTimed(ulong hash, CountdownTimer timer, Action[] OnDecorAddCBs = null, Action[] OnDecorRemoveCBs = null) : base(hash)
         {
             removable = false;
             this.timer = timer;
@@ -60,10 +60,15 @@ namespace EMILtools.Signals
             this.Sub(timer.OnTimerStop, RemoveModifier);
             
             OnAdd += timer.Start;
-            OnAdd += add;
-
             OnRemove += this.ShutdownTimers;
-            OnRemove += rm;
+            
+            if(OnDecorAddCBs != null && OnDecorAddCBs.Length > 0)
+                foreach(var cb in OnDecorAddCBs)
+                    OnAdd += cb;
+            
+            if(OnDecorRemoveCBs != null && OnDecorRemoveCBs.Length > 0)
+                foreach(var cb in OnDecorRemoveCBs)
+                    OnRemove += cb;
         }
         
 

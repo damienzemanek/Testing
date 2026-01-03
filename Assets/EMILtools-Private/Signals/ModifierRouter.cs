@@ -25,13 +25,14 @@ namespace EMILtools.Signals
         public static void CacheStats(this IStatUser user)
         {
             if (user == null) return;
-            user.Stats = new Dictionary<Type, IStat>();
-            
             Debug.Log($"[CacheStatFields] Starting cache for IStatUser: {user.GetType().Name}");
             
             var fields = user.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(f => typeof(IStat).IsAssignableFrom(f.FieldType))
                 .ToList();
+
+            if (fields.Count <= 0) { Debug.Log("No IStat fields found to cache, Please declare your Stat fields in your IStatUser concrete implementation.");return;}
+            user.Stats = new Dictionary<Type, IStat>(fields.Count);
 
             Debug.Log($"[CacheStatFields] Found {fields.Count} Stat fields: {string.Join(", ", fields.Select(f => f.Name))}");
 
