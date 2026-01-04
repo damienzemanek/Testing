@@ -12,22 +12,52 @@ namespace EMILtools.Core
         public T baseValue;
         public T Value
         { 
-            get => Value;
+            get => baseValue;
             set
             {
-                if(EqualityComparer<T>.Default.Equals(baseValue, value)) return;
-                baseValue = this.ApplyAllIntercepts(value);
+                T processed = (Intercepts != null) ? Intercepts.ApplySequentially(value) : value;
+                if(EqualityComparer<T>.Default.Equals(baseValue, processed)) return;
                 Reactions?.Invoke(baseValue);
             }
         }
-        public List<Func<T, T>> Intercepts;
-        public Action<T> Reactions;
+        public StableFuncList<T, T> Intercepts;
+        public StableAction<T> Reactions;
         
-        public ReactiveIntercept(T initial, List<Func<T, T>> intercepts = null, Action<T> reactions = null)
+        public ReactiveIntercept(T initial)
         {
             baseValue = initial;
-            Intercepts = intercepts;
-            Reactions = reactions;
+            Intercepts = null;
+            Reactions = null;
+        }
+
+        // ----------------------------------------------------------------------------------
+        //                              Operator Overrides
+        //                      Func<T,T>: FUNCS += _ => Method();
+        //                      Action<T>: ACTION += _ => { Method(); };
+        // ----------------------------------------------------------------------------------
+        public static ReactiveIntercept<T> operator +(ReactiveIntercept<T> ri, Func<T,T> cb)
+        {
+            if(ri.Intercepts == null) ri.Intercepts = new StableFuncList<T, T>();
+            ri.Intercepts.Add(cb);
+            return ri;
+        }
+        
+        public static ReactiveIntercept<T> operator -(ReactiveIntercept<T> ri, Func<T, T> cb)
+        {
+            ri.Intercepts?.Remove(cb);
+            return ri;
+        }
+        public static ReactiveIntercept<T> operator +(ReactiveIntercept<T> ri, Action<T> cb)
+        {
+            if (ri.Reactions == null) ri.Reactions = new StableAction<T>();
+            ri.Reactions.Add(cb);
+            return ri;
+        }
+
+        public static ReactiveIntercept<T> operator -(ReactiveIntercept<T> ri, Action<T> cb)
+        {
+            ri.Reactions?.Remove(cb);
+            return ri;
         }
     }
 }

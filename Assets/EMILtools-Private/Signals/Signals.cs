@@ -109,7 +109,7 @@ namespace EMILtools.Signals
             public T Value
             {
                 get => (HasModifiers && !blockIntercepts) ? calculated : ri.baseValue;
-                set => ri.baseValue = value;
+                set => ri.Value = value;
             }
 
             // Not initialized here to save on memory, When using lazy initialize
@@ -120,6 +120,7 @@ namespace EMILtools.Signals
             public Stat(T initialValue)
             {
                 ri = new ReactiveIntercept<T>(initialValue);
+                ri += _ => { Calculate(); }; //putting Calculate(); in { } forces a void return type (for Action<T>)
                 Calculate();
             }
             
