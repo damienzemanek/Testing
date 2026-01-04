@@ -6,7 +6,7 @@ using static EMILtools.Timers.TimerUtility;
 public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser
 {
     [SerializeField] CollectibleData[] collectibleData;
-    [SerializeField] Ref<float> spawnInterval;
+    [SerializeField] float spawnInterval;
 
     EntitySpawner<Collectible> spawner;
     

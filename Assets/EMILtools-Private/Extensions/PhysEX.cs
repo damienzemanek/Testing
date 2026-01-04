@@ -37,10 +37,10 @@ namespace EMILtools.Extensions
         {
             public ForceMode forceMode;
             public Vector3 direction;
-            public Ref<float> mult;
+            public Configureable<float> mult;
             public bool complexJump;
-            public Ref<float> inputMaxDuration;
-            public Ref<float> cooldown;
+            public Configureable<float> inputMaxDuration;
+            public Configureable<float> cooldown;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")]
             public AnimationCurve forceCurve;
         }
