@@ -20,8 +20,9 @@ namespace EMILtools.Signals
         public static T ResolveList<T>(Type type, object list, T val)
             where T: struct
         {
-            /// float result = ((List<MathMod>)list).ApplyTModList(fval);
-            /// return (T)(object)result;
+            Debug.Log("[ResolveList] Started");
+            /// float fval = (float)(object)val;
+            /// return (T)(object)((List<MathMod>)list).ApplyTModList(fval);
             
             // This is faster than doing ( ((List<MathMod>)list).ApplyTModList(fval) as T retVal), as that has a type check, JIT will optimize using Elision
             //
@@ -31,7 +32,9 @@ namespace EMILtools.Signals
             //  the result is direct assignment with zero heap allocation
             //  ex: THh JIT compiler sees (T)(object)(float) and knows that T is a float. (it will remove the object bridge box)
             
-            if (type == typeof(MathMod) && val is float fval) return (T)(object)((List<MathMod>)list).ApplyTModList(fval);
+            // Double Elision, or Double Bridge Cast
+            if (type == typeof(MathMod) && typeof(T) == typeof(float)) return (T)(object)((List<MathMod>)list).ApplyTModList((float)(object)val); 
+
             
             return val;
         }

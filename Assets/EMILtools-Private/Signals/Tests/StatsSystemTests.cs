@@ -32,23 +32,23 @@ public class StatsSystemTests : MonoBehaviour
     }
     
     
-    // [Test]
-    // public void Modify_Once_AndRemove_Once()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //     
-    //     var speed = new SpeedModifier(x => x * 2);
-    //     user.Modify(speed);
-    //     
-    //     Assert.AreEqual(20f, user.speed.Value, "Initial modifier added, stat should be doubled");
-    //
-    //     // Removing the same modifier by its hash should restore base value
-    //     user.RemoveModifier(speed);
-    //     
-    //     Assert.AreEqual(10f, user.speed.Value, "After removing the modifier, stat should return to base value");
-    // }
-    //
+    [Test]
+    public void Modify_Once_AndRemove_Once()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+        
+        var doubleIt = new MathMod(x => x * 2);
+        user.Modify<Speed>(doubleIt);
+        
+        Assert.AreEqual(20f, user.speed.Value, "Initial modifier added, stat should be doubled");
+    
+        // Removing the same modifier by its hash should restore base value
+        user.RemoveModifier<Speed>(doubleIt);
+        
+        Assert.AreEqual(10f, user.speed.Value, "After removing the modifier, stat should return to base value");
+    }
+    
     //
     //
     // [Test]

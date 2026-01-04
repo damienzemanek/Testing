@@ -41,7 +41,7 @@ namespace EMILtools.Signals
         public void RemoveModifier()
         {
             removable = true;
-            stat.RemoveModifier(hash);
+            // stat.RemoveModifier(hash);
         }
 
     }

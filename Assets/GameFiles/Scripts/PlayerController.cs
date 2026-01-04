@@ -11,6 +11,7 @@ using EMILtools.Extensions;
 using EMILtools.Signals;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Signals.StatTags;
 using static EMILtools.Timers.TimerUtility;
 
 public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
@@ -24,7 +25,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
     [SerializeField, Anywhere] InputReader input;
 
     [Header("Settings")]
-    [SerializeField] public Stat<float, SpeedModifier> moveSpeed;
+    [SerializeField] public Stat<float, Speed> moveSpeed;
     [SerializeField] float rotSpeed = 15f;
     [SerializeField] float smoothTimeStart = 0.5f;
     [SerializeField] float smoothTimeEnd = 0.1f;

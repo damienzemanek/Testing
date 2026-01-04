@@ -60,8 +60,7 @@ namespace EMILtools.Signals
                 // object is List<TMod> (ex: List<struct MathMod>)
                 // decors corrosponds to the tmodlist it decorates
                 public List<(Type tmodtype, object tmodlist, List<IStatModDecorator<T, TTag>> decors)> listsOfModifiers;
-                public bool hasDecorators => (decorators != null) && (decorators.Count > 0);
-
+                
                 /// <summary>
                 /// Apply the decorator if it's there first
                 /// </summary>
@@ -69,25 +68,15 @@ namespace EMILtools.Signals
                 /// <returns></returns>
                 public T SlotApply(T val)
                 {
-                    if (hasDecorators)
-                        return modifier.Apply(decorators.ApplyDecorators(val));
-                    else
-                        return modifier.Apply(val);
-                }
-
-                public T ApplyAllModifierLists(T val)
-                {
+                    Debug.Log($"[SlotApply] Applying the Lists using val {val}");
                     foreach (var (tmodtype, tmodlist, decors) in listsOfModifiers)
                     {
                         if (decors != null && decors.Count > 0)
-                        {
-                            return ResolveList(tmodtype, tmodlist, val);
-                        }
+                            return ResolveList(tmodtype, tmodlist, decors.ApplyDecorators(val));
                         else
                             return ResolveList(tmodtype, tmodlist, val);
-
                     }
-
+                    return val;
                 }
 
                 public void AddModifier<TMod>(TMod mod)
@@ -107,24 +96,24 @@ namespace EMILtools.Signals
                     }
                     if (tmodlistAlreadyExists == false)                  // If there isnt already a List<TMod> of this TMod type, Create the List<Tmod> and add it to the listsOfModifiers master list)
                     {
-                        (Type tagType, object tmodlist) newtmodList = (typeof(TMod), new List<TMod>() { mod }); // Lazy initialize specific modifier list, of this TMod type, and assign
+                        var newtmodList = new List<TMod>() { mod };// Lazy initialize specific modifier list, of this TMod type, and assign
                         listsOfModifiers.Add((typeof(TMod), newtmodList, null));
                     }
                 }
-                
-                public bool RemoveDecorator(IStatModDecorator<T, TMod> deco, Stat<T, TMod> stat)
-                {
-                    if (decorators == null) return false;
-                    bool removed = decorators.Remove(deco);
-                    if (removed)
-                    {
-                        deco.stat = stat;
-                        deco.OnRemove?.Invoke();
-                        return true;
-                    }
-
-                    return false;
-                }
+                //
+                // public bool RemoveDecorator(IStatModDecorator<T, TMod> deco, Stat<T, TMod> stat)
+                // {
+                //     if (decorators == null) return false;
+                //     bool removed = decorators.Remove(deco);
+                //     if (removed)
+                //     {
+                //         deco.stat = stat;
+                //         deco.OnRemove?.Invoke();
+                //         return true;
+                //     }
+                //
+                //     return false;
+                // }
             }
             
             /// <summary>
@@ -256,24 +245,24 @@ namespace EMILtools.Signals
             //                  Decorators
             //--------------------------------------------------
             
-            public void AddDecorator(IStatModDecorator<T, TMod> decorator)
-            {
-                Debug.Log("Appending Decorators: " + decorator);
-                _modifiers.AddDecorator(decorator, this);
-                Debug.Log($"Added Decorators : {decorator}. Total Modifiers now: {_modifiers.Count}");
-
-                Calculate();
-            }
-            
-            public void RemoveDecorator(ulong hash, IStatModDecorator<T, TMod> deco)
-            {
-                if (!_modifiers.RemoveDecoOnMod(this, hash, deco)) {
-                    Debug.Log("[Removing Decorator] Removal failed. Could not find modifier with that func");
-                    return; }
-                
-                Debug.Log($"[Removing Decorator] Decorator Removal Success on hash {hash}");
-                Calculate();
-            }
+            // public void AddDecorator(IStatModDecorator<T, TTag> decorator)
+            // {
+            //     Debug.Log("Appending Decorators: " + decorator);
+            //     _modifiers.AddDecorator(decorator, this);
+            //     Debug.Log($"Added Decorators : {decorator}. Total Modifiers now: {_modifiers.Count}");
+            //
+            //     Calculate();
+            // }
+            //
+            // public void RemoveDecorator(ulong hash, IStatModDecorator<T, TMod> deco)
+            // {
+            //     if (!_modifiers.RemoveDecoOnMod(this, hash, deco)) {
+            //         Debug.Log("[Removing Decorator] Removal failed. Could not find modifier with that func");
+            //         return; }
+            //     
+            //     Debug.Log($"[Removing Decorator] Decorator Removal Success on hash {hash}");
+            //     Calculate();
+            // }
             
             
             //--------------------------------------------------
@@ -287,7 +276,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="intercept"></param>
             /// <returns></returns>
-            public Stat<T, TMod> AddIntercept(Func<T, T> intercept)
+            public Stat<T, TTag> AddIntercept(Func<T, T> intercept)
             {
                 if(Intercepts == null) _intercepts = new List<Func<T, T>>();
                 if (_intercepts.Contains(intercept)) return this;
@@ -297,7 +286,7 @@ namespace EMILtools.Signals
 
             }
             
-            public Stat<T, TMod> RemoveIntercept(Func<T, T> intercept)
+            public Stat<T, TTag> RemoveIntercept(Func<T, T> intercept)
             {
                 _intercepts.Remove(intercept);
                 RefreshIntercept();
@@ -313,14 +302,14 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="reaction"></param>
             /// <returns></returns>
-            public Stat<T, TMod> AddReaction(Action<T> reaction)
+            public Stat<T, TTag> AddReaction(Action<T> reaction)
             {
                 if(Reactions == null) Reactions = reaction;
                 Reactions += reaction;
                 return this;
             }
 
-            public Stat<T, TMod> RemoveReaction(Action<T> reaction)
+            public Stat<T, TTag> RemoveReaction(Action<T> reaction)
             {
                 Reactions -= reaction;
                 return this;
@@ -332,7 +321,7 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="r"></param>
             /// <returns></returns>
-            public static implicit operator T(Stat<T, TMod> r) => (r != null) ? r.Value : default;
+            public static implicit operator T(Stat<T, TTag> r) => (r != null) ? r.Value : default;
             
         }
     

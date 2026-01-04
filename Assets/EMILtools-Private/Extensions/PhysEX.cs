@@ -5,6 +5,7 @@ using UnityEngine;
 using EMILtools.Signals;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
+using static EMILtools.Signals.StatTags;
 
 namespace EMILtools.Extensions
 {
@@ -13,7 +14,7 @@ namespace EMILtools.Extensions
         [Serializable]
         public struct MoveSettings
         {
-            public Stat<float, SpeedModifier> speed;
+            public Stat<float, Speed> speed;
         }
         [Serializable]
         public struct GroundedSettings
