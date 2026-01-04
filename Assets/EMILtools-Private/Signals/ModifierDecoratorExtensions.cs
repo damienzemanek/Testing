@@ -38,32 +38,41 @@ namespace EMILtools.Signals
         //                  Decorator Timer Overrides (Custom Timer)
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-        //---------------------------------  FLOAT  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<TMod>(this (TMod mod, IStatUser user) data, CountdownTimer timer,
-        //         Action[] OnAddDecorCBs = null,
-        //         Action[] OnRemoveDecorCBs = null)
-        //     where TMod : struct, IStatModStrategy<float>
-        //         => data.WithTimer<float, TMod>(timer, OnAddDecorCBs, OnRemoveDecorCBs);
-        //
-        // //---------------------------------  GENERIC  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<T, TMod>(this (TMod mod, IStatUser user) data, CountdownTimer timer,
-        //         Action[] OnAddDecorCBs = null,
-        //         Action[] OnRemoveDecorCBs = null)
-        //     where T : struct
-        //     where TMod : struct, IStatModStrategy<T>
-        // {
-        //     // Not setting the ref to the modifier strategy here
-        //     // that happens after sending the modifier to the IStatUser
-        //     IStatModDecorator<T, TMod> decor = new StatModDecTimed<T, TMod>(
-        //         data.mod.hash,
-        //         timer,
-        //         OnAddDecorCBs,
-        //         OnRemoveDecorCBs);
-        //
-        //     data.user.AddDecorator(decor);
-        //
-        //     return data;
-        // }
+        // //----------------------------------  FLOAT - MathMod  -----------------------------------------
+        public static (MathMod, TTag, IStatUser) WithTimer<TMod, TTag>(this (MathMod mod, TTag tag, IStatUser user) data, CountdownTimer timer,
+            Action[] OnAddDecorCBs = null,
+            Action[] OnRemoveDecorCBs = null)
+            where TTag: struct, IStatTag
+            => data.WithTimer<float, MathMod, TTag>(timer, OnAddDecorCBs, OnRemoveDecorCBs);
+        
+        // //----------------------------------  FLOAT - GENERIC TMod  -----------------------------------------
+        public static (TMod, TTag, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data, CountdownTimer timer,
+                Action[] OnAddDecorCBs = null,
+                Action[] OnRemoveDecorCBs = null)
+            where TMod : struct, IStatModStrategy<float>
+            where TTag: struct, IStatTag
+                => data.WithTimer<float, TMod, TTag>(timer, OnAddDecorCBs, OnRemoveDecorCBs);
+        
+        // //----------------------------------  GENERIC T - GENERIC TMod  -----------------------------------------
+        public static (TMod, TTag, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data, CountdownTimer timer,
+                Action[] OnAddDecorCBs = null,
+                Action[] OnRemoveDecorCBs = null)
+            where T : struct
+            where TMod : struct, IStatModStrategy<T>
+            where TTag : struct, IStatTag
+        {
+            // Not setting the ref to the modifier strategy here
+            // that happens after sending the modifier to the IStatUser
+            IStatModDecorator<T, TTag> decor = new StatModDecTimed<T, TMod,TTag>(
+                data.mod.hash,
+                timer,
+                OnAddDecorCBs,
+                OnRemoveDecorCBs);
+        
+            data.user.AddDecorator<T, TMod, TTag>(decor);
+        
+            return data;
+        }
 
 
         //--------------------------------------------------------------------------------------
@@ -71,7 +80,7 @@ namespace EMILtools.Signals
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         // //----------------------------------  FLOAT - MathMod  -----------------------------------------
-        public static (MathMod, IStatUser) WithTimer<TTag>(this (MathMod mod, IStatUser user) data, float duration,
+        public static (MathMod, TTag, IStatUser) WithTimer<TTag>(this (MathMod mod, TTag tag, IStatUser user) data, float duration,
             out CountdownTimer timer,
             out StatModDecTimed<float, MathMod, TTag> decor,
             Action[] OnAddCbs = null,
@@ -80,7 +89,7 @@ namespace EMILtools.Signals
             => data.WithTimer<float, MathMod, TTag>(duration, out timer, out decor, OnAddCbs, OnRemoveCbs);
 
         // //----------------------------------  FLOAT - GENERIC TMod  -----------------------------------------
-        public static (TMod, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+        public static (TMod, TTag, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data, float duration,
             out CountdownTimer timer,
             out StatModDecTimed<float, TMod, TTag> decor,
             Action[] OnAddCbs = null,
@@ -90,7 +99,7 @@ namespace EMILtools.Signals
         => data.WithTimer<float, TMod, TTag>(duration, out timer, out decor, OnAddCbs, OnRemoveCbs);
 
         // //----------------------------------  GENERIC T - GENERIC TMod  -----------------------------------------
-        public static (TMod, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+        public static (TMod, TTag, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data, float duration,
             out CountdownTimer timer,
             out StatModDecTimed<T, TMod, TTag> decor,
             Action[] OnAddCbs = null,
@@ -103,7 +112,9 @@ namespace EMILtools.Signals
             // that happens after sending the modifier to the IStatUser
             decor = new StatModDecTimed<T, TMod, TTag>(
                 data.mod.hash,
-                timer = new CountdownTimer(duration));
+                timer = new CountdownTimer(duration),
+                OnAddCbs,
+                OnRemoveCbs);
 
             data.user.AddDecorator<T, TMod, TTag>(decor);
 
@@ -117,14 +128,14 @@ namespace EMILtools.Signals
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         // //----------------------------------  FLOAT - MathMod  -----------------------------------------
-        public static (MathMod, IStatUser) WithTimer<TTag>(this (MathMod mod, IStatUser user) data, float duration,
+        public static (MathMod, TTag, IStatUser) WithTimer<TTag>(this (MathMod mod, TTag tag, IStatUser user) data, float duration,
             Action[] OnAddCbs = null,
             Action[] OnRemoveCbs = null)
             where TTag : struct, IStatTag
             => data.WithTimer<float, MathMod, TTag>(duration, OnAddCbs, OnRemoveCbs);
 
         // //----------------------------------  FLOAT - GENERIC TMod  -----------------------------------------
-        public static (TMod, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+        public static (TMod, TTag, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data, float duration,
             Action[] OnAddCbs = null,
             Action[] OnRemoveCbs = null)
             where TMod : struct, IStatModStrategy<float>
@@ -132,7 +143,7 @@ namespace EMILtools.Signals
             => data.WithTimer<float, TMod, TTag>(duration, OnAddCbs, OnRemoveCbs);
 
         // //----------------------------------  GENERIC T - GENERIC TMod  -----------------------------------------
-        public static (TMod, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, IStatUser user) data,
+        public static (TMod, TTag, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, TTag tag, IStatUser user) data,
             float duration,
             Action[] OnAddCbs = null,
             Action[] OnRemoveCbs = null)

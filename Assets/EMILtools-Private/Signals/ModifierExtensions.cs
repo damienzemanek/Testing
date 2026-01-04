@@ -19,50 +19,49 @@ namespace EMILtools.Signals
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
         //---------------------------------  FLOAT - MathMod  -----------------------------------
-        public static (MathMod, IStatUser) Modify<TTag>(this IStatUser user, MathMod mod)
+        public static (MathMod, TTag, IStatUser) Modify<TTag>(this IStatUser user, MathMod mod)
             where TTag : struct, IStatTag
         => user.Modify<float, MathMod, TTag>(mod);
         
         //--------------------------------  FLOAT  - GENERIC TMod --------------------------------
-        public static (TMod, IStatUser) Modify<TMod, TTag>(this IStatUser user, TMod mod)
+        public static (TMod, TTag, IStatUser) Modify<TMod, TTag>(this IStatUser user, TMod mod)
             where TMod : struct, IStatModStrategy<float>
             where TTag : struct, IStatTag
             => user.Modify<float, TMod, TTag>(mod);
         
         //------------------------------- Generic T - GENERIC TMod  -----------------------------
-        public static (TMod, IStatUser) Modify<T, TMod, TTag>(this IStatUser user, TMod mod)
+        public static (TMod, TTag, IStatUser) Modify<T, TMod, TTag>(this IStatUser user, TMod mod)
             where T : struct
             where TMod : struct, IStatModStrategy<T>
             where TTag : struct, IStatTag
         {
             Stat<T, TTag> stat = (user.Stats[typeof(TTag)] as Stat<T, TTag>);
             stat.AddModifier(mod);
-            return (mod, user);
+            return (mod, new TTag(), user);
         }
         
         //-----------------------------------------------------------------------------------
         //                 Remove Modifier      [User] -> [Stat]
         //------------------------------------------------------------------------------------
         //---------------------------------  FLOAT - MathMod  ----------------------------------
-        public static (MathMod, IStatUser) RemoveModifier<TTag>(this IStatUser user, MathMod mod)
+        public static void RemoveModifier<TTag>(this IStatUser user, MathMod mod)
             where TTag : struct, IStatTag
         => user.RemoveModifier<float, MathMod, TTag>(mod);
         
         //--------------------------------  FLOAT  - GENERIC TMod --------------------------------
-        public static (TMod, IStatUser) RemoveModifier<TMod, TTag>(this IStatUser user, TMod mod)
+        public static void RemoveModifier<TMod, TTag>(this IStatUser user, TMod mod)
             where TMod : struct, IStatModStrategy<float>
-            where TTag : struct, IStatTag
-            => user.RemoveModifier<float, TMod, TTag>(mod);
+            where TTag : struct, IStatTag 
+        => user.RemoveModifier<float, TMod, TTag>(mod);
         
         //------------------------------------  GENERIC  --------------------------------------
-        public static (TMod, IStatUser) RemoveModifier<T, TMod, TTag>(this IStatUser user, TMod mod)
+        public static void RemoveModifier<T, TMod, TTag>(this IStatUser user, TMod mod)
             where T : struct
             where TMod : struct, IStatModStrategy<T>
             where TTag : struct, IStatTag
         {
             Stat<T, TTag> stat = (user.Stats[typeof(TTag)] as Stat<T, TTag>);
             stat.RemoveModifier(mod.hash);
-            return (mod, user);
         }
         
         
