@@ -28,9 +28,9 @@ namespace EMILtools.Signals
             //
             // in normal context, object obj = 5.0f definitly boxes
             // however when inside a generic method where T is known at runtime to be a float, the JIT compiler performs an operation known as Elision
-            //  JIT sees the "bridge" cast and and removes boxing instructions for the final machine code
+            //  JIT sees the "bridge" casts and removes boxing instructions for the final machine code
             //  the result is direct assignment with zero heap allocation
-            //  ex: THh JIT compiler sees (T)(object)(float) and knows that T is a float. (it will remove the object bridge box)
+            //  ex: The JIT compiler sees (T)(object)(float) and knows that T is a float. (it will remove the (object) bridge box)
             
             // Double Elision, or Double Bridge Cast
             if (type == typeof(MathMod) && typeof(T) == typeof(float)) return (T)(object)((List<MathMod>)list).ApplyTModList((float)(object)val); 
