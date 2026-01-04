@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Signals.StatTags;
 
 namespace EMILtools.Signals
 {
@@ -49,14 +50,16 @@ namespace EMILtools.Signals
         /// <typeparam name="T"></typeparam>
         [Serializable]
         [InlineProperty]
-        public sealed class Stat<T, TMod> : Ref<T>, IStat 
+        public sealed class Stat<T, TTag> : Ref<T>, IStat 
             where T : struct
-            where TMod : struct, IStatModStrategy<T>
+            where TTag : struct, IStatTag
         {
             public struct ModifierSlot
             {
-                public TMod modifier;
-                public List<IStatModDecorator<T, TMod>> decorators;
+                // Type is TMod type (ex: tyepof MathMod, typeof ContextMod), Cannot be genericly constrainted
+                // object is List<TMod> (ex: List<struct MathMod>)
+                // decors corrosponds to the tmodlist it decorates
+                public List<(Type tmodtype, object tmodlist, List<IStatModDecorator<T, TTag>> decors)> listsOfModifiers;
                 public bool hasDecorators => (decorators != null) && (decorators.Count > 0);
 
                 /// <summary>
@@ -70,6 +73,43 @@ namespace EMILtools.Signals
                         return modifier.Apply(decorators.ApplyDecorators(val));
                     else
                         return modifier.Apply(val);
+                }
+
+                public T ApplyAllModifierLists(T val)
+                {
+                    foreach (var (tmodtype, tmodlist, decors) in listsOfModifiers)
+                    {
+                        if (decors != null && decors.Count > 0)
+                        {
+                            return ResolveList(tmodtype, tmodlist, val);
+                        }
+                        else
+                            return ResolveList(tmodtype, tmodlist, val);
+
+                    }
+
+                }
+
+                public void AddModifier<TMod>(TMod mod)
+                    where TMod : struct, IStatModStrategy<T>
+                {
+                    if (listsOfModifiers == null) listsOfModifiers = new List<(Type, object, List<IStatModDecorator<T, TTag>>)>(); // Lazy init the list of (modifier lists)
+
+                    bool tmodlistAlreadyExists = false;
+                    foreach (var (tagtype, tmodlist, decs) in listsOfModifiers)
+                    {
+                        if (tagtype == typeof(TMod)) // If there is already a List<TMod> of this TMod Type, Add to this List<TMod> (which is a object atm)
+                        {
+                            (tmodlist as List<TMod>).Add(mod);
+                            tmodlistAlreadyExists = true;
+                            break;
+                        }
+                    }
+                    if (tmodlistAlreadyExists == false)                  // If there isnt already a List<TMod> of this TMod type, Create the List<Tmod> and add it to the listsOfModifiers master list)
+                    {
+                        (Type tagType, object tmodlist) newtmodList = (typeof(TMod), new List<TMod>() { mod }); // Lazy initialize specific modifier list, of this TMod type, and assign
+                        listsOfModifiers.Add((typeof(TMod), newtmodList, null));
+                    }
                 }
                 
                 public bool RemoveDecorator(IStatModDecorator<T, TMod> deco, Stat<T, TMod> stat)
@@ -127,16 +167,16 @@ namespace EMILtools.Signals
             }
 
             // Not initialized here to save on memory, When using lazy initialize
-            private List<ModifierSlot> _modifiers;
+            private List<ModifierSlot> _modSlots;
             private List<Func<T, T>> _intercepts;
             
             // Access for Configurations
-            public IReadOnlyList<ModifierSlot> Modifiers => _modifiers;
+            public IReadOnlyList<ModifierSlot> ModSlots => _modSlots;
             public IReadOnlyList<Func<T, T>> Intercepts => _intercepts;
             public event Action<T> Reactions; //Kept as event so outside scripts can't invoke it directly
             
             
-            bool HasModifiers => _modifiers != null && _modifiers.Count > 0;
+            bool HasModifiers => _modSlots != null && _modSlots.Count > 0;
             bool HasIntercepts => _intercepts != null && _intercepts.Count > 0;
 
             public Stat(T initialValue) : base(initialValue) => Calculate();
@@ -164,7 +204,7 @@ namespace EMILtools.Signals
             T Calculate()
             {
                 if (!HasModifiers) return val;
-                T beingModified = _modifiers.ApplyAll(val);
+                T beingModified = _modSlots.ApplyAll(val);
                 Debug.Log("Old calculated value: " + val);
                 Debug.Log("New calculated value: " + beingModified);
                 return calculated = beingModified;
@@ -189,22 +229,23 @@ namespace EMILtools.Signals
             /// </summary>
             /// <param name="modifier"></param>
             /// <returns></returns>
-            // Struct
-            public void AddModifier(TMod modifier)
+            public void AddModifier<TMod>(TMod mod) 
+                where TMod: struct, IStatModStrategy<T>
             {
-                Debug.Log("Adding Modifier: " + modifier);
+                Debug.Log("Adding Modifier: " + mod);
                 
-                if(Modifiers == null) _modifiers = new List<ModifierSlot>(); // Lazy init for the list
-                ModifierSlot newSlot = new ModifierSlot { modifier = modifier, }; // create the slot, put in the mod
-                _modifiers.Add(newSlot); // add the slot to the list
+                if(ModSlots == null) _modSlots = new List<ModifierSlot>(); // Lazy init for the SLOTS
+                ModifierSlot newSlot = new ModifierSlot();
+                newSlot.AddModifier(mod); // Add the MOD into the slot
+                _modSlots.Add(newSlot); // Add the slot with the new mod into the SLOTS
                 
-                Debug.Log($"Added Modifier : {modifier}. Total Modifiers now: {_modifiers.Count}");
+                Debug.Log($"Added Modifier : {mod}. Total Modifier Slots now: {_modSlots.Count}");
                 Calculate();
             }
             
             public void RemoveModifier(ulong hash)
             {
-                if (!_modifiers.RemoveModifierSlot(hash)) {
+                if (!_modSlots.RemoveModifierSlot(hash)) {
                     Debug.Log("[RemoveModifier] Removal failed. Could not find modifier with that func"); return; }
                 
                 Debug.Log("[RemoveModifier] Modifier Slot Removal Success. (Which includes the modifiers and decorators)");

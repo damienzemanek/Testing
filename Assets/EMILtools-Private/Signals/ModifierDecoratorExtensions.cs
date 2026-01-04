@@ -1,14 +1,28 @@
 using System;
+using System.Collections.Generic;
 using EMILtools.Timers;
 using JetBrains.Annotations;
 using UnityEngine;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Signals.StatTags;
 
 namespace EMILtools.Signals
 {
     public static class ModifierDecoratorExtensions
     {
+        
+        //--------------------------------------------------------------------------------------
+        //                                  Apply for Decs
+        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+        public static T ApplyDecorators<T, TTag>(this List<IStatModDecorator<T, TTag> decs, T val)
+            where T : struct
+            where TTag : struct, IStatTag
+        {
+            
+        }
+        
 
         //--------------------------------------------------------------------------------------
         //                  Decorator Timer Overrides (Custom Timer)

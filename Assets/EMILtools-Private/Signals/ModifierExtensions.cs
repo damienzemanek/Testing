@@ -6,6 +6,7 @@ using EMILtools.Timers;
 using UnityEngine;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Signals.StatTags;
 
 namespace EMILtools.Signals
 { 
@@ -13,25 +14,24 @@ namespace EMILtools.Signals
     {
         public interface IStat { }
 
+        //---------------------------------------------------------------------------------------
+        //                  Modify               [User] -> [Stat]
+        //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        //---------------------------------  FLOAT - MathMod  -----------------------------------
+        public static (MathMod, IStatUser) Modify<TTag>(this IStatUser user, MathMod mod)
+            where TTag : struct, IStatTag
+        => user.Modify<float, TTag, MathMod>(mod);
         
-        //-----------------------------------------------------------------------------------
-        //                 Modify               [User] -> [Stat]
-        //------------------------------------------------------------------------------------
-        // Float specific overload
-        public static (TMod, IStatUser) Modify<TMod>(this IStatUser user, TMod mod)
-            where TMod : struct, IStatModStrategy<float>
-        => user.Modify<float, TMod>(mod);
-        
-        // Generic base Modify
-        public static (TMod, IStatUser) Modify<T, TMod>(this IStatUser user, TMod mod)
+        //------------------------------- Generic T - Generic TMod  -----------------------------
+        public static (TMod, IStatUser) Modify<T, TTag, TMod>(this IStatUser user, TMod mod)
             where T : struct
+            where TTag : struct, IStatTag
             where TMod : struct, IStatModStrategy<T>
         {
-            Stat<T, TMod> stat = (user.Stats[typeof(TMod)] as Stat<T, TMod>);
+            Stat<T, TTag> stat = (user.Stats[typeof(TMod)] as Stat<T, TTag>);
             stat.AddModifier(mod);
             return (mod, user);
         }
-        
         
         //-----------------------------------------------------------------------------------
         //                 Remove Modifier      [User] -> [Stat]
