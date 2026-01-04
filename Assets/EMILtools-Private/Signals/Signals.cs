@@ -56,6 +56,14 @@ namespace EMILtools.Signals
         {
             public struct ModifierSlot
             {
+                public ModifierSlot(ulong hash)
+                {
+                    this.hash = hash;
+                    listsOfModifiers = new();
+                }
+                
+                public ulong hash; // For quick removal ops. moved from inside the mod to here so i dont have to iterate look for it
+                
                 // Type is TMod type (ex: tyepof MathMod, typeof ContextMod), Cannot be genericly constrainted
                 // object is List<TMod> (ex: List<struct MathMod>)
                 // decors corrosponds to the tmodlist it decorates
@@ -79,7 +87,7 @@ namespace EMILtools.Signals
                     return val;
                 }
 
-                public void AddModifier<TMod>(TMod mod)
+                public void AddModifierToSlot<TMod>(TMod mod)
                     where TMod : struct, IStatModStrategy<T>
                 {
                     if (listsOfModifiers == null) listsOfModifiers = new List<(Type, object, List<IStatModDecorator<T, TTag>>)>(); // Lazy init the list of (modifier lists)
@@ -100,20 +108,16 @@ namespace EMILtools.Signals
                         listsOfModifiers.Add((typeof(TMod), newtmodList, null));
                     }
                 }
-                //
-                // public bool RemoveDecorator(IStatModDecorator<T, TMod> deco, Stat<T, TMod> stat)
-                // {
-                //     if (decorators == null) return false;
-                //     bool removed = decorators.Remove(deco);
-                //     if (removed)
-                //     {
-                //         deco.stat = stat;
-                //         deco.OnRemove?.Invoke();
-                //         return true;
-                //     }
-                //
-                //     return false;
-                // }
+
+                public void RemoveAllDecoratorsFromSlot()
+                {
+                    foreach (var (_, _, decors) in listsOfModifiers)
+                    {
+                        if (decors == null) continue;
+                        foreach (var dec in decors)
+                            dec?.OnRemove?.Invoke();
+                    }
+                }
             }
             
             /// <summary>
@@ -208,7 +212,7 @@ namespace EMILtools.Signals
             
             
             //--------------------------------------------------
-            //                  Modifiers
+            //                  Stat Modifiers
             //--------------------------------------------------
             /// <summary>
             /// Modifiers are functions that modify the base value and replace the Value getter with the calcualted value
@@ -224,8 +228,8 @@ namespace EMILtools.Signals
                 Debug.Log("Adding Modifier: " + mod);
                 
                 if(ModSlots == null) _modSlots = new List<ModifierSlot>(); // Lazy init for the SLOTS
-                ModifierSlot newSlot = new ModifierSlot();
-                newSlot.AddModifier(mod); // Add the MOD into the slot
+                ModifierSlot newSlot = new ModifierSlot(mod.hash);
+                newSlot.AddModifierToSlot(mod); // Add the MOD into the slot
                 _modSlots.Add(newSlot); // Add the slot with the new mod into the SLOTS
                 
                 Debug.Log($"Added Modifier : {mod}. Total Modifier Slots now: {_modSlots.Count}");
@@ -234,7 +238,7 @@ namespace EMILtools.Signals
             
             public void RemoveModifier(ulong hash)
             {
-                if (!_modSlots.RemoveModifierSlot(hash)) {
+                if (!_modSlots.RemoveModifierSlotEX(hash)) {
                     Debug.Log("[RemoveModifier] Removal failed. Could not find modifier with that func"); return; }
                 
                 Debug.Log("[RemoveModifier] Modifier Slot Removal Success. (Which includes the modifiers and decorators)");
@@ -242,31 +246,31 @@ namespace EMILtools.Signals
             }
             
             //--------------------------------------------------
-            //                  Decorators
+            //                 Stat Decorators
             //--------------------------------------------------
             
-            // public void AddDecorator(IStatModDecorator<T, TTag> decorator)
-            // {
-            //     Debug.Log("Appending Decorators: " + decorator);
-            //     _modifiers.AddDecorator(decorator, this);
-            //     Debug.Log($"Added Decorators : {decorator}. Total Modifiers now: {_modifiers.Count}");
-            //
-            //     Calculate();
-            // }
-            //
-            // public void RemoveDecorator(ulong hash, IStatModDecorator<T, TMod> deco)
-            // {
-            //     if (!_modifiers.RemoveDecoOnMod(this, hash, deco)) {
-            //         Debug.Log("[Removing Decorator] Removal failed. Could not find modifier with that func");
-            //         return; }
-            //     
-            //     Debug.Log($"[Removing Decorator] Decorator Removal Success on hash {hash}");
-            //     Calculate();
-            // }
+            public void AddDecorator(IStatModDecorator<T, TTag> decorator)
+            {
+                Debug.Log("Appending Decorators: " + decorator);
+                _modSlots.AddDecoratorEX(decorator, this);
+                Debug.Log($"Added Decorators : {decorator}. Total Modifier Slots now: {_modSlots.Count}");
+            
+                Calculate();
+            }
+            
+            public void RemoveDecorator(ulong hash, IStatModDecorator<T, TTag> deco)
+            {
+                if (!_modSlots.RemoveDecoOnModEX(hash, deco)) {
+                    Debug.Log("[Removing Decorator] Removal failed. Could not find modifier with that func");
+                    return; }
+                
+                Debug.Log($"[Removing Decorator] Decorator Removal Success on hash {hash}");
+                Calculate();
+            }
             
             
             //--------------------------------------------------
-            //                  Interecepts
+            //                  Stat Interecepts
             //--------------------------------------------------
 
             /// <summary>

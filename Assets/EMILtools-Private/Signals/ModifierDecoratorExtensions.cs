@@ -11,12 +11,12 @@ namespace EMILtools.Signals
 {
     public static class ModifierDecoratorExtensions
     {
-        
+
         //-----------------------------------------------------------------------------------
         //            Modifier Applying Funcs / Decorator Flexible Thoroughfare
         //------------------------------------------------------------------------------------
-        
-        public static T ApplyAll<T, TTag>(this List<Stat<T,TTag>.ModifierSlot> modslots, T val)
+
+        public static T ApplyAll<T, TTag>(this List<Stat<T, TTag>.ModifierSlot> modslots, T val)
             where T : struct
             where TTag : struct, IStatTag
         {
@@ -24,7 +24,7 @@ namespace EMILtools.Signals
             foreach (var slot in modslots) val = slot.SlotApply(val);
             return val;
         }
-        
+
         public static T ApplyDecorators<T, TTag>(this List<IStatModDecorator<T, TTag>> decorators, T val)
             where T : struct
             where TTag : struct, IStatTag
@@ -32,12 +32,12 @@ namespace EMILtools.Signals
             foreach (var dec in decorators) val = dec.ApplyThruDecoratorFirst(val);
             return val;
         }
-        
+
 
         //--------------------------------------------------------------------------------------
         //                  Decorator Timer Overrides (Custom Timer)
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        
+
         //---------------------------------  FLOAT  ------------------------------------------
         // public static (TMod, IStatUser) WithTimer<TMod>(this (TMod mod, IStatUser user) data, CountdownTimer timer,
         //         Action[] OnAddDecorCBs = null,
@@ -67,70 +67,89 @@ namespace EMILtools.Signals
 
 
         //--------------------------------------------------------------------------------------
-        //             Decorator Timer Overrides (out for debugs, and flexibility)
+        //             Decorator Timer Overrides (OUTs for debugs, and flexibility)
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        
-        //---------------------------------  FLOAT  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<TMod>(this (TMod mod, IStatUser user) data, float duration,
-        //         out CountdownTimer timer,
-        //         out StatModDecTimed<float, TMod> decor,
-        //         Action[] OnAddDecorCBs = null,
-        //         Action[] OnRemoveDecorCBs = null)
-        //     where TMod : struct, IStatModStrategy<float>
-        //         => data.WithTimer<float, TMod>(duration, out timer, out decor, OnAddDecorCBs, OnRemoveDecorCBs);
-        //
-        // //---------------------------------  GENERIC  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<T, TMod>(this (TMod mod, IStatUser user) data, float duration,
-        //         out CountdownTimer timer,
-        //         out StatModDecTimed<T, TMod> decor,
-        //         Action[] OnAddDecorCBs = null,
-        //         Action[] OnRemoveDecorCBs = null)
-        //     where T : struct
-        //     where TMod : struct, IStatModStrategy<T>
-        // {
-        //     // Not setting the ref to the modifier strategy here
-        //     // that happens after sending the modifier to the IStatUser
-        //     decor = new StatModDecTimed<T, TMod>(
-        //         data.mod.hash,
-        //         timer = new CountdownTimer(duration),
-        //         OnAddDecorCBs,
-        //         OnRemoveDecorCBs);
-        //
-        //     data.user.AddDecorator(decor);
-        //
-        //     return data;
-        //
+
+        // //----------------------------------  FLOAT - MathMod  -----------------------------------------
+        public static (MathMod, IStatUser) WithTimer<TTag>(this (MathMod mod, IStatUser user) data, float duration,
+            out CountdownTimer timer,
+            out StatModDecTimed<float, MathMod, TTag> decor,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where TTag : struct, IStatTag
+            => data.WithTimer<float, MathMod, TTag>(duration, out timer, out decor, OnAddCbs, OnRemoveCbs);
+
+        // //----------------------------------  FLOAT - GENERIC TMod  -----------------------------------------
+        public static (TMod, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+            out CountdownTimer timer,
+            out StatModDecTimed<float, TMod, TTag> decor,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where TMod : struct, IStatModStrategy<float>
+            where TTag : struct, IStatTag
+        => data.WithTimer<float, TMod, TTag>(duration, out timer, out decor, OnAddCbs, OnRemoveCbs);
+
+        // //----------------------------------  GENERIC T - GENERIC TMod  -----------------------------------------
+        public static (TMod, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+            out CountdownTimer timer,
+            out StatModDecTimed<T, TMod, TTag> decor,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where T : struct
+            where TMod : struct, IStatModStrategy<T>
+            where TTag : struct, IStatTag
+        {
+            // Not setting the ref to the modifier strategy here
+            // that happens after sending the modifier to the IStatUser
+            decor = new StatModDecTimed<T, TMod, TTag>(
+                data.mod.hash,
+                timer = new CountdownTimer(duration));
+
+            data.user.AddDecorator<T, TMod, TTag>(decor);
+
+            return data;
+        }
+
         // }
-        
+
         //--------------------------------------------------------------------------------------
         //                          Decorator Timer Overrides (NO OUTS)
         //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        
-        //---------------------------------  FLOAT  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<TMod>(this (TMod mod, IStatUser user) data, float duration,
-        //     Action[] OnAddDecorCBs = null,
-        //     Action[] OnRemoveDecorCBs = null)
-        //     where TMod : struct, IStatModStrategy<float> 
-        //         => data.WithTimer<float, TMod>(duration, OnAddDecorCBs, OnRemoveDecorCBs);
-        //
-        // //---------------------------------  GENERIC  ------------------------------------------
-        // public static (TMod, IStatUser) WithTimer<T, TMod>(this (TMod mod, IStatUser user) data, float duration,
-        //     Action[] OnAddCbs = null,
-        //     Action[] OnRemoveCbs = null)
-        //     where T : struct
-        //     where TMod : struct, IStatModStrategy<T>
-        // {
-        //     // Not setting the ref to the modifier strategy here
-        //     // that happens after sending the modifier to the IStatUser
-        //     IStatModDecorator<T, TMod> decor = new StatModDecTimed<T, TMod>(
-        //         data.mod.hash,
-        //         new CountdownTimer(duration));
-        //     
-        //     data.user.AddDecorator(decor);
-        //
-        //     return data;
-        // }
-        //
-    }
 
+        // //----------------------------------  FLOAT - MathMod  -----------------------------------------
+        public static (MathMod, IStatUser) WithTimer<TTag>(this (MathMod mod, IStatUser user) data, float duration,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where TTag : struct, IStatTag
+            => data.WithTimer<float, MathMod, TTag>(duration, OnAddCbs, OnRemoveCbs);
+
+        // //----------------------------------  FLOAT - GENERIC TMod  -----------------------------------------
+        public static (TMod, IStatUser) WithTimer<TMod, TTag>(this (TMod mod, IStatUser user) data, float duration,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where TMod : struct, IStatModStrategy<float>
+            where TTag : struct, IStatTag
+            => data.WithTimer<float, TMod, TTag>(duration, OnAddCbs, OnRemoveCbs);
+
+        // //----------------------------------  GENERIC T - GENERIC TMod  -----------------------------------------
+        public static (TMod, IStatUser) WithTimer<T, TMod, TTag>(this (TMod mod, IStatUser user) data,
+            float duration,
+            Action[] OnAddCbs = null,
+            Action[] OnRemoveCbs = null)
+            where T : struct
+            where TMod : struct, IStatModStrategy<T>
+            where TTag : struct, IStatTag
+        {
+            // Not setting the ref to the modifier strategy here
+            // that happens after sending the modifier to the IStatUser
+            IStatModDecorator<T, TTag> decor = new StatModDecTimed<T, TMod, TTag>(
+                data.mod.hash,
+                new CountdownTimer(duration));
+
+            data.user.AddDecorator<T, TMod, TTag>(decor);
+
+            return data;
+        }
+
+    }
 }

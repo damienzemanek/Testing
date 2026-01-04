@@ -49,96 +49,99 @@ public class StatsSystemTests : MonoBehaviour
         Assert.AreEqual(10f, user.speed.Value, "After removing the modifier, stat should return to base value");
     }
     
-    //
-    //
-    // [Test]
-    // public void Modify_Twice_TheSameModifiers_DifferentFuncs_InSeries()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //     
-    //     var speed1 = new SpeedModifier(x => x + 5);
-    //     var speed2 = new SpeedModifier(x => x * 2);
-    //
-    //     user.Modify(speed1);
-    //     user.Modify(speed2);
-    //     
-    //     // (10 + 5) * 2 = 30
-    //     Assert.AreEqual(30f, user.speed.Value, "Multiple modifiers should apply in the order they are added");
-    // }
-    //
-    // [Test]
-    // public void Modify_Twice_TheSameModifier_DifferentFuncs_InSeries_RemoveOneModifier()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //
-    //     var doubleMod = new SpeedModifier(x => x * 2);
-    //     var addMod = new SpeedModifier(x => x + 100);
-    //
-    //     user.Modify(doubleMod);
-    //     user.Modify(addMod);
-    //
-    //     // (10 * 2) + 100 = 120
-    //     Assert.AreEqual(120f, user.speed.Value, "(10 * 2) + 100 = 120");
-    //
-    //     // Remove only the 'double' modifier by its hash
-    //     user.RemoveModifier(doubleMod);
-    //
-    //     // 10 + 100 = 110
-    //     Assert.AreEqual(110f, user.speed.Value, "After removing the doubler, only the +100 modifier should remain");
-    // }
-    //
-    //
-    // [Test]
-    // public void Modify_Twice_TheSame_InSeries()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //     var speed = new SpeedModifier(x => x + 5);
-    //
-    //     user.Modify(speed);
-    //     user.Modify(speed);
-    //     
-    //     // (10 + 5) + 5 = 20
-    //     Assert.AreEqual(20f, user.speed.Value, "Adding the same +5 modifier twice should increase the stat by 10 total");
-    // }
-    //
-    //
-    // [Test]
-    // public void ApplyModifier_Timed()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //
-    //     var speed = new SpeedModifier(x => x * 2);
-    //     user.Modify(speed).WithTimer(5, out _, out StatModDecTimed<float, SpeedModifier> dec);
-    //     
-    //     // While the timed decorator is active, the underlying modifier is applied
-    //     Assert.AreEqual(20f, user.speed.Value, "The stat value should be doubled while the timed modifier is active");
-    //     Assert.AreEqual(true, dec.timer.isRunning, "The timer associated with the timed modifier should be running");
-    // }
-    //
-    //
-    //
-    // [Test]
-    // public void Modify_Once_WithTwoDecors_IsRunning()
-    // {
-    //     var user = new TestStatUser();
-    //     user.CacheStats();
-    //
-    //     var speed = new SpeedModifier(x => x + 10);
-    //     // Two separate timed decorators controlling the same underlying modifier's lifecycle
-    //     user.Modify(speed)
-    //         .WithTimer(5, out _, out StatModDecTimed<float, SpeedModifier> dec1)
-    //         .WithTimer(5, out _, out StatModDecTimed<float, SpeedModifier> dec2);
-    //     
-    //     // Only the SpeedModifier (+10) changes the math; decorators manage timing/callbacks only
-    //     // 10 (base) + 10 (modifier) = 20
-    //     Assert.AreEqual(20f, user.speed.Value, "The underlying modifier applies its +10 once; decorators do not change the math");
-    //     
-    //     Assert.IsTrue(dec1.timer.isRunning && dec2.timer.isRunning, "Both timers for both decorators should be running");
-    // }
+    
+    
+    [Test]
+    public void Modify_Twice_TheSameModifiers_DifferentFuncs_InSeries()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+        
+        var add5 = new MathMod(x => x + 5);
+        var mult2 = new MathMod(x => x * 2);
+    
+        user.Modify<Speed>(add5);
+        user.Modify<Speed>(mult2);
+        
+        // (10 + 5) * 2 = 30
+        Assert.AreEqual(30f, user.speed.Value, "Multiple modifiers should apply in the order they are added");
+    }
+    
+    [Test]
+    public void Modify_Twice_TheSameModifier_DifferentFuncs_InSeries_RemoveOneModifier()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+    
+        var mult2 = new MathMod(x => x * 2);
+        var add100 = new MathMod(x => x + 100);
+    
+        user.Modify<Speed>(mult2);
+        user.Modify<Speed>(add100);
+    
+        // (10 * 2) + 100 = 120
+        Assert.AreEqual(120f, user.speed.Value, "(10 * 2) + 100 = 120");
+    
+        // Remove only the 'mult2' modifier by its hash
+        user.RemoveModifier<Speed>(mult2);
+    
+        // 10 + 100 = 110
+        Assert.AreEqual(110f, user.speed.Value, "After removing the doubler, only the +100 modifier should remain");
+    }
+    
+    
+    [Test]
+    public void Modify_Twice_TheSame_InSeries()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+        var add5 = new MathMod(x => x + 5);
+    
+        // Im pretty sure since we are adding a new slot with the same hash twice, if I were to add manual decorator removal, and
+        // i were to decorate one of these, it would result in it not finding the right decorator, idk tho
+        user.Modify<Speed>(add5);
+        user.Modify<Speed>(add5);
+        
+        // (10 + 5) + 5 = 20
+        Assert.AreEqual(20f, user.speed.Value, "Adding the same +5 modifier twice should increase the stat by 10 total");
+    }
+    
+    
+    [Test]
+    public void ApplyModifier_Timed()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+    
+        var mult2 = new MathMod(x => x * 2);
+        user.Modify<Speed>(mult2).WithTimer(5, out _, out StatModDecTimed<float, MathMod, Speed> dec);
+        
+        // While the timed decorator is active, the underlying modifier is applied
+        Assert.AreEqual(20f, user.speed.Value, "The stat value should be doubled while the timed modifier is active");
+        Assert.AreEqual(true, dec.timer.isRunning, "The timer associated with the timed modifier should be running");
+    }
+    
+    
+    
+    
+    [Test]
+    public void Modify_Once_WithTwoDecors_IsRunning()
+    {
+        var user = new TestStatUser();
+        user.CacheStats();
+    
+        var add10 = new MathMod(x => x + 10);
+        // Two separate timed decorators controlling the same underlying modifier's lifecycle
+        user.Modify<Speed>(add10)
+            .WithTimer(5, out _, out StatModDecTimed<float, MathMod, Speed> dec1)
+            .WithTimer(5, out _, out StatModDecTimed<float, MathMod, Speed> dec2);
+        
+        // Only the SpeedModifier (+10) changes the math; decorators manage timing/callbacks only
+        // 10 (base) + 10 (modifier) = 20
+        Assert.AreEqual(20f, user.speed.Value, "The underlying modifier applies its +10 once; decorators do not change the math");
+        
+        Assert.IsTrue(dec1.timer.isRunning && dec2.timer.isRunning, "Both timers for both decorators should be running");
+    }
     //
     // [UnityTest]
     // public IEnumerator Modify_Once_WithTwoDecors_Concurrently_StopTimerImmedietely()

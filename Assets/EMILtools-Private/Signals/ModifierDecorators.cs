@@ -14,19 +14,22 @@ namespace EMILtools.Signals
         where TTag : struct, IStatTag
     {
         public bool removable { get; set; }
-        public Type tagtype => typeof(TTag);
+        public ulong hash { get; set; } // Used to isolate the correct ModSlot
+        public Type tmodType { get; } // Used to isolate the correct List<TMod> in the ModSlot, from the TMod type next to it in the tuple (tmodtype, object)
         public Stat<T, TTag> stat { get; set; }
         public T ApplyThruDecoratorFirst(T input);
         public Action OnAdd { get; set; }
         public Action OnRemove{ get; set; }
     }
     
-    public abstract class StatModDecorator<T, TTag> : IStatModDecorator<T, TTag>
+    public abstract class StatModDecorator<T, TMod, TTag> : IStatModDecorator<T, TTag>
         where T : struct
+        where TMod : struct,  IStatModStrategy<T>
         where TTag : struct, IStatTag
     {
         public bool removable { get; set; }
         public ulong hash { get; set; }
+        public Type tmodType => typeof(TMod);
         public Stat<T, TTag> stat { get; set; }
         public abstract T ApplyThruDecoratorFirst(T input);
         public Action OnAdd { get; set; } = delegate { };
@@ -46,8 +49,9 @@ namespace EMILtools.Signals
 
     }
     
-    public class StatModDecTimed<T, TTag> : StatModDecorator<T, TTag>, ITimerUser
+    public class StatModDecTimed<T, TMod, TTag> : StatModDecorator<T, TMod, TTag>, ITimerUser
         where T : struct
+        where TMod : struct, IStatModStrategy<T>
         where TTag : struct, IStatTag
     {
         public CountdownTimer timer;
