@@ -1,4 +1,5 @@
 using System;
+using EMILtools.Core;
 using Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -33,14 +34,14 @@ namespace EMILtools.Extensions
         }
 
         [Serializable]
-        public struct JumpSettings
+        public struct JumpSettings : IStablizableUser
         {
             public ForceMode forceMode;
             public Vector3 direction;
-            public Configureable<float> mult;
+            public Stablizable<float> mult;
             public bool complexJump;
-            public Configureable<float> inputMaxDuration;
-            public Configureable<float> cooldown;
+            public Stablizable<float> inputMaxDuration;
+            public Stablizable<float> cooldown;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")]
             public AnimationCurve forceCurve;
         }
