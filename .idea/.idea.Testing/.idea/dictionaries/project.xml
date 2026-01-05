@@ -2,6 +2,7 @@
   <dictionary name="project">
     <words>
       <w>Funcs</w>
+      <w>Stablizable</w>
     </words>
   </dictionary>
 </component>
