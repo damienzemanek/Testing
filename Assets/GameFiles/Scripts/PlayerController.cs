@@ -63,8 +63,8 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
         rb.freezeRotation = true;
 
-        timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration.Value);
-        timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown.Value);
+        timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration.Get);
+        timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown.Get);
         
         this.InitializeTimers(
                 (timer_jumpInput, true), 
