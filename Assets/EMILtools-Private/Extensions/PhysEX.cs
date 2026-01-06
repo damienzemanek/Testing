@@ -7,7 +7,7 @@ using EMILtools.Signals;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.StatTags;
-using static EMILtools.Core.Stabilizer;
+using static EMILtools.Core.AutoBoxer;
 
 namespace EMILtools.Extensions
 {
@@ -35,14 +35,14 @@ namespace EMILtools.Extensions
         }
 
         [Serializable]
-        public struct JumpSettings : IStablizableUser
+        public struct JumpSettings : IBoxUser
         {
             public ForceMode forceMode;
             public Vector3 direction;
-            public Stablizable<float> mult;
+            public OptionalRef<float> mult;
             public bool complexJump;
-            public Stablizable<float> inputMaxDuration;
-            public Stablizable<float> cooldown;
+            public OptionalRef<float> inputMaxDuration;
+            public OptionalRef<float> cooldown;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")]
             public AnimationCurve forceCurve;
         }
@@ -116,8 +116,8 @@ namespace EMILtools.Extensions
             float mult = ZEROF;
             prog = Mathf.Clamp01(prog);
 
-            if (!jump.complexJump) mult = jump.mult.Get;
-            else mult = jump.mult.Get * jump.forceCurve.Evaluate(prog);
+            if (!jump.complexJump) mult = jump.mult.Value;
+            else mult = jump.mult.Value * jump.forceCurve.Evaluate(prog);
            
             dir += jump.direction * mult;
             rb.AddForce(dir, jump.forceMode);
