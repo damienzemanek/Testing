@@ -1495,16 +1495,32 @@ PrefabInstance:
       value: 6.5
       objectReference: {fileID: 0}
     - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      propertyPath: moveSpeed.ri.baseValue
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       propertyPath: fallSettings.mult._value
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      propertyPath: jumpSettings.mult._stack
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       propertyPath: jumpSettings.cooldown._val
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      propertyPath: jumpSettings.cooldown._stack
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       propertyPath: jumpSettings.inputMaxDuration._val
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      propertyPath: jumpSettings.inputMaxDuration._stack
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 8655465356033895648, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       propertyPath: jumpSettings.inputMaxDuration._value
@@ -1732,8 +1748,8 @@ MonoBehaviour:
   - {fileID: 229059093}
   collectibleData:
   - {fileID: 11400000, guid: 3cefb84b12467e049831101502644fd9, type: 2}
-  spawnInterval:
-    _val: 1
+  spawnInterval: 0
+  spawnTimer: {}
 --- !u!4 &1533024707
 Transform:
   m_ObjectHideFlags: 0

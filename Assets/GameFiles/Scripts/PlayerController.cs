@@ -3,6 +3,7 @@ using KBCore.Refs;
 using Unity.Cinemachine;
 using System;
 using System.Collections.Generic;
+using EMILtools.Core;
 using static UnityEngine.Mathf;
 using static UnityEngine.Quaternion;
 using static EMILtools.Extensions.PhysEX;
@@ -51,7 +52,13 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
     private void Awake()
     {
-
+        Debug.Log(jumpSettings.mult.Value);
+        Debug.Log(jumpSettings.inputMaxDuration.Value);
+        jumpSettings.mult.Box();
+        jumpSettings.inputMaxDuration.Box();
+        Debug.Log(jumpSettings.mult.Value);
+        Debug.Log(jumpSettings.inputMaxDuration.Value);
+        
         mainCam = Camera.main.transform;
         freelookCam.Follow = transform;
         freelookCam.LookAt = transform;
@@ -63,8 +70,8 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
         rb.freezeRotation = true;
 
-        timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration.Value);
-        timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown.Value);
+        timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
+        timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown);
         
         this.InitializeTimers(
                 (timer_jumpInput, true), 

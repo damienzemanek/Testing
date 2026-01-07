@@ -7,7 +7,6 @@ using EMILtools.Signals;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.StatTags;
-using static EMILtools.Core.AutoBoxer;
 
 namespace EMILtools.Extensions
 {
@@ -35,14 +34,14 @@ namespace EMILtools.Extensions
         }
 
         [Serializable]
-        public struct JumpSettings : IBoxUser
+        public struct JumpSettings
         {
             public ForceMode forceMode;
             public Vector3 direction;
-            public OptionalRef<float> mult;
+            [SerializeField] public Fluid<float> mult;
             public bool complexJump;
-            public OptionalRef<float> inputMaxDuration;
-            public OptionalRef<float> cooldown;
+            [SerializeField] public Fluid<float> inputMaxDuration;
+            [SerializeField] public Fluid<float> cooldown;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")]
             public AnimationCurve forceCurve;
         }
