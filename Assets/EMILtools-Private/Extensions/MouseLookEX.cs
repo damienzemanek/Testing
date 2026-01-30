@@ -6,13 +6,15 @@ namespace EMILtools.Extensions
 {
     public static class MouseLookEX
     {
+        const int SENSITIVITY_ADJUSTMENT = 5;
+        
         [Serializable]
         public class MouseLookSettings
         {
             [SerializeField] Transform body;
             [SerializeField] Transform head;
             [SerializeField] IInputMouseLookReference input;
-            [SerializeField] Vector2 sensitivity;
+            [SerializeField] Vector2 sensitivity = new Vector2(1, 1);
             [SerializeField] Vector2 look;
             [SerializeField] Vector2 rot;
             [SerializeField] bool updateMouseLook = true;
@@ -25,7 +27,7 @@ namespace EMILtools.Extensions
                 Vector2 mouseInput = input.Value.mouse; //Debug.Log("Mouse Input: " + mouseInput);
                 
                 // Apply sensitivity
-                look = mouseInput * sensitivity / 5;
+                look = mouseInput * sensitivity / SENSITIVITY_ADJUSTMENT;
                 look.y *= -1;
 
                 // Apply the rotation to the variable

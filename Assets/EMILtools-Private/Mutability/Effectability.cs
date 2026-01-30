@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading;
 using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -12,7 +13,7 @@ public static class Effectability
     public static void UseEffectsAll(this EffectUser[] effects)
     {
         foreach (EffectUser effect in effects)
-            effect.UseEffect();
+            effect.Play();
     }
 
     public static void UseEffectsAllWithDelayInbetween(this EffectUser[] effects, MonoBehaviour host, float delay) => host.StartCoroutine(C_UseEffectsAllWithDelayInbetween(effects, delay));
@@ -20,7 +21,7 @@ public static class Effectability
     {
         foreach (EffectUser effect in effects)
         {
-            effect.UseEffect();
+            effect.Play();
             yield return new WaitForSeconds(delay);
         }
     }
@@ -44,18 +45,21 @@ public static class Effectability
         public float delay => _delay;
 
         [Button]
-        public void UseEffect(System.Threading.CancellationToken token = default)
+        void UseEffect(System.Threading.CancellationToken token = default)
         {
+            WaitForSeconds wait = null;
             if (!effect) return;
-            
+
+            // Setup all local variables for delegate usage
             ParticleSystem e = effect;
             AudioSource _source = source;
             AudioClip _clip = clip;
             MainModule main = e.main;
             bool canPlayAudio = audio && (source) && (clip);
             main.loop = looping;
-            
-            if(!looping) main.duration = effectLength;
+
+            if (!looping) main.duration = effectLength;
+
 
             void EffectPlay()
             {
@@ -68,10 +72,18 @@ public static class Effectability
             }
 
             if (delay <= 0f)    EffectPlay();
-            else                _ = DelayUtility.Delay(EffectPlay, delay, token);
-
-
+            else                _ = DelayUtility.Delay(EffectPlay, delay, token); // <-- Main Path
         }
+
+
+        public void Play(CancellationToken token = default) => UseEffect(token);
+        public IEnumerator PlayAndWait(CancellationToken token = default)
+        {
+            UseEffect(token);
+            if (looping) yield break;
+            yield return new WaitForSeconds(delay + effectLength);
+        }
+        
     }
 
     [Serializable]

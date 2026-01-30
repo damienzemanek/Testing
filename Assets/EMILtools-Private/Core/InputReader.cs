@@ -7,16 +7,13 @@ using static PlayerInputActions;
 [CreateAssetMenu(fileName = "InputReader", menuName = "ScriptableObjects/InputReader")]
 public class InputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 {
-    public event UnityAction<Vector2> Move = delegate { };
-
     public event UnityAction EnableMouseControlCamera = delegate { };
     public event UnityAction DisableMouseControlCamera = delegate { };
     public event UnityAction<bool> Jump = delegate { };
 
     [SerializeField] PlayerInputActions inputActions;
-    public Vector3 move => inputActions != null ? (Vector3)inputActions.Player.Move.ReadValue<Vector2>() : Vector2.zero;
-
-    public Vector2 mouse => inputActions != null ? inputActions.Player.Look.ReadValue<Vector2>() : Vector2.zero;
+    public Vector3 move;
+    public Vector2 mouse { get; set; }
     
     private void OnEnable()
     {
@@ -31,13 +28,15 @@ public class InputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        Move.Invoke(context.ReadValue<Vector2>());
+        Vector2 v = context.ReadValue<Vector2>();
+        move = new Vector3(v.x, 0f, v.y);
     }
-
+    
     public void OnLook(InputAction.CallbackContext context)
     {
-        // no op
+        mouse = context.ReadValue<Vector2>();
     }
+
 
     public void OnMouseControlCamera(InputAction.CallbackContext context)
     {

@@ -14,7 +14,7 @@ public class Collectible : Entity
 
     private void Start()
     {
-        eff_spawn.UseEffect(destroyCancellationToken);
+        eff_spawn.Play(destroyCancellationToken);
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, enlargeTime)
             .SetEase(Ease.OutBack);
