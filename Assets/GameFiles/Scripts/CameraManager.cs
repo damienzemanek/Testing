@@ -18,20 +18,14 @@ public class CameraManager : ValidatedMonoBehaviour
 
     private void OnEnable()
     {
-        input.Look += OnLook;
         input.EnableMouseControlCamera += OnEnableMouseControlCamera;
         input.DisableMouseControlCamera += OnDisableMouseControlCamera;
     }
 
     private void OnDisable()
     {
-        input.Look -= OnLook;
         input.EnableMouseControlCamera -= OnEnableMouseControlCamera;
         input.DisableMouseControlCamera -= OnDisableMouseControlCamera;
-    }
-    private void OnLook(Vector2 camMovement, bool isDeviceMouse)
-    {
-        if (isDeviceMouse && !isRMBPressed) return;
     }
 
     private void OnDisableMouseControlCamera()

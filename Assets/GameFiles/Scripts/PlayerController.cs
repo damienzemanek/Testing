@@ -52,13 +52,6 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
     private void Awake()
     {
-        Debug.Log(jumpSettings.mult.Value);
-        Debug.Log(jumpSettings.inputMaxDuration.Value);
-        jumpSettings.mult.Box();
-        jumpSettings.inputMaxDuration.Box();
-        Debug.Log(jumpSettings.mult.Value);
-        Debug.Log(jumpSettings.inputMaxDuration.Value);
-        
         mainCam = Camera.main.transform;
         freelookCam.Follow = transform;
         freelookCam.LookAt = transform;
@@ -115,7 +108,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
     private void Update()
     {
         isGrounded = transform.IsGrounded(ref groundedSettings);
-        movement = new Vector3(input.Direction.x, 0, input.Direction.y);
+        movement = new Vector3(input.move.x, 0, input.move.y);
         UpdateAnimator();
     }
 

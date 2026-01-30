@@ -5,18 +5,19 @@ using UnityEngine.InputSystem;
 using static PlayerInputActions;
 
 [CreateAssetMenu(fileName = "InputReader", menuName = "ScriptableObjects/InputReader")]
-public class InputReader : ScriptableObject, IPlayerActions
+public class InputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 {
-   
     public event UnityAction<Vector2> Move = delegate { };
-    public event UnityAction<Vector2, bool> Look = delegate { };
+
     public event UnityAction EnableMouseControlCamera = delegate { };
     public event UnityAction DisableMouseControlCamera = delegate { };
     public event UnityAction<bool> Jump = delegate { };
 
     [SerializeField] PlayerInputActions inputActions;
-    public Vector3 Direction => inputActions != null ? (Vector3)inputActions.Player.Move.ReadValue<Vector2>() : Vector2.zero;
+    public Vector3 move => inputActions != null ? (Vector3)inputActions.Player.Move.ReadValue<Vector2>() : Vector2.zero;
 
+    public Vector2 mouse => inputActions != null ? inputActions.Player.Look.ReadValue<Vector2>() : Vector2.zero;
+    
     private void OnEnable()
     {
         if(inputActions == null)
@@ -35,11 +36,8 @@ public class InputReader : ScriptableObject, IPlayerActions
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        Look.Invoke(context.ReadValue<Vector2>(), IsDeviceMouse(context));
+        // no op
     }
-
-    private bool IsDeviceMouse(InputAction.CallbackContext context) => context.control.device.name == "Mouse";
-
 
     public void OnMouseControlCamera(InputAction.CallbackContext context)
     {
@@ -68,5 +66,4 @@ public class InputReader : ScriptableObject, IPlayerActions
             case InputActionPhase.Canceled: Jump.Invoke(false); break;
         }
     }
-
 }
