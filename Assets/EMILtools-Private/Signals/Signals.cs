@@ -205,6 +205,37 @@ namespace EMILtools.Signals
             /// <param name="r"></param>
             /// <returns></returns>
             public static implicit operator T(Stat<T, TTag> r) => (r != null) ? r.Value : default;
+
+
+            /// <summary>
+            /// Writing operator overloads
+            /// </summary>
+            /// <param name="stat"></param>
+            /// <param name="amount"></param>
+            /// <returns></returns>
+            public static Stat<T, TTag> operator +(Stat<T, TTag> stat, int amount)
+            {
+                stat._value = (T)Convert.ChangeType(Convert.ToDouble(stat._value) + amount, typeof(T));
+                return stat;
+            }
+            
+            public static Stat<T, TTag> operator -(Stat<T, TTag> stat, int amount)
+            {
+                stat._value = (T)Convert.ChangeType(Convert.ToDouble(stat._value) - amount, typeof(T));
+                return stat;
+            }
+            
+            public static Stat<T, TTag> operator *(Stat<T, TTag> stat, int amount)
+            {
+                stat._value = (T)Convert.ChangeType(Convert.ToDouble(stat._value) * amount, typeof(T));
+                return stat;
+            }
+            
+            public static Stat<T, TTag> operator /(Stat<T, TTag> stat, int amount)
+            {
+                stat._value = (T)Convert.ChangeType(Convert.ToDouble(stat._value) / amount, typeof(T));
+                return stat;
+            }
             
         }
     
