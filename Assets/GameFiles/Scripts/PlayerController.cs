@@ -129,7 +129,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
         }
     
         if (timer_jumpInput.isRunning)
-            rb.Jump(jumpSettings, timer_jumpInput.Progress);
+            //rb.Jump(jumpSettings, timer_jumpInput.Progress);
 
         timesJumpForceApplied++;
         this.Log($"timesJumpForceApplied: {timesJumpForceApplied}");

@@ -4,6 +4,7 @@ using Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using EMILtools.Signals;
+using EMILtools.Timers;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.StatTags;
@@ -107,16 +108,16 @@ namespace EMILtools.Extensions
             rb.AddForce(fall.dir * fall.mult, fall.forceMode);
         }
 
-        public static void Jump(this Rigidbody rb, JumpSettings jump, float prog)
+        public static void Jump(this Rigidbody rb, JumpSettings jump, float progress)
         {
-            Vector3 dir = Vector3.zero;
+            Debug.Log("Jumping");
             float mult = ZEROF;
-            prog = Mathf.Clamp01(prog);
 
             if (!jump.complexJump) mult = jump.mult;
-            else mult = jump.mult * jump.forceCurve.Evaluate(prog);
+            else mult = jump.mult * jump.forceCurve.Evaluate(Flip01(progress));
            
-            dir += jump.direction * mult;
+            Vector3 dir = jump.direction * mult;
+            Debug.Log(jump.direction * mult);
             rb.AddForce(dir, jump.forceMode);
         }
 

@@ -185,7 +185,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.95193136
-  m_Height: 4.3708715
+  m_Height: 4.3
   m_Direction: 1
   m_Center: {x: 0.03104937, y: 2.1609688, z: 0}
 --- !u!4 &14127275
@@ -221,10 +221,105 @@ MonoBehaviour:
   input: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
   rb: {fileID: 14127273}
   facing: {fileID: 140046208}
-  walkSpeed: 1
-  runSpeed: 4
+  moveDecay: {}
+  jumpInput: {}
+  jumpDelay: {}
+  walkSpeed: 230
+  moveForceMode: 0
+  runSpeed:
+    val: 390
+  moveDecayMult:
+    val: 3
+  moveAnimJitterTolerance: 0.15
+  jumpSettings:
+    forceMode: 2
+    direction: {x: 0, y: 1, z: 0}
+    mult:
+      val: 17
+    complexJump: 1
+    inputMaxDuration:
+      val: 1
+    cooldown:
+      val: 0.5
+    forceCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: -0.012325287
+        value: 0.9952049
+        inSlope: -1.3179865
+        outSlope: -1.3179865
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.16636556
+        value: 0.7596928
+        inSlope: -1.7852021
+        outSlope: -1.7852021
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.36810452
+        value: 0.30529237
+        inSlope: -0.2752931
+        outSlope: -0.2752931
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.84573317
+      - serializedVersion: 3
+        time: 0.7208527
+        value: 0.22617926
+        inSlope: -0.16490132
+        outSlope: -0.16490132
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.76964986
+        outWeight: 1
+      - serializedVersion: 3
+        time: 0.9321661
+        value: 0.0677991
+        inSlope: -0.54540503
+        outSlope: -0.54540503
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: -0.999487
+        outSlope: -0.999487
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  groundedSettings:
+    feetPoint: {fileID: 0}
+    checkDist: 0.1
+    mask:
+      serializedVersion: 2
+      m_Bits: 63
+  fallSettings:
+    forceMode: 5
+    mult: 310
+    dir: {x: 0, y: -1, z: 0}
   ANIM_smoothTime: 0.5
-  ANIM_speedStep: 0.05
+  ANIM_speedStep: 0.15
+  animatable:
+    animator: {fileID: 572845870}
+    animSpeed:
+      deviate: 0
+      _value: 1
+      _valueBetween: {x: 0, y: 0}
+    blocked: 0
 --- !u!1 &140046207
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,7 +396,7 @@ GameObject:
   - component: {fileID: 620414712}
   - component: {fileID: 620414711}
   - component: {fileID: 620414710}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}

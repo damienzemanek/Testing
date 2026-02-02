@@ -8,15 +8,12 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
 {
     TwoD_IA ia;
     
-    public UnityAction MoveStart = delegate { };
-    public UnityAction MoveStop = delegate { };
-    
-    public UnityAction RunStart = delegate { };
-    public UnityAction RunStop = delegate { };
+    public UnityAction<bool> Move = delegate { };
+    public UnityAction<bool> Run = delegate { };
+    public UnityAction<bool> Jump = delegate { };
 
     public UnityAction Look = delegate { };
     public UnityAction Shoot = delegate { };
-    public UnityAction Jump = delegate { };
     public UnityAction Interact = delegate { };
 
     public Vector2 movement;
@@ -43,11 +40,9 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
         {
             case InputActionPhase.Started: 
                 movement = context.ReadValue<Vector2>();
-                MoveStart?.Invoke();
-                break;
-            case InputActionPhase.Canceled:
-                MoveStop?.Invoke();
-                break;
+                Move?.Invoke(true); break;
+            case InputActionPhase.Canceled: 
+                Move?.Invoke(false); break;
         }
 
     }
@@ -67,14 +62,18 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
     {
         switch (context.phase)
         {
-            case InputActionPhase.Started: RunStart?.Invoke(); break;
-            case InputActionPhase.Canceled: RunStop?.Invoke(); break;
+            case InputActionPhase.Started: Run?.Invoke(true); break;
+            case InputActionPhase.Canceled: Run?.Invoke(false); break;
         }
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        Jump?.Invoke();
+        switch (context.phase)
+        {
+            case InputActionPhase.Started: Jump?.Invoke(true); break;
+            case InputActionPhase.Canceled: Jump?.Invoke(false); break;
+        }
     }
 
     public void OnInteract(InputAction.CallbackContext context)
