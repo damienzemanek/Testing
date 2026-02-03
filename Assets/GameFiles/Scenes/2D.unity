@@ -184,10 +184,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.95193136
-  m_Height: 4.3
+  m_Radius: 1
+  m_Height: 5
   m_Direction: 1
-  m_Center: {x: 0.03104937, y: 2.1609688, z: 0}
+  m_Center: {x: 0, y: 2.5, z: 0}
 --- !u!4 &14127275
 Transform:
   m_ObjectHideFlags: 0
@@ -197,7 +197,7 @@ Transform:
   m_GameObject: {fileID: 14127272}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.187, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -224,13 +224,90 @@ MonoBehaviour:
   moveDecay: {}
   jumpInput: {}
   jumpDelay: {}
-  walkSpeed: 230
-  moveForceMode: 0
-  runSpeed:
+  turnSlowdown: {}
+  walkForce: 230
+  runForce:
     val: 390
+  moveForceMode: 0
   moveDecayMult:
     val: 3
-  moveAnimJitterTolerance: 0.15
+  turnSlowDownCurveGrounded:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -4.4694753
+      outSlope: -4.4694753
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.06348589
+      value: 0.7162514
+      inSlope: 1.2710813
+      outSlope: 1.2710813
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.41418627
+      outWeight: 0.1121756
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.30298382
+      outSlope: 0.30298382
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  turnSlowDownCurveInAir:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -3.3086221
+      outSlope: -3.3086221
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2557221
+      value: 0.15391216
+      inSlope: -0.30818665
+      outSlope: -0.30818665
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.52656716
+    - serializedVersion: 3
+      time: 0.78703165
+      value: 0.2140539
+      inSlope: 0.5320809
+      outSlope: 0.5320809
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.6904364
+      outSlope: 3.6904364
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  turnSlowDownDuration: 0.6
+  turnSlowDownMult: 0.5
   jumpSettings:
     forceMode: 2
     direction: {x: 0, y: 1, z: 0}
@@ -303,7 +380,7 @@ MonoBehaviour:
       m_RotationOrder: 4
   groundedSettings:
     feetPoint: {fileID: 0}
-    checkDist: 0.1
+    checkDist: 0.3
     mask:
       serializedVersion: 2
       m_Bits: 63
@@ -313,6 +390,7 @@ MonoBehaviour:
     dir: {x: 0, y: -1, z: 0}
   ANIM_smoothTime: 0.5
   ANIM_speedStep: 0.15
+  moveAnimJitterTolerance: 0.15
   animatable:
     animator: {fileID: 572845870}
     animSpeed:

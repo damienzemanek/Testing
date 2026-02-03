@@ -17,18 +17,20 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
      private const float NINETYF = 90f;
      private const float ZEROF = 0f;
      static readonly int Speed = Animator.StringToHash("Speed");
-     private const float WALK_MAX_SPEED = 1f;
-     private const float RUN_MAX_SPEED = 2.2f;
+     private const float WALK_ALPHA_MAX = 1f;
+     private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
+     enum LookDir { Fwd, Left, Right }
 
     
-    [Header("References")] 
+    [Title("References")] 
     [SerializeField] Animator animator;
     [SerializeField] TwoD_InputReader input;
     [SerializeField] Rigidbody rb;
     [SerializeField] Transform facing;
-    [SerializeField] DecayTimer moveDecay;
-    [SerializeField] CountdownTimer jumpInput;
-    [SerializeField] CountdownTimer jumpDelay;
+    [BoxGroup("Timers")] [SerializeField] DecayTimer moveDecay;
+    [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpInput;
+    [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpDelay;
+    [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool running = false;
@@ -40,23 +42,36 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         get => moveDecay != null ? moveDecay.Time : ZEROF;
         set => moveDecay.Time = value;
     }
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
 
-    [Header("Settings")]
-    [SerializeField] float walkSpeed = 1f;
-    [SerializeField] ForceMode moveForceMode = ForceMode.Force;
-    [SerializeField] Ref<float> runSpeed = 2f;
-    [SerializeField] Ref<float> moveDecayMult = 2.5f;
-    [SerializeField] float moveAnimJitterTolerance = 0.2f;
-    [SerializeField] JumpSettings jumpSettings;
-    [SerializeField] GroundedSettings groundedSettings;
-    [SerializeField] FallSettings fallSettings;
+
+    [Title("Settings")] 
+    [BoxGroup("Movement")] [SerializeField] float walkForce = 230f; // value based on mass 1
+    [BoxGroup("Movement")] [SerializeField] Ref<float> runForce = 390f; // value based on mass 1
+    [BoxGroup("Movement")] [SerializeField] ForceMode moveForceMode = ForceMode.Force;
+    [BoxGroup("Movement")] [SerializeField] Ref<float> moveDecayMult = 2.5f;
     
-    [Header("Animation")]
+    AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
+    [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveGrounded;
+    [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveInAir;
+    [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownDuration = 0.1f;
+    [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownMult = 0.5f;
+    
+    
+    [BoxGroup("PhysEX")] [SerializeField] JumpSettings jumpSettings;
+    [BoxGroup("PhysEX")] [SerializeField] GroundedSettings groundedSettings;
+    [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
+    
+    [Title("Animation")]
     [SerializeField] float ANIM_smoothTime = 0.5f;
     [SerializeField] float ANIM_speedStep = 0.05f;
+    [SerializeField] float moveAnimJitterTolerance = 0.2f;
     [SerializeField] Animatable animatable;
 
-    [ShowInInspector] ReactiveInterceptVT<bool> isGrounded;
+    
+    
+    
     
     void OnEnable()
     {
@@ -73,13 +88,15 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
 
     void Awake()
     {
-        moveDecay = new DecayTimer(runSpeed, moveDecayMult);
+        moveDecay = new DecayTimer(runForce, moveDecayMult);
         jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
         jumpDelay = new CountdownTimer(jumpSettings.cooldown);
+        turnSlowdown = new CountdownTimer(turnSlowDownDuration);
         this.InitializeTimers((moveDecay, false),
                               (jumpInput, true),
-                              (jumpDelay, false));
-
+                              (jumpDelay, false),
+                              (turnSlowdown, true));
+        
         isGrounded.core.Reactions.Add(OnLand);
         void OnLand(bool landed) { if(landed) jumpDelay.Start();}
     }
@@ -105,20 +122,19 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         // A -> (-1, 0)
         // D -> (+1, 0)
         Vector2 move = input.movement;
-        print(move);
 
         if (!running) // Walking
         {
-            if(currentSpeed < WALK_MAX_SPEED) 
+            if(currentSpeed < WALK_ALPHA_MAX) 
                 currentSpeed += ANIM_speedStep;
             
-            currentSpeed = ToleranceSet(currentSpeed, WALK_MAX_SPEED, moveAnimJitterTolerance);
+            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, moveAnimJitterTolerance);
         }
         else         // Running
         {
-            if (currentSpeed > RUN_MAX_SPEED)
-                currentSpeed = RUN_MAX_SPEED;
-            else if(currentSpeed < RUN_MAX_SPEED) 
+            if (currentSpeed > RUN_ALPHA_MAX)
+                currentSpeed = RUN_ALPHA_MAX;
+            else if(currentSpeed < RUN_ALPHA_MAX) 
                 currentSpeed += ANIM_speedStep;
             
             //currentSpeed = ToleranceSet(currentSpeed, RUN_MAX_SPEED, 0.2f);
@@ -127,13 +143,15 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         if (move.x != 0)
         {
             Vector3 dir = move.x < 0 ? left : right;
+            HandleChangeDirectionSlowdown(dir);
             FaceDirectionWithY(dir);
-
-            rb.AddForce(
-                dir * (running
-                    ? (currentSpeed > WALK_MAX_SPEED ? runSpeed : walkSpeed)
-                    : walkSpeed),
-                moveForceMode);
+            
+            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
+            float actualSpeed = running ? runSpeedIncludingDecay : walkForce;
+            
+            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
+            
+            rb.AddForce( dir * actualSpeed, moveForceMode);
         }
     }
 
@@ -156,6 +174,13 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     {
         Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
         facing.transform.rotation = Quaternion.Euler(newDir);   
+    }
+
+    void HandleChangeDirectionSlowdown(Vector3 dir)
+    {
+        LookDir newFacingDir = (dir.x < 0) ? LookDir.Left : LookDir.Right;
+        if (newFacingDir != facingDir) turnSlowdown.Restart();
+        facingDir = newFacingDir;
     }
 
     void OnDestroy()
