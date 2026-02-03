@@ -28,13 +28,11 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [SerializeField] Rigidbody rb;
     [SerializeField] Transform facing;
     [BoxGroup("Timers")] [SerializeField] DecayTimer moveDecay;
-    [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpInput;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpDelay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool running = false;
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumping = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
     float currentSpeed // Represents the move alpha 
@@ -44,7 +42,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     }
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
-
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasJumped;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
 
     [Title("Settings")] 
     [BoxGroup("Movement")] [SerializeField] float walkForce = 230f; // value based on mass 1
@@ -57,8 +56,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveInAir;
     [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownDuration = 0.1f;
     [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownMult = 0.5f;
-    
-    
+
+    [BoxGroup("PhysEX")] [SerializeField] private float dblJumpMult = 1.5f;
     [BoxGroup("PhysEX")] [SerializeField] JumpSettings jumpSettings;
     [BoxGroup("PhysEX")] [SerializeField] GroundedSettings groundedSettings;
     [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
@@ -69,7 +68,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [SerializeField] float moveAnimJitterTolerance = 0.2f;
     [SerializeField] Animatable animatable;
     static readonly int jumpAnim = Animator.StringToHash("jump");
-    static readonly int inairanim = Animator.StringToHash("inair");
+    static readonly int dblJumpAnim = Animator.StringToHash("dbljump");
+    static readonly int inAirAnim = Animator.StringToHash("inair");
     static readonly int landAnim = Animator.StringToHash("land");
     
 
@@ -93,15 +93,12 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     void Awake()
     {
         moveDecay = new DecayTimer(runForce, moveDecayMult);
-        jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
         jumpDelay = new CountdownTimer(jumpSettings.cooldown);
         turnSlowdown = new CountdownTimer(turnSlowDownDuration);
         this.InitializeTimers((moveDecay, false),
-                              (jumpInput, true),
                               (jumpDelay, false),
                               (turnSlowdown, true));
 
-        jumpInput.OnTimerStart.Add(AnimateJumpStart);
         isGrounded.core.Reactions.Add(OnLand);
 
         void OnLand(bool landed)
@@ -109,8 +106,10 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             if (!landed) return;
             jumpDelay.Start();
             animatable.Animate(landAnim);
+            hasJumped = false;
+            hasDoubleJumped = false;
         }
-        void AnimateJumpStart() => animatable.Animate(jumpAnim);
+        
     }
 
     void Start() => moveDecay.Start();
@@ -122,12 +121,10 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         rb.FallFaster(fallSettings);
         
         if(moving) HandleMovement();
-        if(jumping) HandleJump();
     }
 
     void Move(bool v) => moving = v;
     void Run(bool v) => running = v;
-    void Jump(bool v) => jumping = v;
     
     /// <summary>
     /// Sequencing for movement
@@ -159,14 +156,9 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             Vector3 dir = move.x < 0 ? left : right;
             MoveChangeDirectionSlowdown(dir);
             FaceDirectionWithY(dir);
-            
-            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
-            float actualSpeed = running ? runSpeedIncludingDecay : walkForce;
-            
-            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
-            
-            rb.AddForce( dir * actualSpeed, moveForceMode);
+            ApplyMoveForce(dir);
         }
+        
         void FaceDirectionWithY(Vector3 dir)
         {
             Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
@@ -178,19 +170,45 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             if (newFacingDir != facingDir) turnSlowdown.Restart();
             facingDir = newFacingDir;
         }
+        void ApplyMoveForce(Vector3 dir)
+        {
+            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
+            float actualSpeed = running ? runSpeedIncludingDecay : walkForce;
+            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
+            rb.AddForce( dir * actualSpeed, moveForceMode);
+        }
     }
 
 
 
-    void HandleJump()
+    void Jump()
     {
+        if (hasJumped)
+        {
+            HandleDoubleJump();
+            return;
+        }
+        HandleFirstJump();
+    }
+
+    void HandleFirstJump()
+    {
+        if (hasJumped) return;
         if (jumpOnCooldown) return;
-        
-        if(!jumpInput.isRunning && isGrounded)
-            jumpInput.Start();
-        
-        if(jumpInput.isRunning)
-            rb.Jump(jumpSettings, jumpInput.Progress);
+        if (!isGrounded) return;
+        animatable.Animate(jumpAnim);
+        rb.Jump(jumpSettings);
+        hasJumped = true;
+        print("jumped");
+    }
+
+    void HandleDoubleJump()
+    {
+        if (hasDoubleJumped) return;
+        animatable.Animate(dblJumpAnim);
+        rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
+        hasDoubleJumped = true;
+        print("dbl jumped");
     }
     
     void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);

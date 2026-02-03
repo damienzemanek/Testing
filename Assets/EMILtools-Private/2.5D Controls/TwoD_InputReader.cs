@@ -10,8 +10,8 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
     
     public UnityAction<bool> Move = delegate { };
     public UnityAction<bool> Run = delegate { };
-    public UnityAction<bool> Jump = delegate { };
-
+    
+    public UnityAction Jump = delegate { };
     public UnityAction Look = delegate { };
     public UnityAction Shoot = delegate { };
     public UnityAction Interact = delegate { };
@@ -69,11 +69,7 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        switch (context.phase)
-        {
-            case InputActionPhase.Started: Jump?.Invoke(true); break;
-            case InputActionPhase.Canceled: Jump?.Invoke(false); break;
-        }
+        if(context.phase == InputActionPhase.Performed) Jump?.Invoke();
     }
 
     public void OnInteract(InputAction.CallbackContext context)

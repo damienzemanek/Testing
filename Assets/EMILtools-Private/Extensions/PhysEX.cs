@@ -40,11 +40,12 @@ namespace EMILtools.Extensions
             public ForceMode forceMode;
             public Vector3 direction;
             [SerializeField] public Ref<float> mult;
-            public bool complexJump;
-            [SerializeField] public Ref<float> inputMaxDuration;
             [SerializeField] public Ref<float> cooldown;
-            [ShowInInspector, InlineProperty, ShowIf("complexJump")]
-            public AnimationCurve forceCurve;
+            public bool complexJump;
+            [ShowInInspector, InlineProperty, ShowIf("complexJump")] public AnimationCurve forceCurve;
+            [SerializeField, ShowIf("complexJump")]                  public Ref<float> inputMaxDuration;
+            
+            public Vector3 jumpForce { get => direction * mult; }
         }
 
         [Serializable]
@@ -108,11 +109,17 @@ namespace EMILtools.Extensions
             rb.AddForce(fall.dir * fall.mult, fall.forceMode);
         }
 
-        public static void Jump(this Rigidbody rb, JumpSettings jump, float progress)
+        public static void Jump(this Rigidbody rb, JumpSettings jump)
         {
-            Debug.Log("Jumping");
-            float mult = ZEROF;
+            Vector3 dir = jump.direction * jump.mult;
+            Debug.Log(jump.direction * jump.mult);
+            rb.AddForce(dir, jump.forceMode);
+        }
+        
 
+        public static void JumpComplex(this Rigidbody rb, JumpSettings jump, float progress)
+        {
+            float mult = ZEROF;
             if (!jump.complexJump) mult = jump.mult;
             else mult = jump.mult * jump.forceCurve.Evaluate(Flip01(progress));
            
