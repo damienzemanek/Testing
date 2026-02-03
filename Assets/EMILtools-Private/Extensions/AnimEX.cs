@@ -15,7 +15,7 @@ namespace EMILtools.Extensions
             [HideInInspector] public bool blocked;
            
 
-            public void Animate(string animName, MonoBehaviour host = null, Action postHook = null, int layer = 0)
+            public void Animate(int animHash, MonoBehaviour host = null, Action postHook = null, int layer = 0)
             {
                 if (blocked) return;
                 if (animator == null) { Debug.LogWarning("Early Return: NO Animator found"); return; }
@@ -23,35 +23,33 @@ namespace EMILtools.Extensions
                 float speed = animSpeed.value;
                 if (speed == 0) speed = 1;
 
-                this.Log($"Animating {animName}");
+                this.Log($"Animating {animHash}");
 
 
                 if (postHook != null)
                 {
                     if (host == null) this.Error("Need a Monobehaviour host parameter to use PostHook");
-                    animator.PlayWithHook(animName, host, postHook, layer);
+                    animator.PlayWithHook(animHash, host, postHook, layer);
                 }
                 else
-                    animator.Play(animName, layer);
+                    animator.Play(animHash, layer);
 
                 if (animSpeed.deviate)
                     animator.speed = speed;
             }
 
-            public void CrossFade(string animName, MonoBehaviour host = null, Action postHook = null, float fade = 0.25f, int layer = 0)
+            public void CrossFade(int stateHash, MonoBehaviour host = null, Action postHook = null, float fade = 0.25f, int layer = 0)
             {
                 if(blocked) return;
                 if (animator == null) { Debug.LogWarning("Early Return: NO Animator found"); return; }
 
                 float speed = animSpeed.value;
                 if (speed == 0) speed = 1;
-
-                this.Log($"Crossfading {animName}");
-
+                
                 if (postHook != null)
-                    animator.CrossFadeWithHook(animName, host, postHook, fade, layer);
+                    animator.CrossFadeWithHook(stateHash, host, postHook, fade, layer);
                 else
-                    animator.CrossFade(animName, fade, layer);
+                    animator.CrossFade(stateHash, fade, layer);
 
                 if (animSpeed.deviate)
                     animator.speed = speed;
@@ -81,12 +79,12 @@ namespace EMILtools.Extensions
             return (animator.IsInTransition(layer) && animator.GetNextAnimatorStateInfo(layer).IsName(clipname));
         }
 
-        public static void PlayWithHook(this Animator animator, string statename, MonoBehaviour mono, Action postHook, int layer = 0)
-            => mono.StartCoroutine(C_PlayWithHook(animator, statename, mono, postHook, layer));
+        public static void PlayWithHook(this Animator animator, int animHash, MonoBehaviour mono, Action postHook, int layer = 0)
+            => mono.StartCoroutine(C_PlayWithHook(animator, animHash, mono, postHook, layer));
 
-        public static IEnumerator C_PlayWithHook(this Animator animator, string statename, MonoBehaviour mono, Action postHook, int layer = 0)
+        public static IEnumerator C_PlayWithHook(this Animator animator, int animHash, MonoBehaviour mono, Action postHook, int layer = 0)
         {
-            animator.Play(statename, layer);
+            animator.Play(animHash, layer);
 
             yield return null;
 
@@ -98,12 +96,12 @@ namespace EMILtools.Extensions
             postHook?.Invoke();
         }
 
-        public static void CrossFadeWithHook(this Animator animator, string statename, MonoBehaviour mono, Action postHook, float fade = 0.25f, int layer = 0)
-    => mono.StartCoroutine(C_CrossFadeWithHook(animator, statename, mono, postHook, fade, layer));
+        public static void CrossFadeWithHook(this Animator animator, int stateHash, MonoBehaviour mono, Action postHook, float fade = 0.25f, int layer = 0)
+    => mono.StartCoroutine(C_CrossFadeWithHook(animator, stateHash, mono, postHook, fade, layer));
 
-        public static IEnumerator C_CrossFadeWithHook(this Animator animator, string statename, MonoBehaviour mono, Action postHook, float fade = 0.25f, int layer = 0)
+        public static IEnumerator C_CrossFadeWithHook(this Animator animator, int stateHash, MonoBehaviour mono, Action postHook, float fade = 0.25f, int layer = 0)
         {
-            animator.CrossFade(statename, fade, layer);
+            animator.CrossFade(stateHash, fade, layer);
 
             yield return null;
 

@@ -68,6 +68,10 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [SerializeField] float ANIM_speedStep = 0.05f;
     [SerializeField] float moveAnimJitterTolerance = 0.2f;
     [SerializeField] Animatable animatable;
+    static readonly int jumpAnim = Animator.StringToHash("jump");
+    static readonly int inairanim = Animator.StringToHash("inair");
+    static readonly int landAnim = Animator.StringToHash("land");
+    
 
     
     
@@ -96,9 +100,17 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
                               (jumpInput, true),
                               (jumpDelay, false),
                               (turnSlowdown, true));
-        
+
+        jumpInput.OnTimerStart.Add(AnimateJumpStart);
         isGrounded.core.Reactions.Add(OnLand);
-        void OnLand(bool landed) { if(landed) jumpDelay.Start();}
+
+        void OnLand(bool landed)
+        {
+            if (!landed) return;
+            jumpDelay.Start();
+            animatable.Animate(landAnim);
+        }
+        void AnimateJumpStart() => animatable.Animate(jumpAnim);
     }
 
     void Start() => moveDecay.Start();
@@ -117,33 +129,35 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     void Run(bool v) => running = v;
     void Jump(bool v) => jumping = v;
     
+    /// <summary>
+    /// Sequencing for movement
+    /// </summary>
     void HandleMovement()
     {
-        // A -> (-1, 0)
-        // D -> (+1, 0)
-        Vector2 move = input.movement;
-
-        if (!running) // Walking
+        if (!running) Walk();
+        else Run();
+        
+        Move(input.movement);
+        
+        void Walk()
         {
             if(currentSpeed < WALK_ALPHA_MAX) 
                 currentSpeed += ANIM_speedStep;
-            
             currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, moveAnimJitterTolerance);
         }
-        else         // Running
+        void Run()
         {
             if (currentSpeed > RUN_ALPHA_MAX)
                 currentSpeed = RUN_ALPHA_MAX;
             else if(currentSpeed < RUN_ALPHA_MAX) 
                 currentSpeed += ANIM_speedStep;
-            
-            //currentSpeed = ToleranceSet(currentSpeed, RUN_MAX_SPEED, 0.2f);
         }
-        
-        if (move.x != 0)
+        void Move(Vector2 move)
         {
+            if (move.x == 0) return;
+            
             Vector3 dir = move.x < 0 ? left : right;
-            HandleChangeDirectionSlowdown(dir);
+            MoveChangeDirectionSlowdown(dir);
             FaceDirectionWithY(dir);
             
             float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
@@ -153,7 +167,20 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             
             rb.AddForce( dir * actualSpeed, moveForceMode);
         }
+        void FaceDirectionWithY(Vector3 dir)
+        {
+            Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
+            facing.transform.rotation = Quaternion.Euler(newDir);   
+        }
+        void MoveChangeDirectionSlowdown(Vector3 dir)
+        {
+            LookDir newFacingDir = (dir.x < 0) ? LookDir.Left : LookDir.Right;
+            if (newFacingDir != facingDir) turnSlowdown.Restart();
+            facingDir = newFacingDir;
+        }
     }
+
+
 
     void HandleJump()
     {
@@ -166,23 +193,10 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             rb.Jump(jumpSettings, jumpInput.Progress);
     }
     
-
     void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);
     
 
-    void FaceDirectionWithY(Vector3 dir)
-    {
-        Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
-        facing.transform.rotation = Quaternion.Euler(newDir);   
-    }
-
-    void HandleChangeDirectionSlowdown(Vector3 dir)
-    {
-        LookDir newFacingDir = (dir.x < 0) ? LookDir.Left : LookDir.Right;
-        if (newFacingDir != facingDir) turnSlowdown.Restart();
-        facingDir = newFacingDir;
-    }
-
+    
     void OnDestroy()
     {
         this.ShutdownTimers();
