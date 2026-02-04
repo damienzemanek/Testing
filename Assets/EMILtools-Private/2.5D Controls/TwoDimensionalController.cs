@@ -9,6 +9,7 @@ using static EMILtools.Extensions.AnimEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
 using static EMILtools.Timers.TimerUtility;
+using static Ledge;
 
 public class TwoDimensionalController : MonoBehaviour, ITimerUser
 {
@@ -19,7 +20,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
      static readonly int Speed = Animator.StringToHash("Speed");
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
-     enum LookDir { Fwd, Left, Right }
+     public enum LookDir { Fwd, Left, Right }
 
     
     [Title("References")] 
@@ -44,12 +45,19 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasJumped;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isMantled;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool canMantle;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
-    [Title("Settings")] 
+    
     [BoxGroup("Movement")] [SerializeField] float walkForce = 230f; // value based on mass 1
     [BoxGroup("Movement")] [SerializeField] Ref<float> runForce = 390f; // value based on mass 1
     [BoxGroup("Movement")] [SerializeField] ForceMode moveForceMode = ForceMode.Force;
     [BoxGroup("Movement")] [SerializeField] Ref<float> moveDecayMult = 2.5f;
+    [BoxGroup("Movement")] [SerializeField] float mantleXOffset = 1f;
+    [BoxGroup("Movement")] [SerializeField] float mantleDelay = 1f;
+
     
     AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
     [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveGrounded;
@@ -62,6 +70,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField] GroundedSettings groundedSettings;
     [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
     
+    
     [Title("Animation")]
     [SerializeField] float ANIM_smoothTime = 0.5f;
     [SerializeField] float ANIM_speedStep = 0.05f;
@@ -71,8 +80,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     static readonly int dblJumpAnim = Animator.StringToHash("dbljump");
     static readonly int inAirAnim = Animator.StringToHash("inair");
     static readonly int landAnim = Animator.StringToHash("land");
-    
-
+    static readonly int mantleAnim = Animator.StringToHash("mantle");
+    static readonly int climbAnim = Animator.StringToHash("climb");
     
     
     
@@ -83,7 +92,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         input.Run += Run;
         input.Jump += Jump;
     }
-     void OnDisable()
+    void OnDisable()
     {
         input.Move -= Move;
         input.Run -= Run;
@@ -167,7 +176,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         void MoveChangeDirectionSlowdown(Vector3 dir)
         {
             LookDir newFacingDir = (dir.x < 0) ? LookDir.Left : LookDir.Right;
-            if (newFacingDir != facingDir) turnSlowdown.Restart();
+            if (newFacingDir != facingDir) NewFaceDirection();
             facingDir = newFacingDir;
         }
         void ApplyMoveForce(Vector3 dir)
@@ -179,44 +188,92 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         }
     }
 
-
+    /// <summary>
+    /// For mantling and movement
+    /// </summary>
+    void NewFaceDirection()
+    {
+        turnSlowdown.Restart();
+        if(isMantled) HandleUnMantleLedge();
+    }
 
     void Jump()
     {
-        if (hasJumped)
-        {
-            HandleDoubleJump();
-            return;
-        }
+        if (isMantled) { HandleClimb(); return; }
+        if (canMantle) { HandleMantleLedge(); return; }
+        if (hasJumped) { HandleDoubleJump(); return; }
+        
         HandleFirstJump();
-    }
+        
+        void HandleFirstJump()
+        {
+            if (hasJumped) return;
+            if (jumpOnCooldown) return;
+            if (!isGrounded) return;
+            animatable.Animate(jumpAnim);
+            rb.Jump(jumpSettings);
+            hasJumped = true;
+            print("jumped");
+        }
 
-    void HandleFirstJump()
-    {
-        if (hasJumped) return;
-        if (jumpOnCooldown) return;
-        if (!isGrounded) return;
-        animatable.Animate(jumpAnim);
-        rb.Jump(jumpSettings);
-        hasJumped = true;
-        print("jumped");
-    }
-
-    void HandleDoubleJump()
-    {
-        if (hasDoubleJumped) return;
-        animatable.Animate(dblJumpAnim);
-        rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
-        hasDoubleJumped = true;
-        print("dbl jumped");
+        void HandleDoubleJump()
+        {
+            if (hasDoubleJumped) return;
+            animatable.Animate(dblJumpAnim);
+            rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
+            hasDoubleJumped = true;
+            print("dbl jumped");
+        }
     }
     
     void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);
-    
 
+                        #region  Ledge
+
+    void HandleMantleLedge()
+    {
+        if(ledgeData.dir != facingDir) return;
+        isMantled = true;
+        rb.isKinematic = true;
+        transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - mantleXOffset);
+        animatable.Animate(mantleAnim);
+    }
+    
+    void HandleUnMantleLedge()
+    {
+        isMantled = false;
+        rb.isKinematic = false;
+        animatable.CrossFade(inAirAnim);
+    }
+
+    void HandleClimb()
+    {
+        animatable.CrossFade(climbAnim);
+    }
+    
+    public void CompleteClimb()
+    {
+        isMantled = false;
+        rb.isKinematic = false;
+        transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + mantleXOffset);
+    }
+    
+    
+    public void CanMantleLedge(LedgeData ledgeData)
+    {
+        canMantle = true;
+        this.ledgeData = ledgeData;
+    }
+
+    public void CantMantleLedge() => canMantle = false;
+
+                    #endregion
+    
     
     void OnDestroy()
     {
         this.ShutdownTimers();
     }
+    
+    
 }

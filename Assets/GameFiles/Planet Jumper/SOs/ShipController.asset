@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24f2f641ac1a4277a484d1dab1270d37, type: 3}
-  m_Name: Coin
+  m_Script: {fileID: 11500000, guid: ec90be15d17460c4faa96220fa50377d, type: 3}
+  m_Name: ShipController
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
-  score: 0
+  rotation: {x: 0, y: 0, z: 0}
+  mouse: {x: 0, y: 0}
