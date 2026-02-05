@@ -9,6 +9,7 @@ public class RotateModule : MonoBehaviour
 {
     public ConstantRotate ConstantRotateModule;
     public RandomRotation RandomRotationModule;
+    public LockRotation LockRotationModule;
 
     private void Start()
     {
@@ -19,11 +20,30 @@ public class RotateModule : MonoBehaviour
     {
         if (ConstantRotateModule.active) ConstantRotateModule.Rotate();
     }
+
+    void LateUpdate()
+    {
+        if (LockRotationModule.active) LockRotationModule.LockRotationInLateUpdate();
+    }
 }
 
 public static class RotateExtension
 {
 
+    [Serializable]
+    public struct LockRotation
+    {
+        [SerializeField] public bool active;
+        [ShowIf("active")] [SerializeField] Vector3 rotation;
+        [ShowIf("active")] [SerializeField] Transform transform;
+
+        public void LockRotationInLateUpdate()
+        {
+            if (transform == null) this.Error("No transform set");
+            transform.rotation = Quaternion.Euler(rotation);
+        }
+    }
+    
     [Serializable]
     public struct ConstantRotate
     {
@@ -48,9 +68,7 @@ public static class RotateExtension
         [ShowIf("active")][ShowIf("x")] public Deviatable xRot;
         [ShowIf("active")][ShowIf("y")] public Deviatable yRot;
         [ShowIf("active")][ShowIf("z")] public Deviatable zRot;
-        
-
-        public bool rotateOnSpawn;
+        [ShowIf("active")]public bool rotateOnSpawn;
 
         public void Rotate()
         {

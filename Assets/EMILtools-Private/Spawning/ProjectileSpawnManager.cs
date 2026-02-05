@@ -12,7 +12,11 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
     public ProjectileData[] data = new ProjectileData[1];
     public Ref<float> fireInterval = 1f;
     EntitySpawner<Projectile> projSpawner;
-    [SerializeField] CountdownTimer fireTimer;
+    [SerializeField] public CountdownTimer fireTimer;
+    [SerializeField] bool targetSetDirection = false;
+    [SerializeField] [ShowIf("targetSetDirection")] public Vector3 direction;
+    [SerializeField] bool targetAPosition = false;
+    [SerializeField] [ShowIf("targetAPosition")] public Vector3 targetPosition;
 
     protected override void InitializationImplementation()
     {
@@ -26,11 +30,17 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
         Debug.Log("Projectile Spawner Initialization Complete");
     }
 
+    /// <summary>
+    /// Will automatically go proj.transform.fwd unless specifed
+    /// </summary>
     protected override void SpawnImplementation()
     {
         if (fireTimer.isRunning) return;
         fireTimer.Start();
         Projectile proj = projSpawner.Spawn().Initalize(data[0]);
-        proj.rb.AddForce(proj.transform.forward * data[0].forceScalar, data[0].forceMode);
+        Vector3 launchDir = proj.transform.forward;
+        if(targetSetDirection) launchDir = proj.transform.TransformDirection(direction.normalized);
+        if(targetAPosition) launchDir = (targetPosition - proj.transform.position).normalized;
+        proj.rb.AddForce(launchDir * data[0].forceScalar, data[0].forceMode);
     }
 }

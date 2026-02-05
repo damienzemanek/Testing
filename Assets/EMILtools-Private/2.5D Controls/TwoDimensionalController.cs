@@ -24,11 +24,11 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
      public enum LookDir { Fwd, Left, Right }
 
     
-    [Title("References")] 
-    [SerializeField] Animator animator;
-    [SerializeField] TwoD_InputReader input;
-    [SerializeField] Rigidbody rb;
-    [SerializeField] Transform facing;
+    [BoxGroup("References")] [SerializeField] Animator animator; 
+    [BoxGroup("References")] [SerializeField] TwoD_InputReader input;
+    [BoxGroup("References")] [SerializeField] Rigidbody rb;
+    [BoxGroup("References")] [SerializeField] Transform facing;
+    
     [BoxGroup("Timers")] [SerializeField] DecayTimer moveDecay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpDelay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
@@ -45,7 +45,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isMantled;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isMantled;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isShooting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasJumped;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool canMantle;
@@ -53,16 +54,11 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
     
-    [BoxGroup("Movement")] [SerializeField] float walkForce = 230f; // value based on mass 1
-    [BoxGroup("Movement")] [SerializeField] Ref<float> runForce = 390f; // value based on mass 1
-    [BoxGroup("Movement")] [SerializeField] ForceMode moveForceMode = ForceMode.Force;
-    [BoxGroup("Movement")] [SerializeField] Ref<float> moveDecayMult = 2.5f;
-    [BoxGroup("Movement")] [SerializeField] float mantleXOffset = 1f;
-    [BoxGroup("Movement")] [SerializeField] float mantleDelay = 1f;
-    [BoxGroup("Movement")] [SerializeField] float maxMoveVelocityMagnitude = 2f;
-
+    [InlineEditor] public Movement_TwoD_Config movement;
+    [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
+    [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
+    
     [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
-
     
     AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
     [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveGrounded;
@@ -76,18 +72,18 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
     
     
-    [Title("Animation")]
-    [SerializeField] float ANIM_smoothTime = 0.5f;
-    [SerializeField] float ANIM_speedStep = 0.05f;
-    [SerializeField] float moveAnimJitterTolerance = 0.2f;
-    [SerializeField] Animatable animatable;
+    [BoxGroup("Animation")] [SerializeField] float ANIM_smoothTime = 0.5f;
+    [BoxGroup("Animation")] [SerializeField] float ANIM_speedStep = 0.05f;
+    [BoxGroup("Animation")] [SerializeField] float moveAnimJitterTolerance = 0.2f;
+    [BoxGroup("Animation")] [SerializeField] Animatable animatable;
     static readonly int jumpAnim = Animator.StringToHash("jump");
     static readonly int dblJumpAnim = Animator.StringToHash("dbljump");
     static readonly int inAirAnim = Animator.StringToHash("inair");
     static readonly int landAnim = Animator.StringToHash("land");
     static readonly int mantleAnim = Animator.StringToHash("mantle");
     static readonly int climbAnim = Animator.StringToHash("climb");
-    
+    static readonly int shootAnim = Animator.StringToHash("shoot");
+    static readonly int upperbodyidle = Animator.StringToHash("upperbodyidle");
     
     
     
@@ -97,6 +93,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         input.Run += Run;
         input.Jump += Jump;
         input.Look += Look;
+        input.Shoot += Shoot;
     }
     void OnDisable()
     {
@@ -104,17 +101,18 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         input.Run -= Run;
         input.Jump -= Jump;
         input.Look -= Look;
+        input.Shoot -= Shoot;
     }
 
     void Awake()
     {
-        moveDecay = new DecayTimer(runForce, moveDecayMult);
+        moveDecay = new DecayTimer(movement.runForce, movement.decayScalar);
         jumpDelay = new CountdownTimer(jumpSettings.cooldown);
         turnSlowdown = new CountdownTimer(turnSlowDownDuration);
         this.InitializeTimers((moveDecay, false),
-                              (jumpDelay, false),
-                              (turnSlowdown, true));
-
+                                (jumpDelay, false),
+                                (turnSlowdown, true));
+        
         isGrounded.core.Reactions.Add(OnLand);
 
         void OnLand(bool landed)
@@ -126,8 +124,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             hasDoubleJumped = false;
         }
         
-        rb.maxLinearVelocity = maxMoveVelocityMagnitude;
-        rb.maxAngularVelocity = maxMoveVelocityMagnitude;
+        rb.maxLinearVelocity = movement.maxVelMagnitude;
+        rb.maxAngularVelocity = movement.maxVelMagnitude;
 
     }
 
@@ -144,17 +142,20 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         rb.FallFaster(fallSettings);
         
         if(moving) HandleMovement();
+        HandleShooting();
     }
 
     void LateUpdate()
     {
         if(isMantled) return;
-       mouseLook.LateUpdateMouseLook();
+        bulletSpawner.targetPosition = mouseLook.contactPoint;
+        mouseLook.LateUpdateMouseLook();
     }
 
     void Move(bool v) => moving = v;
     void Run(bool v) => running = v;
     void Look(bool v) => isLooking = v;
+    void Shoot(bool v) => isShooting = v;
     
     /// <summary>
     /// Sequencing for movement
@@ -202,21 +203,12 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         }
         void ApplyMoveForce(Vector3 dir)
         {
-            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
-            float actualSpeed = running ? runSpeedIncludingDecay : walkForce;
+            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.runForce : movement.walkForce);
+            float actualSpeed = running ? runSpeedIncludingDecay : movement.walkForce;
             if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
             if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
-            rb.AddForce( dir * actualSpeed, moveForceMode);
+            rb.AddForce( dir * actualSpeed, movement.forceMode);
         }
-    }
-
-    /// <summary>
-    /// For mantling and movement
-    /// </summary>
-    void NewFaceDirection()
-    {
-        turnSlowdown.Restart();
-        if(isMantled) HandleUnMantleLedge();
     }
 
     void Jump()
@@ -249,8 +241,20 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     }
     
     void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);
-    
-    
+
+    void HandleShooting()
+    {
+        if (isShooting) ShootImplementation();
+        else animatable.CrossFade(upperbodyidle, layer: 1);
+
+        void ShootImplementation()
+        {
+            if (bulletSpawner.fireTimer.isRunning) return;
+            print("shooting");
+            bulletSpawner.Spawn();
+            animatable.Animate(shootAnim, layer: 1, restart: true);
+        }
+    }
     
     
     #region  Ledge
@@ -260,7 +264,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         if(ledgeData.dir != facingDir) return;
         isMantled = true;
         rb.isKinematic = true;
-        transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - mantleXOffset);
+        transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - movement.mantleXOffset);
         animatable.Animate(mantleAnim);
     }
     
@@ -280,7 +284,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     {
         isMantled = false;
         rb.isKinematic = false;
-        transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + mantleXOffset);
+        transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + movement.mantleXOffset);
     }
     
     
@@ -291,6 +295,15 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     }
 
     public void CantMantleLedge() => canMantle = false;
+    
+    /// <summary>
+    /// For Ledges and movement
+    /// </summary>
+    void NewFaceDirection()
+    {
+        turnSlowdown.Restart();
+        if(isMantled) HandleUnMantleLedge();
+    }
 
                     #endregion
     

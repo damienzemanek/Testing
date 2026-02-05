@@ -12,10 +12,9 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
     public UnityAction<bool> Move = delegate { };
     public UnityAction<bool> Run = delegate { };
     public UnityAction<bool> Look = delegate { };
+    public UnityAction<bool> Shoot = delegate { };
 
-    
     public UnityAction Jump = delegate { };
-    public UnityAction Shoot = delegate { };
     public UnityAction Interact = delegate { };
 
     public Vector2 movement;
@@ -63,7 +62,11 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
 
     public void OnShoot(InputAction.CallbackContext context)
     {
-        Shoot?.Invoke();
+        switch (context.phase)
+        {
+            case InputActionPhase.Started: Shoot?.Invoke(true); break;
+            case InputActionPhase.Canceled: Shoot?.Invoke(false); break;
+        }
     }
 
     public void OnRun(InputAction.CallbackContext context)

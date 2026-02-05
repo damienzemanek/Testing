@@ -15,7 +15,7 @@ namespace EMILtools.Extensions
             [HideInInspector] public bool blocked;
            
 
-            public void Animate(int animHash, MonoBehaviour host = null, Action postHook = null, int layer = 0)
+            public void Animate(int animHash, MonoBehaviour host = null, Action postHook = null, int layer = 0, bool restart = false)
             {
                 if (blocked) return;
                 if (animator == null) { Debug.LogWarning("Early Return: NO Animator found"); return; }
@@ -32,7 +32,10 @@ namespace EMILtools.Extensions
                     animator.PlayWithHook(animHash, host, postHook, layer);
                 }
                 else
-                    animator.Play(animHash, layer);
+                {
+                    if(restart) animator.Play(animHash, layer, 0f);
+                    else animator.Play(animHash, layer);
+                }
 
                 if (animSpeed.deviate)
                     animator.speed = speed;

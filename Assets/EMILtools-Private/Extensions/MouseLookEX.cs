@@ -23,6 +23,7 @@ namespace EMILtools.Extensions
             [BoxGroup("Settings")] [SerializeField] public bool clampXRotation = false;
             [BoxGroup("Settings")] [SerializeField] public bool clampYRotation = true;
             [BoxGroup("Settings")] [SerializeField] public bool updateMouseLook = true;
+            
             [BoxGroup("Settings")] [SerializeField] Vector2 sensitivity = new Vector2(1, 1);
             [BoxGroup("Settings")] [SerializeField] [ShowIf("clampXRotation")] Vector2 clampX = new Vector2(-90f, 90f);
             [BoxGroup("Settings")] [SerializeField] [ShowIf("clampYRotation")] Vector2 clampY = new Vector2(-90f, 90f);
@@ -71,13 +72,20 @@ namespace EMILtools.Extensions
                 [ShowIf("clampZ")] public Vector2 clampZrot;
             }
             
-            public RotatingObject[] rotatingObjects;
-            public Camera cam;
-            public float maximumLength;
+            [BoxGroup("References")] public RotatingObject[] rotatingObjects;
+            [BoxGroup("References")] public Camera cam;
             
-            private Ray rayMouse;
-            private Vector3 direction;
-            private Quaternion rotation;
+            [BoxGroup("Settings")] [SerializeField] float maximumLength;
+            [BoxGroup("Settings")] [SerializeField] public bool lookAtCollisions = false;
+            [BoxGroup("Settings")] [SerializeField] public bool lookAtDirection = true;
+            [BoxGroup("Settings")] [SerializeField] public bool lookAtPlane = false;
+            [BoxGroup("Settings")] [SerializeField] [ShowIf("lookAtPlane")]  public LayerMask lookAtPlaneMask;
+            
+            [BoxGroup("ReadOnly")] [ReadOnly] [ShowIf("lookAtPlane")] public Vector3 contactPoint; 
+            [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Vector3 direction;
+            [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion rotation;
+            Ray rayMouse;
+
 
             public void LateUpdateMouseLook()
             {
@@ -85,11 +93,14 @@ namespace EMILtools.Extensions
                 var mousePos = Input.mousePosition;
                 rayMouse = cam.ScreenPointToRay(mousePos);
                 Debug.DrawRay(rayMouse.origin, rayMouse.direction * maximumLength, Color.red);
-                if(Physics.Raycast (rayMouse.origin, rayMouse.direction, out hit, maximumLength))
+                int layermask = 0;
+                if(lookAtPlane) layermask = lookAtPlaneMask.value;
+                if(Physics.Raycast (rayMouse.origin, rayMouse.direction, out hit, maximumLength, layermask))
                 {
-                    RotateToMouseDirection(rotatingObjects, hit.point);
+                    if(lookAtCollisions || lookAtPlane) RotateToMouseDirection(rotatingObjects,
+                        contactPoint = hit.point);
                 }
-                else
+                else if(lookAtDirection)
                 {
                     var pos = rayMouse.GetPoint(maximumLength);
                     RotateToMouseDirection(rotatingObjects, pos);
