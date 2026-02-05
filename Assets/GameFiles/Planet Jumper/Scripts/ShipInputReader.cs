@@ -11,10 +11,11 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
     
     public UnityAction<bool> Thrust = delegate { };
     public UnityAction<Vector3, bool> Rotate = delegate { };
+    public UnityAction<bool> Fire = delegate { };
+
     
     public UnityAction Move = delegate { };
     public UnityAction SwitchCam = delegate { };
-    public UnityAction Fire = delegate { };
 
     public Vector3 rotation;
     public Vector2 mouse { get; set; }
@@ -54,7 +55,11 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 
     public void OnFire(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Performed) Fire?.Invoke();
+        switch (context.phase)
+        {
+            case InputActionPhase.Started: Fire.Invoke(true); break;
+            case InputActionPhase.Canceled: Fire.Invoke(false); break;
+        }
     }
 
     public void OnJump(InputAction.CallbackContext context)

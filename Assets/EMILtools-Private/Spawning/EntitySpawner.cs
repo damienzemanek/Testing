@@ -1,5 +1,8 @@
-﻿public class EntitySpawner<T> where T : Entity
-{
+﻿using Sirenix.OdinInspector;
+using UnityEngine;
+
+public class EntitySpawner<T> where T : Entity
+{ 
     IEntityFactory<T> entityFactory;
     ISpawnPointStrategy spawnPointStrategy;
     

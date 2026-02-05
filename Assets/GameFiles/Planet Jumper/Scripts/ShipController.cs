@@ -17,6 +17,7 @@ public class ShipController : MonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Vector3 rotationVector;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isRotating;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isThrusting;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isFiring;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion camOffset => camTransform != null ? camTransform.rotation : Quaternion.identity;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool usingCannonCam = false;
@@ -38,7 +39,9 @@ public class ShipController : MonoBehaviour, ITimerUser
     
     [BoxGroup("Rotation")] [SerializeField] ForceMode rotateForceMode = ForceMode.Force;
     [BoxGroup("Rotation")] [SerializeField] float rotationScalar;
+    
     [BoxGroup("Cannons")] [SerializeField] MouseLookSettings cannonMouseLook;
+    [BoxGroup("Cannons")] [SerializeField] ProjectileSpawnManager cannonProjectileSpawner;
 
 
     private void Awake()
@@ -49,7 +52,6 @@ public class ShipController : MonoBehaviour, ITimerUser
 
     void Start()
     {
-        print("a");
         CursorEX.Set(false, CursorLockMode.Locked);
         cannonMouseLook.updateMouseLook = false;
         cannonCameraComponent.enabled = false;
@@ -61,6 +63,7 @@ public class ShipController : MonoBehaviour, ITimerUser
         input.Thrust += Thrust;
         input.Rotate += Rotate;
         input.SwitchCam += SwitchCam;
+        input.Fire += Fire;
     }
 
     private void OnDisable()
@@ -68,6 +71,7 @@ public class ShipController : MonoBehaviour, ITimerUser
         input.Thrust -= Thrust;
         input.Rotate -= Rotate;
         input.SwitchCam -= SwitchCam;
+        input.Fire -= Fire;
     }
 
     private void Update()
@@ -80,6 +84,7 @@ public class ShipController : MonoBehaviour, ITimerUser
     {
         HandleRotation();
         HandleThrust();
+        HandleFiring();
     }
     
     
@@ -112,6 +117,17 @@ public class ShipController : MonoBehaviour, ITimerUser
         shipCameraObject.SetActive(!usingCannonCam);
         cannonCameraComponent.enabled = usingCannonCam;
     }
+    void Fire(bool active)
+    {
+        if (!usingCannonCam)
+        {
+            isFiring = false;
+            return;
+        }
+        isFiring = active;
+    }
+    
+    
 
     void HandleRotation()
     {
@@ -131,7 +147,12 @@ public class ShipController : MonoBehaviour, ITimerUser
         if (!isThrusting) return;
         rb.AddForce(transform.up * thrustForce, thrustForceMode);
     }
-    
+
+    void HandleFiring()
+    {
+        if (!isFiring) return;
+       cannonProjectileSpawner.Spawn();
+    }
     
     
 
@@ -139,5 +160,6 @@ public class ShipController : MonoBehaviour, ITimerUser
     private void OnDestroy()
     {
         this.ShutdownTimers();
+        cannonProjectileSpawner.ShutdownTimers();
     }
 }

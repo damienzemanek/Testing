@@ -13,10 +13,9 @@ public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser
     public CountdownTimer spawnTimer;
 
     int counter = 0;
-    
-    protected override void Awake()
+
+    protected override void InitializationImplementation()
     {
-        base.Awake();
 
         spawner = new EntitySpawner<Collectible>(
             new EntityFactory<Collectible>(collectibleData),
@@ -25,13 +24,12 @@ public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser
         spawnTimer = new CountdownTimer(spawnInterval);
         
         this.InitializeTimers((spawnTimer, false))
-            .Sub(spawnTimer.OnTimerStop, HandleTimerStop);
-    }
+            .Sub(spawnTimer.OnTimerStop, HandleTimerStop);    }
     
     void OnDestroy() => this.ShutdownTimers();
     
     void Start() => spawnTimer.Start();
-    public override void Spawn() => spawner.Spawn();
+    protected override void SpawnImplementation() => spawner.Spawn();
 
     void HandleTimerStop()
     {
