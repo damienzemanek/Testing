@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using static Ship_IA;
 
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 {
     public Ship_IA ia;
     
@@ -17,7 +17,7 @@ public class ShipInputReader : ScriptableObject, IPlayerActions
     public UnityAction Fire = delegate { };
 
     public Vector3 rotation;
-    public Vector2 mouse;
+    public Vector2 mouse { get; set; }
 
     private void OnEnable()
     {

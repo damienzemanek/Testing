@@ -341,7 +341,7 @@ public partial class @Ship_IA: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a4ed7ad5-856f-4754-9ce6-13ad93e91b77"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

@@ -11,13 +11,20 @@ namespace EMILtools.Extensions
         [Serializable]
         public class MouseLookSettings
         {
-            [SerializeField] Transform body;
-            [SerializeField] Transform head;
-            [SerializeField] IInputMouseLookReference input;
-            [SerializeField] Vector2 sensitivity = new Vector2(1, 1);
-            [SerializeField] Vector2 look;
-            [SerializeField] Vector2 rot;
-            [SerializeField] bool updateMouseLook = true;
+            [BoxGroup("ReadOnly")] [SerializeField, ReadOnly] Vector2 look;
+            [BoxGroup("ReadOnly")] [SerializeField, ReadOnly]  Vector2 rot;
+            
+            [BoxGroup("References")] [SerializeField] [ShowIf("useBody")] Transform body;
+            [BoxGroup("References")] [SerializeField] Transform head;
+            [BoxGroup("References")] [SerializeField] IInputMouseLookReference input;
+            
+            [BoxGroup("Settings")] [SerializeField] public bool useBody = true;
+            [BoxGroup("Settings")] [SerializeField] public bool clampXRotation = false;
+            [BoxGroup("Settings")] [SerializeField] public bool clampYRotation = true;
+            [BoxGroup("Settings")] [SerializeField] public bool updateMouseLook = true;
+            [BoxGroup("Settings")] [SerializeField] Vector2 sensitivity = new Vector2(1, 1);
+            [BoxGroup("Settings")] [SerializeField] [ShowIf("clampXRotation")] Vector2 clampX = new Vector2(-90f, 90f);
+            [BoxGroup("Settings")] [SerializeField] [ShowIf("clampYRotation")] Vector2 clampY = new Vector2(-90f, 90f);
 
             public void UpdateMouseLook()
             {
@@ -33,11 +40,12 @@ namespace EMILtools.Extensions
                 // Apply the rotation to the variable
                 rot.x += look.x;
                 rot.y += look.y;
-                rot.y = Mathf.Clamp(rot.y, -90f, 90f);
+                if(clampXRotation) rot.x = Mathf.Clamp(rot.x, clampX.x, clampX.y);
+                if(clampYRotation) rot.y = Mathf.Clamp(rot.y, clampY.x, clampY.y);
                 
                 // Use the variable on the transforms
-                body.rotation = Quaternion.Euler(0, rot.x, 0);
-                head.transform.rotation = Quaternion.Euler(rot.y, rot.x, 0);
+                if(useBody) body.localRotation = Quaternion.Euler(0, rot.x, 0);
+                head.transform.localRotation = Quaternion.Euler(rot.y, rot.x, 0);
             }
         }
 

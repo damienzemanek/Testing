@@ -4,9 +4,11 @@ using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static CamEX;
 using static CamEX.CurveValue;
 using static Effectability;
+using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static LifecycleEX;
 
@@ -17,11 +19,16 @@ public class ShipController : MonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isThrusting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion camOffset => camTransform != null ? camTransform.rotation : Quaternion.identity;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool usingCannonCam = false;
+
     
     [BoxGroup("References")] [SerializeField] ShipInputReader input;
     [BoxGroup("References")] [SerializeField] Rigidbody rb;
     [BoxGroup("References")] [SerializeField] Transform camTransform;
     [BoxGroup("References")] [SerializeField] CinemachineCamera cam;
+    [BoxGroup("References")] [SerializeField] GameObject shipCameraObject;
+    [BoxGroup("References")] [SerializeField] Camera cannonCameraComponent;
+
     
     [BoxGroup("Thrust")] [SerializeField] ForceMode thrustForceMode = ForceMode.Force;
     [BoxGroup("Thrust")] [SerializeField] float thrustForce;
@@ -31,8 +38,8 @@ public class ShipController : MonoBehaviour, ITimerUser
     
     [BoxGroup("Rotation")] [SerializeField] ForceMode rotateForceMode = ForceMode.Force;
     [BoxGroup("Rotation")] [SerializeField] float rotationScalar;
+    [BoxGroup("Cannons")] [SerializeField] MouseLookSettings cannonMouseLook;
 
-    
 
     private void Awake()
     {
@@ -44,6 +51,8 @@ public class ShipController : MonoBehaviour, ITimerUser
     {
         print("a");
         CursorEX.Set(false, CursorLockMode.Locked);
+        cannonMouseLook.updateMouseLook = false;
+        cannonCameraComponent.enabled = false;
     }
 
     private void OnEnable()
@@ -51,18 +60,20 @@ public class ShipController : MonoBehaviour, ITimerUser
         CursorEX.Set(false, CursorLockMode.Locked);
         input.Thrust += Thrust;
         input.Rotate += Rotate;
+        input.SwitchCam += SwitchCam;
     }
 
     private void OnDisable()
     {
         input.Thrust -= Thrust;
         input.Rotate -= Rotate;
-
+        input.SwitchCam -= SwitchCam;
     }
 
     private void Update()
     {
         cam.Lens.FieldOfView = thrustFOV.Evaluate * defaultFOV;
+        cannonMouseLook.UpdateMouseLook();
     }
 
     private void FixedUpdate()
@@ -70,34 +81,7 @@ public class ShipController : MonoBehaviour, ITimerUser
         HandleRotation();
         HandleThrust();
     }
-
-    void HandleRotation()
-    {
-        if (!isRotating)
-        {
-            rb.angularVelocity = Vector3.zero;
-            return;
-        }
-
-        Quaternion deltaScaled = Quaternion.Euler(rotationVector * rotationScalar);
-        Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * transform.rotation;
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, newRot, 0.1f);
-    }
-
-    void HandleThrust()
-    {
-        if (!isThrusting) return;
-        rb.AddForce(transform.up * thrustForce, thrustForceMode);
-    }
     
-    
-    void Rotate(Vector3 rotation, bool active)
-    {
-        rotationVector = rotation;
-        isRotating = active;
-    }
-
     
     void Thrust(bool active)
     {
@@ -114,6 +98,42 @@ public class ShipController : MonoBehaviour, ITimerUser
             vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
     }
+    void Rotate(Vector3 rotation, bool active)
+    {
+        if (usingCannonCam) return;
+        
+        rotationVector = rotation;
+        isRotating = active;
+    }
+    void SwitchCam()
+    {
+        usingCannonCam = !usingCannonCam;
+        cannonMouseLook.updateMouseLook = usingCannonCam;
+        shipCameraObject.SetActive(!usingCannonCam);
+        cannonCameraComponent.enabled = usingCannonCam;
+    }
+
+    void HandleRotation()
+    {
+        if (!isRotating)
+        {
+            rb.angularVelocity = Vector3.zero;
+            return;
+        }
+
+        Quaternion deltaScaled = Quaternion.Euler(rotationVector * rotationScalar);
+        Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * transform.rotation;
+
+        transform.rotation = Quaternion.Lerp(transform.rotation, newRot, 0.1f);
+    }
+    void HandleThrust()
+    {
+        if (!isThrusting) return;
+        rb.AddForce(transform.up * thrustForce, thrustForceMode);
+    }
+    
+    
+    
 
 
     private void OnDestroy()
