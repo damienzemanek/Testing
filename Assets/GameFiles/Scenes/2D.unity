@@ -243,9 +243,9 @@ MonoBehaviour:
       flipX: 1
       flipY: 0
       flipZ: 1
-      clampX: 0
-      clampY: 0
-      clampZ: 0
+      clampX: 1
+      clampY: 1
+      clampZ: 1
       clampXrot: {x: -50, y: 40}
       clampYrot: {x: -15, y: 15}
       clampZrot: {x: -20, y: 20}
@@ -253,9 +253,9 @@ MonoBehaviour:
       flipX: 0
       flipY: 0
       flipZ: 1
-      clampX: 0
-      clampY: 0
-      clampZ: 0
+      clampX: 1
+      clampY: 1
+      clampZ: 1
       clampXrot: {x: -30, y: 30}
       clampYrot: {x: -30, y: 30}
       clampZrot: {x: -30, y: 30}

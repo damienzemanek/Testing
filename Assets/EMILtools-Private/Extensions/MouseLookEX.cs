@@ -66,9 +66,9 @@ namespace EMILtools.Extensions
                 public bool clampY;
                 public bool clampZ;
 
-                public Vector2 clampXrot;
-                public Vector2 clampYrot;
-                public Vector2 clampZrot;
+                [ShowIf("clampX")] public Vector2 clampXrot;
+                [ShowIf("clampY")] public Vector2 clampYrot;
+                [ShowIf("clampZ")] public Vector2 clampZrot;
             }
             
             public RotatingObject[] rotatingObjects;
