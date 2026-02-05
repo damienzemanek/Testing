@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace EMILtools.Extensions
         public class MouseLookSettings
         {
             [BoxGroup("ReadOnly")] [SerializeField, ReadOnly] Vector2 look;
-            [BoxGroup("ReadOnly")] [SerializeField, ReadOnly]  Vector2 rot;
+            [BoxGroup("ReadOnly")] [SerializeField, ReadOnly] Vector2 rot;
             
             [BoxGroup("References")] [SerializeField] [ShowIf("useBody")] Transform body;
             [BoxGroup("References")] [SerializeField] Transform head;
@@ -49,6 +50,96 @@ namespace EMILtools.Extensions
             }
         }
 
+
+        [Serializable]
+        public class RotateToMouseWorldSpace
+        {
+            [Serializable]
+            public struct RotatingObject
+            {
+                public Transform transform;
+                public bool flipX;
+                public bool flipY;
+                public bool flipZ;
+
+                public bool clampX;
+                public bool clampY;
+                public bool clampZ;
+
+                public Vector2 clampXrot;
+                public Vector2 clampYrot;
+                public Vector2 clampZrot;
+            }
+            
+            public RotatingObject[] rotatingObjects;
+            public Camera cam;
+            public float maximumLength;
+            
+            private Ray rayMouse;
+            private Vector3 direction;
+            private Quaternion rotation;
+
+            public void LateUpdateMouseLook()
+            {
+                RaycastHit hit;
+                var mousePos = Input.mousePosition;
+                rayMouse = cam.ScreenPointToRay(mousePos);
+                Debug.DrawRay(rayMouse.origin, rayMouse.direction * maximumLength, Color.red);
+                if(Physics.Raycast (rayMouse.origin, rayMouse.direction, out hit, maximumLength))
+                {
+                    RotateToMouseDirection(rotatingObjects, hit.point);
+                }
+                else
+                {
+                    var pos = rayMouse.GetPoint(maximumLength);
+                    RotateToMouseDirection(rotatingObjects, pos);
+                }
+            }
+
+            void RotateToMouseDirection (RotatingObject[] transform, Vector3 destination)
+            {
+                foreach (var ro in transform)
+                {
+                    direction = destination - ro.transform.position;
+
+                    if (ro.flipX) direction.x *= -1;
+                    if (ro.flipY) direction.y *= -1;
+                    if (ro.flipZ) direction.z *= -1;
+
+                    // Base rotation
+                    rotation = Quaternion.LookRotation(direction, Vector3.up);
+
+                    // Convert to euler
+                    Vector3 euler = rotation.eulerAngles;
+
+                    // Normalize for clamping
+                    euler.x = NormalizeAngle(euler.x);
+                    euler.y = NormalizeAngle(euler.y);
+                    euler.z = NormalizeAngle(euler.z);
+
+                    // Clamp
+                    if (ro.clampX) euler.x = Mathf.Clamp(euler.x, ro.clampXrot.x, ro.clampXrot.y);
+                    if (ro.clampY) euler.y = Mathf.Clamp(euler.y, ro.clampYrot.x, ro.clampYrot.y);
+                    if (ro.clampZ) euler.z = Mathf.Clamp(euler.z, ro.clampZrot.x, ro.clampZrot.y);
+
+                    // Rebuild quaternion
+                    ro.transform.localRotation = Quaternion.Euler(euler);
+                }
+            }
+            
+            
+        }
+        
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static float NormalizeAngle(float angle)
+        {
+            if (angle > 180f) angle -= 360f;
+            return angle;
+        }
+
     }
+    
+    
 
 }

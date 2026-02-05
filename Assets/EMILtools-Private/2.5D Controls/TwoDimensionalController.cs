@@ -6,6 +6,7 @@ using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.AnimEX;
+using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
 using static EMILtools.Timers.TimerUtility;
@@ -43,9 +44,10 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     }
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isMantled;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasJumped;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isMantled;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool canMantle;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
@@ -57,6 +59,9 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("Movement")] [SerializeField] Ref<float> moveDecayMult = 2.5f;
     [BoxGroup("Movement")] [SerializeField] float mantleXOffset = 1f;
     [BoxGroup("Movement")] [SerializeField] float mantleDelay = 1f;
+    [BoxGroup("Movement")] [SerializeField] float maxMoveVelocityMagnitude = 2f;
+
+    [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
 
     
     AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
@@ -91,12 +96,14 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         input.Move += Move;
         input.Run += Run;
         input.Jump += Jump;
+        input.Look += Look;
     }
     void OnDisable()
     {
         input.Move -= Move;
         input.Run -= Run;
         input.Jump -= Jump;
+        input.Look -= Look;
     }
 
     void Awake()
@@ -119,10 +126,17 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             hasDoubleJumped = false;
         }
         
+        rb.maxLinearVelocity = maxMoveVelocityMagnitude;
+        rb.maxAngularVelocity = maxMoveVelocityMagnitude;
+
     }
 
     void Start() => moveDecay.Start();
-    void Update() => UpdateAnimator();
+
+    void Update()
+    {
+        UpdateAnimator();
+    }
     
     void FixedUpdate()
     {
@@ -132,8 +146,15 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         if(moving) HandleMovement();
     }
 
+    void LateUpdate()
+    {
+        if(isMantled) return;
+       mouseLook.LateUpdateMouseLook();
+    }
+
     void Move(bool v) => moving = v;
     void Run(bool v) => running = v;
+    void Look(bool v) => isLooking = v;
     
     /// <summary>
     /// Sequencing for movement
@@ -184,6 +205,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? runForce : walkForce);
             float actualSpeed = running ? runSpeedIncludingDecay : walkForce;
             if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
+            if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
             rb.AddForce( dir * actualSpeed, moveForceMode);
         }
     }
@@ -213,7 +235,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             animatable.Animate(jumpAnim);
             rb.Jump(jumpSettings);
             hasJumped = true;
-            print("jumped");
+            //print("jumped");
         }
 
         void HandleDoubleJump()
@@ -222,13 +244,16 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             animatable.Animate(dblJumpAnim);
             rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
             hasDoubleJumped = true;
-            print("dbl jumped");
+            //print("dbl jumped");
         }
     }
     
     void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);
-
-                        #region  Ledge
+    
+    
+    
+    
+    #region  Ledge
 
     void HandleMantleLedge()
     {

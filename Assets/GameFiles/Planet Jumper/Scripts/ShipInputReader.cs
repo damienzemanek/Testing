@@ -41,7 +41,7 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 
         void DoRotate()
         {
-            Debug.Log("held");
+            //Debug.Log("held");
             Vector2 v = context.ReadValue<Vector2>();
             rotation = new Vector3(v.y, 0f, -v.x);
             Rotate?.Invoke(rotation, true);

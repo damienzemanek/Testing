@@ -23,7 +23,7 @@ namespace EMILtools.Extensions
                 float speed = animSpeed.value;
                 if (speed == 0) speed = 1;
 
-                this.Log($"Animating {animHash}");
+                //this.Log($"Animating {animHash}");
 
 
                 if (postHook != null)

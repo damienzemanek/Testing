@@ -2,17 +2,19 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using static TwoD_IA;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
-public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
+public class TwoD_InputReader : ScriptableObject, IPlayerActions
 {
     TwoD_IA ia;
     
     public UnityAction<bool> Move = delegate { };
     public UnityAction<bool> Run = delegate { };
+    public UnityAction<bool> Look = delegate { };
+
     
     public UnityAction Jump = delegate { };
-    public UnityAction Look = delegate { };
     public UnityAction Shoot = delegate { };
     public UnityAction Interact = delegate { };
 
@@ -49,8 +51,14 @@ public class TwoD_InputReader : ScriptableObject, TwoD_IA.IPlayerActions
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        mouse = context.ReadValue<Vector2>();
-        Look?.Invoke();
+        switch (context.phase)
+        {
+            case InputActionPhase.Started: 
+                mouse = Mouse.current.position.ReadValue();
+                Look?.Invoke(true); break;
+            case InputActionPhase.Canceled: 
+                Look?.Invoke(false); break;
+        }
     }
 
     public void OnShoot(InputAction.CallbackContext context)

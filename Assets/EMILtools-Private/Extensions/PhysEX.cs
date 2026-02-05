@@ -32,6 +32,7 @@ namespace EMILtools.Extensions
             public ForceMode forceMode;
             public float mult;
             public Vector3 dir;
+            public float inAirMoveScalar;
         }
 
         [Serializable]
