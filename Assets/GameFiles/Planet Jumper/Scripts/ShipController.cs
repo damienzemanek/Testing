@@ -6,29 +6,33 @@ using Unity.Cinemachine;
 using UnityEngine;
 using static CamEX;
 using static CamEX.CurveValue;
+using static Effectability;
 using static EMILtools.Timers.TimerUtility;
 using static LifecycleEX;
 
 public class ShipController : MonoBehaviour, ITimerUser
 {
-    [SerializeField] ShipInputReader input;
-    [SerializeField] ForceMode fmode;
-    [SerializeField] float thrustForce;
-    [SerializeField] Rigidbody rb;
-    [SerializeField] ForceMode rotateForceMode = ForceMode.Force;
-    [SerializeField] float rotationScalar;
-    [SerializeField] Transform camTransform;
-    [SerializeField] CinemachineCamera cam;
-    [SerializeField] CurveValue thrustFOV;
-    [SerializeField] private float defaultFOV = 70f;
-    
-    
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Vector3 rotationVector;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isRotating;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isThrusting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion camOffset => camTransform != null ? camTransform.rotation : Quaternion.identity;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
+    
+    [BoxGroup("References")] [SerializeField] ShipInputReader input;
+    [BoxGroup("References")] [SerializeField] Rigidbody rb;
+    [BoxGroup("References")] [SerializeField] Transform camTransform;
+    [BoxGroup("References")] [SerializeField] CinemachineCamera cam;
+    
+    [BoxGroup("Thrust")] [SerializeField] ForceMode thrustForceMode = ForceMode.Force;
+    [BoxGroup("Thrust")] [SerializeField] float thrustForce;
+    [BoxGroup("Thrust")] [SerializeField] CurveValue thrustFOV;
+    [BoxGroup("Thrust")] [SerializeField] float defaultFOV = 70f;
+    [BoxGroup("Thrust")] [SerializeField] ParticleSystem vfx_Thrust;
+    
+    [BoxGroup("Rotation")] [SerializeField] ForceMode rotateForceMode = ForceMode.Force;
+    [BoxGroup("Rotation")] [SerializeField] float rotationScalar;
 
+    
 
     private void Awake()
     {
@@ -36,9 +40,15 @@ public class ShipController : MonoBehaviour, ITimerUser
         this.InitializeTimers((thrustFOV, false));
     }
 
+    void Start()
+    {
+        print("a");
+        CursorEX.Set(false, CursorLockMode.Locked);
+    }
 
     private void OnEnable()
     {
+        CursorEX.Set(false, CursorLockMode.Locked);
         input.Thrust += Thrust;
         input.Rotate += Rotate;
     }
@@ -78,7 +88,7 @@ public class ShipController : MonoBehaviour, ITimerUser
     void HandleThrust()
     {
         if (!isThrusting) return;
-        rb.AddForce(transform.up * thrustForce, fmode);
+        rb.AddForce(transform.up * thrustForce, thrustForceMode);
     }
     
     
@@ -93,8 +103,16 @@ public class ShipController : MonoBehaviour, ITimerUser
     {
         isThrusting = active;
 
-        if (active) thrustFOV.DynamicStart(Operation.Increase);
-        else thrustFOV.DynamicStart(Operation.Decrease);
+        if (active)
+        {
+            thrustFOV.DynamicStart(Operation.Increase);
+            vfx_Thrust.Play();
+        }
+        else
+        {
+            thrustFOV.DynamicStart(Operation.Decrease);
+            vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
     }
 
 

@@ -44,7 +44,18 @@ public static class Effectability
         public float effectLength => _effectLength;
         public float delay => _delay;
 
-        [Button]
+        
+        public void Play(CancellationToken token = default) => UseEffect(token);
+        public IEnumerator PlayAndWait(CancellationToken token = default)
+        {
+            UseEffect(token);
+            if (looping) yield break;
+            yield return new WaitForSeconds(delay + effectLength);
+        }
+        public void Stop() => effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        
+        
+        
         void UseEffect(System.Threading.CancellationToken token = default)
         {
             WaitForSeconds wait = null;
@@ -73,15 +84,6 @@ public static class Effectability
 
             if (delay <= 0f)    EffectPlay();
             else                _ = DelayUtility.Delay(EffectPlay, delay, token); // <-- Main Path
-        }
-
-
-        public void Play(CancellationToken token = default) => UseEffect(token);
-        public IEnumerator PlayAndWait(CancellationToken token = default)
-        {
-            UseEffect(token);
-            if (looping) yield break;
-            yield return new WaitForSeconds(delay + effectLength);
         }
         
     }

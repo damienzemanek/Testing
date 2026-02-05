@@ -1,6 +1,7 @@
 using System;
 using EMILtools.Extensions;
 using EMILtools.Timers;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Timers.TimerUtility;
 
@@ -10,14 +11,16 @@ public static class CamEX
     public class CurveValue : Timer
     {
         private const float NO_PAUSE = -1f;
-        
         public enum Operation { Increase, Decrease }
         
+        
         public AnimationCurve curve;
-        public Operation operation;
-        public float pauseProgress = NO_PAUSE;
-
         [Min(0.01f)] public float operationScalar;
+
+        
+        [ReadOnly] public Operation operation;
+        [ReadOnly] public float pauseProgress = NO_PAUSE;
+        [ShowInInspector, ReadOnly] public virtual float Evaluate => (curve != null) ? curve.Evaluate(Progress) : 0;
 
         public CurveValue(float _initialTime, AnimationCurve curve) : base(_initialTime)
             =>  this.curve = curve;
@@ -26,7 +29,6 @@ public static class CamEX
         public CurveValue(AnimationCurve curve, float _initialTime, Action[] OnTimerStartCbs = null, Action[] OnTimerTickCbs = null, Action[] OnTimerStopCbs = null) : base(_initialTime, OnTimerStartCbs, OnTimerTickCbs, OnTimerStopCbs)
             => this.curve = curve;
 
-        public virtual float Evaluate => (curve != null) ? curve.Evaluate(Progress) : 0;
         
         public override void TickImplementation(float deltaTime)
         {
