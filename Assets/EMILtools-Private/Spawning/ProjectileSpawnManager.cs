@@ -40,7 +40,11 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
         Projectile proj = projSpawner.Spawn().Initalize(data[0]);
         Vector3 launchDir = proj.transform.forward;
         if(targetSetDirection) launchDir = proj.transform.TransformDirection(direction.normalized);
-        if(targetAPosition) launchDir = (targetPosition - proj.transform.position).normalized;
+        if (targetAPosition)
+        {
+            launchDir = (targetPosition - proj.transform.position).normalized;
+            proj.transform.SetPositionAndRotation(proj.transform.position, Quaternion.LookRotation(launchDir));
+        }
         proj.rb.AddForce(launchDir * data[0].forceScalar, data[0].forceMode);
     }
 }

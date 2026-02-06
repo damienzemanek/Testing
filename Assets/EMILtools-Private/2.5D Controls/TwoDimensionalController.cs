@@ -172,7 +172,9 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     void Move(bool v) => moving = v;
     void Run(bool v) => running = v;
     void Look(bool v) => isLooking = v;
+
     void Shoot(bool v) => isShooting = v;
+    
     
     /// <summary>
     /// Sequencing for movement
@@ -265,16 +267,16 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
 
     void HandleShooting()
     {
-        if (isShooting) ShootImplementation();
+        if (isShooting) StartCoroutine(ShootImplementation());
         else animatable.CrossFade(upperbodyidle, layer: 1);
 
-        void ShootImplementation()
+        IEnumerator ShootImplementation()
         {
             bulletSpawner.targetPosition = mouseLook.contactPoint;
-            if (bulletSpawner.fireTimer.isRunning) return;
-            print("shooting");
-            bulletSpawner.Spawn();
+            if (bulletSpawner.fireTimer.isRunning) yield break;
             animatable.Animate(shootAnim, layer: 1, restart: true);
+            yield return null;
+            bulletSpawner.Spawn();
         }
     }
 

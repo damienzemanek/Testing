@@ -5,6 +5,7 @@ public class EntitySpawner<T> where T : Entity
 { 
     IEntityFactory<T> entityFactory;
     ISpawnPointStrategy spawnPointStrategy;
+    [ReadOnly] public Transform currentSpawnPoint;
     
     public EntitySpawner(IEntityFactory<T> _entityFactory, ISpawnPointStrategy _spawnPointStrategy)
     {
@@ -14,6 +15,6 @@ public class EntitySpawner<T> where T : Entity
     
     public T Spawn()
     {
-        return entityFactory.Create(spawnPointStrategy.NextSpawnPoint());
+        return entityFactory.Create(currentSpawnPoint = spawnPointStrategy.NextSpawnPoint());
     }
 }

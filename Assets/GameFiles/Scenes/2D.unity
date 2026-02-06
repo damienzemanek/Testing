@@ -447,6 +447,7 @@ MonoBehaviour:
       _value: 1
       _valueBetween: {x: 0, y: 0}
     blocked: 0
+  animState: 0
 --- !u!1 &28109236
 GameObject:
   m_ObjectHideFlags: 0
