@@ -3,22 +3,21 @@ using System.Collections;
 using EMILtools.Core;
 using EMILtools.Extensions;
 using EMILtools.Timers;
+using KBCore.Refs;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using static EMILtools.Extensions.AnimEX;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
 
-public class TwoDimensionalController : MonoBehaviour, ITimerUser
+public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 {
      Vector3 left = Vector3.left;
      Vector3 right = Vector3.right;
      private const float NINETYF = 90f;
      private const float ZEROF = 0f;
-     static readonly int Speed = Animator.StringToHash("Speed");
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
      public enum LookDir { None, Left, Right }
@@ -59,6 +58,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [InlineEditor] public Movement_TwoD_Config movement;
     [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
+    [SerializeField, Self] AnimatorController_TwoD animController;
     
     [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
     [BoxGroup("Orientation")] [SerializeField] MouseCallbackZones mouseZones;
@@ -75,22 +75,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
     
     
-    [BoxGroup("Animation")] [SerializeField] float ANIM_smoothTime = 0.5f;
-    [BoxGroup("Animation")] [SerializeField] float ANIM_speedStep = 0.05f;
-    [BoxGroup("Animation")] [SerializeField] float moveAnimJitterTolerance = 0.2f;
-    [BoxGroup("Animation")] [SerializeField] Animatable animatable;
-    [BoxGroup("Animation")] [SerializeField] AnimState animState;
-    
-    static readonly int jumpAnim = Animator.StringToHash("jump");
-    static readonly int dblJumpAnim = Animator.StringToHash("dbljump");
-    static readonly int inAirAnim = Animator.StringToHash("inair");
-    static readonly int landAnim = Animator.StringToHash("land");
-    static readonly int mantleAnim = Animator.StringToHash("mantle");
-    static readonly int climbAnim = Animator.StringToHash("climb");
-    static readonly int shootAnim = Animator.StringToHash("shoot");
-    static readonly int upperbodyidle = Animator.StringToHash("upperbodyidle");
-    static readonly int moveLocomotion = Animator.StringToHash("Move");
-    static readonly int moveBackLocomotion = Animator.StringToHash("MoveBack");
+
 
     
     
@@ -126,9 +111,9 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         {
             if (!landed) return;
 
-            animState = AnimState.Locomotion;
+            animController.state = AnimState.Locomotion;
             jumpDelay.Start();
-            animatable.Animate(landAnim);
+            animController.animator.Play(animController.landAnim);
             hasJumped = false;
             hasDoubleJumped = false;
         }
@@ -150,7 +135,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
 
     void Update()
     {
-        if(animState == AnimState.Locomotion) UpdateAnimator();
+        if(animController.state == AnimState.Locomotion)
+            animController.UpdateLocomotion(facingDir, moveDir, currentSpeed);
         if(isLooking && !isMantled) mouseZones.CheckAllZones(input.mouse);
     }
     
@@ -189,15 +175,15 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         void Walk()
         {
             if(currentSpeed < WALK_ALPHA_MAX) 
-                currentSpeed += ANIM_speedStep;
-            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, moveAnimJitterTolerance);
+                currentSpeed += animController.speedStep;
+            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, animController.moveJitterTolerance);
         }
         void Run()
         {
             if (currentSpeed > RUN_ALPHA_MAX)
                 currentSpeed = RUN_ALPHA_MAX;
             else if(currentSpeed < RUN_ALPHA_MAX) 
-                currentSpeed += ANIM_speedStep;
+                currentSpeed += animController.speedStep;
         }
         void Move(Vector2 move)
         {
@@ -241,8 +227,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             if (jumpOnCooldown) return;
             if (!isGrounded) return;
             
-            animState = AnimState.Jump;
-            animatable.Animate(jumpAnim);
+            animController.state = AnimState.Jump;
+            animController.animator.Play(animController.jumpAnim);
             rb.Jump(jumpSettings);
             hasJumped = true;
             //print("jumped");
@@ -251,30 +237,24 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         void HandleDoubleJump()
         {
             if (hasDoubleJumped) return;
-            animatable.Animate(dblJumpAnim);
+            animController.animator.Play(animController.dblJumpAnim);
             rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
             hasDoubleJumped = true;
             //print("dbl jumped");
         }
     }
-
-    void UpdateAnimator()
-    {
-        animator.SetFloat(Speed, currentSpeed);
-        if(facingDir != moveDir) animatable.Animate(moveBackLocomotion);
-        else animatable.Animate(moveLocomotion);
-    }
+    
 
     void HandleShooting()
     {
         if (isShooting) StartCoroutine(ShootImplementation());
-        else animatable.CrossFade(upperbodyidle, layer: 1);
+        else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);
 
         IEnumerator ShootImplementation()
         {
             bulletSpawner.targetPosition = mouseLook.contactPoint;
             if (bulletSpawner.fireTimer.isRunning) yield break;
-            animatable.Animate(shootAnim, layer: 1, restart: true);
+            animController.animator.Play(animController.shootAnim, layer: 1, normalizedTime: 0f);
             yield return null;
             bulletSpawner.Spawn();
         }
@@ -301,28 +281,28 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         isMantled = true;
         rb.isKinematic = true;
         transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - movement.mantleXOffset);
-        animState = AnimState.Mantle;
-        animatable.Animate(mantleAnim);
+        animController.state = AnimState.Mantle;
+        animController.animator.Play(animController.mantleAnim);
     }
     
     void HandleUnMantleLedge()
     {
         isMantled = false;
         rb.isKinematic = false;
-        animState = AnimState.InAir;
-        animatable.CrossFade(inAirAnim);
+        animController.state = AnimState.InAir;
+        animController.animator.CrossFade(animController.inAirAnim, 0.1f);
     }
 
     void HandleClimb()
     {
-        animatable.CrossFade(climbAnim);
+        animController.animator.CrossFade(animController.climbAnim, 0.1f);
     }
     
     public void CompleteClimb()
     {
         isMantled = false;
         rb.isKinematic = false;
-        animState = AnimState.Locomotion;
+        animController.state = AnimState.Locomotion;
         transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + movement.mantleXOffset);
     }
     
