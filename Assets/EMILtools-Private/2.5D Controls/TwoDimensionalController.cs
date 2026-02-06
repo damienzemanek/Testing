@@ -73,10 +73,12 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField] JumpSettings jumpSettings;
     [BoxGroup("PhysEX")] [SerializeField] GroundedSettings groundedSettings;
     [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
-    
-    
 
-
+    
+    [BoxGroup("Guards")] [SerializeField] GuardsImmutable MoveGuards;
+    [BoxGroup("Guards")] [SerializeField] GuardsImmutable ShootGuards;
+    [BoxGroup("Guards")] [SerializeField] GuardsImmutable LookGuards;
+    [BoxGroup("Guards")] [SerializeField] GuardsImmutable MouseZoneGuards;
     
     
     void OnEnable()
@@ -98,6 +100,13 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 
     void Awake()
     {
+        // Super easy to check what flags influence what methods
+        MoveGuards = new GuardsImmutable(("Not Moving", () => !moving)); // Cant move is !moving
+        ShootGuards = new GuardsImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
+        LookGuards = new GuardsImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
+        MouseZoneGuards = new GuardsImmutable(("Not Looking", () => !isLooking),
+                                              ("Mantled", () => isMantled));
+        
         moveDecay = new DecayTimer(movement.runForce, movement.decayScalar);
         jumpDelay = new CountdownTimer(jumpSettings.cooldown);
         turnSlowdown = new CountdownTimer(turnSlowDownDuration);
@@ -106,17 +115,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
                                 (turnSlowdown, true));
         
         isGrounded.core.Reactions.Add(OnLand);
-
-        void OnLand(bool landed)
-        {
-            if (!landed) return;
-
-            animController.state = AnimState.Locomotion;
-            jumpDelay.Start();
-            animController.animator.Play(animController.landAnim);
-            hasJumped = false;
-            hasDoubleJumped = false;
-        }
+        
         
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;
@@ -126,8 +125,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         float screenHeight = mouseZones.h;
         
         mouseZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { HandleLookInDirection(LookDir.Right); }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => {HandleLookInDirection(LookDir.Left); }));
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); }),
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
     }
 
@@ -137,7 +136,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         if(animController.state == AnimState.Locomotion)
             animController.UpdateLocomotion(facingDir, moveDir, currentSpeed);
-        if(isLooking && !isMantled) mouseZones.CheckAllZones(input.mouse);
+        if(!MouseZoneGuards) mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
@@ -145,72 +144,13 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         isGrounded.Value = transform.IsGrounded(ref groundedSettings);
         rb.FallFaster(fallSettings);
         
-        if(moving) HandleMovement();
-        if(!isMantled) HandleShooting();
+        HandleMovement();
+        HandleShooting();
     }
 
     void LateUpdate()
     {
-        if(isMantled) return;
         HandleLooking(); // Needs to be constantly polled for or else player will reset rot when not "looking"
-    }
-
-    void Move(bool v) => moving = v;
-    void Run(bool v) => running = v;
-    void Look(bool v) => isLooking = v;
-
-    void Shoot(bool v) => isShooting = v;
-    
-    
-    /// <summary>
-    /// Sequencing for movement
-    /// </summary>
-    void HandleMovement()
-    {
-        if (!running) Walk();
-        else Run();
-        
-        Move(input.movement);
-        
-        void Walk()
-        {
-            if(currentSpeed < WALK_ALPHA_MAX) 
-                currentSpeed += animController.speedStep;
-            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, animController.moveJitterTolerance);
-        }
-        void Run()
-        {
-            if (currentSpeed > RUN_ALPHA_MAX)
-                currentSpeed = RUN_ALPHA_MAX;
-            else if(currentSpeed < RUN_ALPHA_MAX) 
-                currentSpeed += animController.speedStep;
-        }
-        void Move(Vector2 move)
-        {
-            if (move.x == 0) return;
-            
-            Vector3 dir = move.x < 0 ? left : right;
-            moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
-            //FaceDirectionWithY(dir);
-            ApplyMoveForce(dir);
-        }
-        
-        // DEPRACTED
-        // void FaceDirectionWithY(Vector3 dir)
-        // {
-        //     Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
-        //     facing.transform.rotation = Quaternion.Euler(newDir);   
-        // }
-        
-
-        void ApplyMoveForce(Vector3 dir)
-        {
-            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.runForce : movement.walkForce);
-            float actualSpeed = running ? runSpeedIncludingDecay : movement.walkForce;
-            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
-            if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
-            rb.AddForce(dir * actualSpeed, movement.forceMode);
-        }
     }
 
     void Jump()
@@ -243,10 +183,68 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             //print("dbl jumped");
         }
     }
+    void Move(bool v) => moving = v;
+    void Run(bool v) => running = v;
+    void Look(bool v) => isLooking = v;
+    void Shoot(bool v) => isShooting = v;
     
-
+    
+    
+    /// <summary>
+    /// Sequencing for movement
+    /// </summary>
+    void HandleMovement()
+    {
+        if (MoveGuards) return;
+        
+        
+        if (!running) Walk();
+        else Run();
+        Move(input.movement);
+        
+        void Walk()
+        {
+            if(currentSpeed < WALK_ALPHA_MAX) 
+                currentSpeed += animController.speedStep;
+            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, animController.moveJitterTolerance);
+        }
+        void Run()
+        {
+            if (currentSpeed > RUN_ALPHA_MAX)
+                currentSpeed = RUN_ALPHA_MAX;
+            else if(currentSpeed < RUN_ALPHA_MAX) 
+                currentSpeed += animController.speedStep;
+        }
+        void Move(Vector2 move)
+        {
+            if (move.x == 0) return;
+            
+            Vector3 dir = move.x < 0 ? left : right;
+            moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
+            //FaceDirectionWithY(dir);
+            ApplyMoveForce(dir);
+        }
+        
+        // DEPRACTED
+        // void FaceDirectionWithY(Vector3 dir)
+        // {
+        //     Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
+        //     facing.transform.rotation = Quaternion.Euler(newDir);   
+        // }
+        
+        void ApplyMoveForce(Vector3 dir)
+        {
+            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.runForce : movement.walkForce);
+            float actualSpeed = running ? runSpeedIncludingDecay : movement.walkForce;
+            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
+            if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
+            rb.AddForce(dir * actualSpeed, movement.forceMode);
+        }
+    }
     void HandleShooting()
     {
+        if (ShootGuards) return;
+        
         if (isShooting) StartCoroutine(ShootImplementation());
         else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);
 
@@ -259,20 +257,29 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             bulletSpawner.Spawn();
         }
     }
-
     void HandleLooking()
     {
+        if (LookGuards) return;
         mouseLook.LateUpdateMouseLook();
     }
 
-    void HandleLookInDirection(LookDir dir)
+    void FaceDirection(LookDir dir)
     {
         print("looking in dir: " + dir);
         if (dir == LookDir.Left) facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
         if (dir == LookDir.Right) facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
         facingDir = dir;
     }
-    
+    void OnLand(bool landed)
+    {
+        if (!landed) return;
+
+        animController.state = AnimState.Locomotion;
+        jumpDelay.Start();
+        animController.animator.Play(animController.landAnim);
+        hasJumped = false;
+        hasDoubleJumped = false;
+    }
     #region ========================================= Ledge =============================================================================
 
     void HandleMantleLedge()
