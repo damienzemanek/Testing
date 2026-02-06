@@ -21,7 +21,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
      static readonly int Speed = Animator.StringToHash("Speed");
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
-     public enum LookDir { Fwd, Left, Right }
+     public enum LookDir { None, Left, Right }
+     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle }
 
     
     [BoxGroup("References")] [SerializeField] Animator animator; 
@@ -43,6 +44,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         set => moveDecay.Time = value;
     }
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir moveDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isMantled;
@@ -59,6 +61,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
     
     [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
+    [BoxGroup("Orientation")] [SerializeField] MouseCallbackZones mouseZones;
     
     AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
     [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveGrounded;
@@ -76,6 +79,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     [BoxGroup("Animation")] [SerializeField] float ANIM_speedStep = 0.05f;
     [BoxGroup("Animation")] [SerializeField] float moveAnimJitterTolerance = 0.2f;
     [BoxGroup("Animation")] [SerializeField] Animatable animatable;
+    [BoxGroup("Animation")] [SerializeField] AnimState animState;
+    
     static readonly int jumpAnim = Animator.StringToHash("jump");
     static readonly int dblJumpAnim = Animator.StringToHash("dbljump");
     static readonly int inAirAnim = Animator.StringToHash("inair");
@@ -84,7 +89,9 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     static readonly int climbAnim = Animator.StringToHash("climb");
     static readonly int shootAnim = Animator.StringToHash("shoot");
     static readonly int upperbodyidle = Animator.StringToHash("upperbodyidle");
-    
+    static readonly int moveLocomotion = Animator.StringToHash("Move");
+    static readonly int moveBackLocomotion = Animator.StringToHash("MoveBack");
+
     
     
     void OnEnable()
@@ -118,6 +125,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         void OnLand(bool landed)
         {
             if (!landed) return;
+
+            animState = AnimState.Locomotion;
             jumpDelay.Start();
             animatable.Animate(landAnim);
             hasJumped = false;
@@ -126,6 +135,14 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;
+        
+        // Looking at the player from the front, reverses the directions (like a mirror)
+        float halfScreenWidth = mouseZones.w * 0.5f;
+        float screenHeight = mouseZones.h;
+        
+        mouseZones.AddInitalZones(
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { HandleLookInDirection(LookDir.Right); }),
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => {HandleLookInDirection(LookDir.Left); }));
 
     }
 
@@ -133,7 +150,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
 
     void Update()
     {
-        UpdateAnimator();
+        if(animState == AnimState.Locomotion) UpdateAnimator();
+        if(isLooking && !isMantled) mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
@@ -142,14 +160,13 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
         rb.FallFaster(fallSettings);
         
         if(moving) HandleMovement();
-        HandleShooting();
+        if(!isMantled) HandleShooting();
     }
 
     void LateUpdate()
     {
         if(isMantled) return;
-        bulletSpawner.targetPosition = mouseLook.contactPoint;
-        mouseLook.LateUpdateMouseLook();
+        HandleLooking(); // Needs to be constantly polled for or else player will reset rot when not "looking"
     }
 
     void Move(bool v) => moving = v;
@@ -185,29 +202,26 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             if (move.x == 0) return;
             
             Vector3 dir = move.x < 0 ? left : right;
-            MoveChangeDirectionSlowdown(dir);
-            FaceDirectionWithY(dir);
+            moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
+            //FaceDirectionWithY(dir);
             ApplyMoveForce(dir);
         }
         
-        void FaceDirectionWithY(Vector3 dir)
-        {
-            Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
-            facing.transform.rotation = Quaternion.Euler(newDir);   
-        }
-        void MoveChangeDirectionSlowdown(Vector3 dir)
-        {
-            LookDir newFacingDir = (dir.x < 0) ? LookDir.Left : LookDir.Right;
-            if (newFacingDir != facingDir) NewFaceDirection();
-            facingDir = newFacingDir;
-        }
+        // DEPRACTED
+        // void FaceDirectionWithY(Vector3 dir)
+        // {
+        //     Vector3 newDir = new Vector3().With(y: -dir.x * NINETYF);
+        //     facing.transform.rotation = Quaternion.Euler(newDir);   
+        // }
+        
+
         void ApplyMoveForce(Vector3 dir)
         {
             float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.runForce : movement.walkForce);
             float actualSpeed = running ? runSpeedIncludingDecay : movement.walkForce;
             if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
             if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
-            rb.AddForce( dir * actualSpeed, movement.forceMode);
+            rb.AddForce(dir * actualSpeed, movement.forceMode);
         }
     }
 
@@ -224,6 +238,8 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             if (hasJumped) return;
             if (jumpOnCooldown) return;
             if (!isGrounded) return;
+            
+            animState = AnimState.Jump;
             animatable.Animate(jumpAnim);
             rb.Jump(jumpSettings);
             hasJumped = true;
@@ -239,8 +255,13 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
             //print("dbl jumped");
         }
     }
-    
-    void UpdateAnimator() => animator.SetFloat(Speed, currentSpeed);
+
+    void UpdateAnimator()
+    {
+        animator.SetFloat(Speed, currentSpeed);
+        if(facingDir != moveDir) animatable.Animate(moveBackLocomotion);
+        else animatable.Animate(moveLocomotion);
+    }
 
     void HandleShooting()
     {
@@ -249,22 +270,36 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
 
         void ShootImplementation()
         {
+            bulletSpawner.targetPosition = mouseLook.contactPoint;
             if (bulletSpawner.fireTimer.isRunning) return;
             print("shooting");
             bulletSpawner.Spawn();
             animatable.Animate(shootAnim, layer: 1, restart: true);
         }
     }
+
+    void HandleLooking()
+    {
+        mouseLook.LateUpdateMouseLook();
+    }
+
+    void HandleLookInDirection(LookDir dir)
+    {
+        print("looking in dir: " + dir);
+        if (dir == LookDir.Left) facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+        if (dir == LookDir.Right) facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+        facingDir = dir;
+    }
     
-    
-    #region  Ledge
+    #region ========================================= Ledge =============================================================================
 
     void HandleMantleLedge()
     {
-        if(ledgeData.dir != facingDir) return;
+        if(ledgeData.dir == facingDir) return;
         isMantled = true;
         rb.isKinematic = true;
         transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - movement.mantleXOffset);
+        animState = AnimState.Mantle;
         animatable.Animate(mantleAnim);
     }
     
@@ -272,6 +307,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     {
         isMantled = false;
         rb.isKinematic = false;
+        animState = AnimState.InAir;
         animatable.CrossFade(inAirAnim);
     }
 
@@ -284,6 +320,7 @@ public class TwoDimensionalController : MonoBehaviour, ITimerUser
     {
         isMantled = false;
         rb.isKinematic = false;
+        animState = AnimState.Locomotion;
         transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + movement.mantleXOffset);
     }
     

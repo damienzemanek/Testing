@@ -1,7 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using static EMILtools.Extensions.MouseLookEX.MouseCallbackZones;
 
 namespace EMILtools.Extensions
 {
@@ -51,6 +54,72 @@ namespace EMILtools.Extensions
             }
         }
 
+        [Serializable]
+        public class MouseCallbackZones
+        { 
+            public float w = Screen.width;
+            public float h = Screen.height;
+            
+            [Serializable]
+            public class CallbackZone
+            {
+                public Rect zone;
+                [ShowInInspector, ReadOnly] bool wasInside;
+                public PersistentAction callback;
+                
+                public void CheckZone(Vector2 mousePos)
+                {
+                    bool inside = zone.Contains(mousePos);
+                    if(inside && !wasInside) callback.Invoke();
+                    wasInside = inside;
+                }
+
+                public CallbackZone(Rect zone)
+                {
+                    this.zone = zone;
+                    wasInside = false;
+                    callback = new PersistentAction();
+                }
+            }
+
+            public void CheckAllZones(Vector2 mousePos)
+            {
+                if(callbackZones == null) Debug.LogError("No callback zones found, make sure to add some with AddInitialZones or AddZone");
+                foreach (var zone in callbackZones)
+                    zone.CheckZone(mousePos);
+            }
+            
+            [BoxGroup("References")] public List<CallbackZone> callbackZones;
+        }
+        
+        /// <summary>
+        /// Add all zones needed in the beginning
+        /// </summary>
+        /// <param name="zones"></param>
+        /// <param name="zonesToAdd"></param>
+        public static void AddInitalZones(this MouseCallbackZones zones, params (Rect rect, Action method)[] zonesToAdd)
+        {
+            if (zones.callbackZones == null) zones.callbackZones = new List<CallbackZone>();
+            
+            for(int i = 0; i < zonesToAdd.Length; i++)
+                zones.callbackZones.AddGet(new CallbackZone(zonesToAdd[i].rect))
+                    .callback.Add(zonesToAdd[i].method);
+
+        }
+        
+         /// <summary>
+         /// Add a zone to the list of zones, can be used at runtime
+         /// </summary>
+         /// <param name="zones"></param>
+         /// <param name="rect"></param>
+         /// <param name="method"></param>
+        public static void AddZone(this MouseCallbackZones zones, Rect rect, Action method)
+        {
+            if (zones.callbackZones == null) zones.callbackZones = new List<CallbackZone>();
+            zones.callbackZones.AddGet(new CallbackZone(rect)).callback.Add(method);
+        }
+        
+
 
         [Serializable]
         public class RotateToMouseWorldSpace
@@ -71,6 +140,7 @@ namespace EMILtools.Extensions
                 [ShowIf("clampY")] public Vector2 clampYrot;
                 [ShowIf("clampZ")] public Vector2 clampZrot;
             }
+            
             
             [BoxGroup("References")] public RotatingObject[] rotatingObjects;
             [BoxGroup("References")] public Camera cam;
