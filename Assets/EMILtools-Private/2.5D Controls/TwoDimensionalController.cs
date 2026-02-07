@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using EMILtools.Core;
 using EMILtools.Extensions;
+using EMILtools.Signals;
 using EMILtools.Timers;
 using KBCore.Refs;
 using Sirenix.OdinInspector;
@@ -9,10 +11,11 @@ using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
+using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
 
-public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
+public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 {
      Vector3 left = Vector3.left;
      Vector3 right = Vector3.right;
@@ -22,6 +25,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
      public enum LookDir { None, Left, Right }
      public enum AnimState { Locomotion, Jump, InAir, Land, Mantle }
+     public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
 
     
     [BoxGroup("References")] [SerializeField] Animator animator; 
@@ -107,7 +111,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         MouseZoneGuards = new GuardsImmutable(("Not Looking", () => !isLooking),
                                               ("Mantled", () => isMantled));
         
-        moveDecay = new DecayTimer(movement.runForce, movement.decayScalar);
+        moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
         jumpDelay = new CountdownTimer(jumpSettings.cooldown);
         turnSlowdown = new CountdownTimer(turnSlowDownDuration);
         this.InitializeTimers((moveDecay, false),
@@ -128,6 +132,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); }),
             (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
+        this.CacheStats();
     }
 
     void Start() => moveDecay.Start();
@@ -234,8 +239,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         
         void ApplyMoveForce(Vector3 dir)
         {
-            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.runForce : movement.walkForce);
-            float actualSpeed = running ? runSpeedIncludingDecay : movement.walkForce;
+            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.maxSpeed : movement.moveForce.Value);
+            float actualSpeed = running ? runSpeedIncludingDecay : movement.moveForce.Value;
             if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
             if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
             rb.AddForce(dir * actualSpeed, movement.forceMode);
@@ -342,6 +347,5 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         this.ShutdownTimers();
     }
-    
-    
+
 }

@@ -11,13 +11,14 @@ using EMILtools.Timers;
 using EMILtools.Extensions;
 using EMILtools.Signals;
 using static EMILtools.Signals.ModiferRouting;
+using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Signals.StatTags;
 using static EMILtools.Timers.TimerUtility;
 
 public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 {
-    public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
+    public Dictionary<Type, IStat> Stats { get; set; }
 
     [Header("References")]
     [SerializeField, Self] Animator animator;
