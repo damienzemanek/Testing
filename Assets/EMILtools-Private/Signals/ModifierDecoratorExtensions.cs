@@ -200,24 +200,6 @@ namespace EMILtools.Signals
             return data;
         }
         
-        public static (TMod, TTag, IStatUser) WithToggleable<T, TMod, TTag, TGate>(this (TMod mod, TTag tag, IStatUser user) data,
-            out StatModDecToggleable<T, TMod, TTag, TGate> toggleHandle,
-            ref Mod<T, TMod, TTag> modref)
-                where T : struct
-                where TMod : struct, IStatModStrategy<T>
-                where TTag : struct, IStatTag
-                where TGate : class, IGate, new()
-        {
-            // Not setting the ref to the modifier strategy here
-            // that happens after sending the modifier to the IStatUser
-            IStatModDecorator<T, TTag> decor = toggleHandle 
-                = new StatModDecToggleable<T, TMod, TTag, TGate>(data.mod.hash, false);
-            
-            modref.decorators.Add(toggleHandle);
-            data.user.AddDecorator<T, TMod, TTag>(decor);
-
-            return data;
-        }
 
     }
 }

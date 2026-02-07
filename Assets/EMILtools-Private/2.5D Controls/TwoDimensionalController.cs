@@ -12,7 +12,6 @@ using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
-using static EMILtools.Signals.ModExtensions;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Signals.StatTags;
@@ -89,7 +88,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable LookGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable MouseZoneGuards;
 
-    public Mod<float, MathMod, Speed> speedMod = new(new MathMod(v => v * 1.5f));
+    public MathMod speedMod = new MathMod(v => v * 1.5f);
     
     
     void OnEnable()
@@ -113,7 +112,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     {
         this.CacheStats();
         
-        this.Modify<Speed>(speedMod).WithToggleable<float, MathMod, Speed, RI> (out var toggleRun, ref speedMod);
+        this.Modify<Speed>(speedMod).WithToggleable<float, MathMod, Speed, RI>(out var toggleRun);
         
         // Super easy to check what flags influence what methods
         MoveGuards = new GuardsImmutable(("Not Moving", () => !moving)); // Cant move is !moving
