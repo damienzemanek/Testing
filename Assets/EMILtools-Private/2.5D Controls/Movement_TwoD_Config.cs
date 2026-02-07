@@ -13,7 +13,6 @@ using static EMILtools.Signals.StatTags;
 public class Movement_TwoD_Config : ScriptableObject, IStatHolder
 {
     [ShowInInspector] public readonly ReactiveInterceptRT<Stat<float, Speed>> moveForce = new ReactiveInterceptRT<Stat<float, Speed>>(200);
-    [ShowInInspector] public readonly StatModDecToggleable<float, MathMod, Speed, Bool> runMod;
     
     [SerializeField] public ForceMode forceMode = ForceMode.Force;
     [SerializeField] public Ref<float> decayScalar = 2.5f;

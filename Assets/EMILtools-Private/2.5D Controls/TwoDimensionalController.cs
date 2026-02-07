@@ -7,11 +7,15 @@ using EMILtools.Signals;
 using EMILtools.Timers;
 using KBCore.Refs;
 using Sirenix.OdinInspector;
+using Sirenix.Utilities;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Extensions.PhysEX;
+using static EMILtools.Signals.ModExtensions;
 using static EMILtools.Signals.ModiferRouting;
+using static EMILtools.Signals.ModifierStrategies;
+using static EMILtools.Signals.StatTags;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
 
@@ -38,10 +42,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool running = false;
+
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveInterceptVT<bool> isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
-    float currentSpeed // Represents the move alpha 
+    float speedAlpha // Represents the move alpha 
     {
         get => moveDecay != null ? moveDecay.Time : ZEROF;
         set => moveDecay.Time = value;
@@ -83,6 +88,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable ShootGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable LookGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable MouseZoneGuards;
+
+    public Mod<float, MathMod, Speed> speedMod = new(new MathMod(v => v * 1.5f));
     
     
     void OnEnable()
@@ -104,6 +111,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
 
     void Awake()
     {
+        this.CacheStats();
+        
+        this.Modify<Speed>(speedMod).WithToggleable<float, MathMod, Speed, RI> (out var toggleRun, ref speedMod);
+        
         // Super easy to check what flags influence what methods
         MoveGuards = new GuardsImmutable(("Not Moving", () => !moving)); // Cant move is !moving
         ShootGuards = new GuardsImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
@@ -119,7 +130,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
                                 (turnSlowdown, true));
         
         isGrounded.core.Reactions.Add(OnLand);
-        
+        isRunning.core.Reactions.Add((v) => toggleRun.enabled.Value = v);
         
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;
@@ -132,15 +143,20 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
             (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); }),
             (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
-        this.CacheStats();
+
+        
+        
+        
     }
+    
+    
 
     void Start() => moveDecay.Start();
 
     void Update()
     {
         if(animController.state == AnimState.Locomotion)
-            animController.UpdateLocomotion(facingDir, moveDir, currentSpeed);
+            animController.UpdateLocomotion(facingDir, moveDir, speedAlpha);
         if(!MouseZoneGuards) mouseZones.CheckAllZones(input.mouse);
     }
     
@@ -189,7 +205,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         }
     }
     void Move(bool v) => moving = v;
-    void Run(bool v) => running = v;
+    void Run(bool v) => isRunning.Value = v;
     void Look(bool v) => isLooking = v;
     void Shoot(bool v) => isShooting = v;
     
@@ -203,22 +219,21 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         if (MoveGuards) return;
         
         
-        if (!running) Walk();
+        if (!isRunning) Walk();
         else Run();
         Move(input.movement);
         
         void Walk()
         {
-            if(currentSpeed < WALK_ALPHA_MAX) 
-                currentSpeed += animController.speedStep;
-            currentSpeed = ToleranceSet(currentSpeed, WALK_ALPHA_MAX, animController.moveJitterTolerance);
+            if(speedAlpha < WALK_ALPHA_MAX) speedAlpha += animController.speedStep;
+            speedAlpha = ToleranceSet(speedAlpha, WALK_ALPHA_MAX, animController.moveJitterTolerance);
         }
         void Run()
         {
-            if (currentSpeed > RUN_ALPHA_MAX)
-                currentSpeed = RUN_ALPHA_MAX;
-            else if(currentSpeed < RUN_ALPHA_MAX) 
-                currentSpeed += animController.speedStep;
+            if (speedAlpha > RUN_ALPHA_MAX)
+                speedAlpha = RUN_ALPHA_MAX;
+            else if(speedAlpha < RUN_ALPHA_MAX) 
+                speedAlpha += animController.speedStep;
         }
         void Move(Vector2 move)
         {
@@ -239,8 +254,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         
         void ApplyMoveForce(Vector3 dir)
         {
-            float runSpeedIncludingDecay = (currentSpeed > WALK_ALPHA_MAX ? movement.maxSpeed : movement.moveForce.Value);
-            float actualSpeed = running ? runSpeedIncludingDecay : movement.moveForce.Value;
+            //float runSpeedIncludingDecay = (speedAlpha > WALK_ALPHA_MAX ? movement.maxSpeed : movement.moveForce.Value);
+            //float actualSpeed = running ? runSpeedIncludingDecay : movement.moveForce.Value;
+            
+            float actualSpeed = movement.moveForce.Value;
             if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
             if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
             rb.AddForce(dir * actualSpeed, movement.forceMode);
@@ -285,6 +302,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         hasJumped = false;
         hasDoubleJumped = false;
     }
+    
+    
     #region ========================================= Ledge =============================================================================
 
     void HandleMantleLedge()
