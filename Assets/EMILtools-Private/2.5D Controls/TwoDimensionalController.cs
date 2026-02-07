@@ -287,7 +287,9 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         if(ledgeData.dir == facingDir) return;
         isMantled = true;
         rb.isKinematic = true;
-        transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x - movement.mantleXOffset);
+        float offset = movement.mantleXOffset;
+        if(ledgeData.dir == LookDir.Right) offset *= -1;
+        transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x + offset);
         animController.state = AnimState.Mantle;
         animController.animator.Play(animController.mantleAnim);
     }
@@ -310,7 +312,9 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         isMantled = false;
         rb.isKinematic = false;
         animController.state = AnimState.Locomotion;
-        transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x + movement.mantleXOffset);
+        float offset = movement.mantleXOffset;
+        if(ledgeData.dir == LookDir.Right) offset *= -1;
+        transform.position = ledgeData.point.position.With(x: ledgeData.point.position.x - offset);
     }
     
     
