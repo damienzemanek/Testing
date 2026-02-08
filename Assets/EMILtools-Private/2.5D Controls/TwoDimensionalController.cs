@@ -11,14 +11,11 @@ using Sirenix.Utilities;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
-using static EMILtools.Extensions.PhysEX;
-using static EMILtools.Signals.ModiferRouting;
-using static EMILtools.Signals.ModifierStrategies;
-using static EMILtools.Signals.StatTags;
 using static EMILtools.Timers.TimerUtility;
+using static FlowOutChain;
 using static Ledge;
 
-public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, IStatUser
+public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 {
      Vector3 left = Vector3.left;
      Vector3 right = Vector3.right;
@@ -27,7 +24,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
      public enum LookDir { None, Left, Right }
-     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle }
+     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb }
      public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
 
     
@@ -52,7 +49,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     }
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir moveDir;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveInterceptVT<bool> isGrounded;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isMantled;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isShooting;
@@ -67,29 +63,18 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
     [SerializeField, Self] AnimatorController_TwoD animController;
-    
-    [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
     [BoxGroup("Orientation")] [SerializeField] MouseCallbackZones mouseZones;
-    
-    AnimationCurve currentTurnSlowDownCurve => (isGrounded.Value ? turnSlowDownCurveGrounded : turnSlowDownCurveInAir);
-    [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveGrounded;
-    [BoxGroup("Turn Slow Down")] [SerializeField] AnimationCurve turnSlowDownCurveInAir;
-    [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownDuration = 0.1f;
-    [BoxGroup("Turn Slow Down")] [SerializeField] float turnSlowDownMult = 0.5f;
-
+    [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
+    [SerializeField] TurnSlowDown turnSlowDown;
     [BoxGroup("PhysEX")] [SerializeField] private float dblJumpMult = 1.5f;
-    [BoxGroup("PhysEX")] [SerializeField] JumpSettings jumpSettings;
-    [BoxGroup("PhysEX")] [SerializeField] GroundedSettings groundedSettings;
-    [BoxGroup("PhysEX")] [SerializeField] FallSettings fallSettings;
+    [BoxGroup("PhysEX")] [SerializeField, Self] AugmentPhysEX phys;
 
     
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable MoveGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable ShootGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable LookGuards;
     [BoxGroup("Guards")] [SerializeField] GuardsImmutable MouseZoneGuards;
-
-    public MathMod speedMod = new MathMod(v => v * 1.5f);
-    
+    public FlowImmutable cantJumpFlowOut;
     
     void OnEnable()
     {
@@ -110,9 +95,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
 
     void Awake()
     {
-        this.CacheStats();
-        
-        this.Modify<Speed>(speedMod).WithToggleable<float, MathMod, Speed, RI>(out var toggleRun);
         
         // Super easy to check what flags influence what methods
         MoveGuards = new GuardsImmutable(("Not Moving", () => !moving)); // Cant move is !moving
@@ -122,14 +104,13 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
                                               ("Mantled", () => isMantled));
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
-        jumpDelay = new CountdownTimer(jumpSettings.cooldown);
-        turnSlowdown = new CountdownTimer(turnSlowDownDuration);
+        jumpDelay = new CountdownTimer(phys.jumpSettings.cooldown);
+        turnSlowdown = new CountdownTimer(turnSlowDown.duration);
         this.InitializeTimers((moveDecay, false),
                                 (jumpDelay, false),
                                 (turnSlowdown, true));
         
-        isGrounded.core.Reactions.Add(OnLand);
-        isRunning.core.Reactions.Add((v) => toggleRun.enabled.Value = v);
+        phys.isGrounded.core.Reactions.Add(OnLand);
         
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;
@@ -137,19 +118,22 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         // Looking at the player from the front, reverses the directions (like a mirror)
         float halfScreenWidth = mouseZones.w * 0.5f;
         float screenHeight = mouseZones.h;
-        
+        mouseZones.callbackZones = null;
         mouseZones.AddInitalZones(
             (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); }),
             (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
 
-        
-        
-        
+        cantJumpFlowOut = new FlowImmutable(
+            BranchIf("Is Mantled", () => isMantled, "Climb", HandleClimb),
+            BranchIf("Can Mantle", () => canMantle, "Mantle", HandleMantleLedge),
+            BranchIf("Has Jumped", () => hasJumped, "Double Jump", HandleDoubleJump),
+            ReturnIf("Jump Cooldown", () => jumpOnCooldown),
+            ReturnIf("In the Air", () => !phys.isGrounded));
     }
     
     
-
+    
     void Start() => moveDecay.Start();
 
     void Update()
@@ -161,9 +145,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     
     void FixedUpdate()
     {
-        isGrounded.Value = transform.IsGrounded(ref groundedSettings);
-        rb.FallFaster(fallSettings);
-        
         HandleMovement();
         HandleShooting();
     }
@@ -172,37 +153,29 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     {
         HandleLooking(); // Needs to be constantly polled for or else player will reset rot when not "looking"
     }
+    
+    
+    
+    
+    
 
     void Jump()
     {
-        if (isMantled) { HandleClimb(); return; }
-        if (canMantle) { HandleMantleLedge(); return; }
-        if (hasJumped) { HandleDoubleJump(); return; }
-        
-        HandleFirstJump();
-        
-        void HandleFirstJump()
-        {
-            if (hasJumped) return;
-            if (jumpOnCooldown) return;
-            if (!isGrounded) return;
+        if (cantJumpFlowOut) return;
             
-            animController.state = AnimState.Jump;
-            animController.animator.Play(animController.jumpAnim);
-            rb.Jump(jumpSettings);
-            hasJumped = true;
-            //print("jumped");
-        }
-
-        void HandleDoubleJump()
-        {
-            if (hasDoubleJumped) return;
-            animController.animator.Play(animController.dblJumpAnim);
-            rb.AddForce(jumpSettings.jumpForce * dblJumpMult, jumpSettings.forceMode);
-            hasDoubleJumped = true;
-            //print("dbl jumped");
-        }
+        animController.Play(animController.jump);
+        rb.Jump(phys.jumpSettings);
+        hasJumped = true;
     }
+    
+    void HandleDoubleJump()
+    {
+        if (hasDoubleJumped) return;
+        animController.Play(animController.dbljump);
+        rb.AddForce(phys.jumpSettings.jumpForce * dblJumpMult, phys.jumpSettings.forceMode);
+        hasDoubleJumped = true;
+    }
+    
     void Move(bool v) => moving = v;
     void Run(bool v) => isRunning.Value = v;
     void Look(bool v) => isLooking = v;
@@ -213,10 +186,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
     /// <summary>
     /// Sequencing for movement
     /// </summary>
-    void HandleMovement()
-    {
-        if (MoveGuards) return;
-        
+    void HandleMovement() { if (MoveGuards) return;
         
         if (!isRunning) Walk();
         else Run();
@@ -237,11 +207,19 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         void Move(Vector2 move)
         {
             if (move.x == 0) return;
+            LookDir prevMoveDir = moveDir;
             
             Vector3 dir = move.x < 0 ? left : right;
             moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
             //FaceDirectionWithY(dir);
             ApplyMoveForce(dir);
+            
+            if (prevMoveDir != moveDir)
+            {
+                turnSlowdown.Restart();
+                if(isMantled) HandleUnMantleLedge();
+            }
+            
         }
         
         // DEPRACTED
@@ -253,35 +231,31 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         
         void ApplyMoveForce(Vector3 dir)
         {
-            //float runSpeedIncludingDecay = (speedAlpha > WALK_ALPHA_MAX ? movement.maxSpeed : movement.moveForce.Value);
-            //float actualSpeed = running ? runSpeedIncludingDecay : movement.moveForce.Value;
             
-            float actualSpeed = movement.moveForce.Value;
-            if (turnSlowdown.isRunning) actualSpeed *= currentTurnSlowDownCurve.Evaluate(Flip01(turnSlowdown.Progress));
-            if (!isGrounded) actualSpeed *= fallSettings.inAirMoveScalar;
+            float runSpeedIncludingDecay = (speedAlpha > WALK_ALPHA_MAX ? movement.maxSpeed : movement.moveForce);
+            float actualSpeed = isRunning ? runSpeedIncludingDecay : movement.moveForce;
+            if (turnSlowdown.isRunning) actualSpeed *= turnSlowDown.Eval(phys.isGrounded, turnSlowdown.Progress);
+            if (!phys.isGrounded) actualSpeed *= phys.fallSettings.inAirMoveScalar;
             rb.AddForce(dir * actualSpeed, movement.forceMode);
         }
     }
-    void HandleShooting()
-    {
-        if (ShootGuards) return;
+    void HandleShooting() { if (ShootGuards) return;
         
         if (isShooting) StartCoroutine(ShootImplementation());
         else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);
 
         IEnumerator ShootImplementation()
         {
-            bulletSpawner.targetPosition = mouseLook.contactPoint;
+            bulletSpawner.targetPosition = mouseLook.core.contactPoint;
             if (bulletSpawner.fireTimer.isRunning) yield break;
-            animController.animator.Play(animController.shootAnim, layer: 1, normalizedTime: 0f);
+            animController.animator.Play(animController.shoot, layer: 1, normalizedTime: 0f);
             yield return null;
             bulletSpawner.Spawn();
         }
     }
-    void HandleLooking()
-    {
-        if (LookGuards) return;
-        mouseLook.LateUpdateMouseLook();
+    void HandleLooking() { if (LookGuards) return;
+        
+        mouseLook.Execute();
     }
 
     void FaceDirection(LookDir dir)
@@ -297,7 +271,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
 
         animController.state = AnimState.Locomotion;
         jumpDelay.Start();
-        animController.animator.Play(animController.landAnim);
+        animController.Play(animController.land);
         hasJumped = false;
         hasDoubleJumped = false;
     }
@@ -314,7 +288,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         if(ledgeData.dir == LookDir.Right) offset *= -1;
         transform.position = transform.position.With(y: ledgeData.point.position.y - playerHeight, x: ledgeData.point.position.x + offset);
         animController.state = AnimState.Mantle;
-        animController.animator.Play(animController.mantleAnim);
+        animController.Play(animController.mantle);
     }
     
     void HandleUnMantleLedge()
@@ -322,12 +296,12 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
         isMantled = false;
         rb.isKinematic = false;
         animController.state = AnimState.InAir;
-        animController.animator.CrossFade(animController.inAirAnim, 0.1f);
+        animController.animator.CrossFade(animController.airtime, 0.1f);
     }
 
     void HandleClimb()
     {
-        animController.animator.CrossFade(animController.climbAnim, 0.1f);
+        animController.animator.CrossFade(animController.climb, 0.1f);
     }
     
     public void CompleteClimb()
@@ -349,14 +323,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser, ISta
 
     public void CantMantleLedge() => canMantle = false;
     
-    /// <summary>
-    /// For Ledges and movement
-    /// </summary>
-    void NewFaceDirection()
-    {
-        turnSlowdown.Restart();
-        if(isMantled) HandleUnMantleLedge();
-    }
 
                     #endregion
     

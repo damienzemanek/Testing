@@ -16,6 +16,7 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
 
     public UnityAction Jump = delegate { };
     public UnityAction Interact = delegate { };
+    public UnityAction CallInTitan = delegate { };
 
     public Vector2 movement;
     public Vector2 mouse;
@@ -86,5 +87,10 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
     public void OnInteract(InputAction.CallbackContext context)
     {
         Interact?.Invoke();
+    }
+
+    public void OnCallInTitan(InputAction.CallbackContext context)
+    {
+        if(context.phase == InputActionPhase.Performed) CallInTitan?.Invoke();
     }
 }

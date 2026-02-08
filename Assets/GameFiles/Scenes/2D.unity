@@ -132,6 +132,8 @@ GameObject:
   - component: {fileID: 14127273}
   - component: {fileID: 14127276}
   - component: {fileID: 14127277}
+  - component: {fileID: 14127278}
+  - component: {fileID: 14127279}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -245,18 +247,21 @@ MonoBehaviour:
     targetAPosition: 1
     targetPosition: {x: 0, y: 0, z: 0}
   animController: {fileID: 14127277}
+  mouseZones: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
   mouseLook:
+    cam: {fileID: 1122801504}
+    core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
     rotatingObjects:
     - transform: {fileID: 125445833}
       flipX: 1
       flipY: 0
-      flipZ: 1
+      flipZ: 0
       clampX: 1
       clampY: 1
       clampZ: 1
-      clampXrot: {x: -70, y: 40}
-      clampYrot: {x: -15, y: 15}
-      clampZrot: {x: -20, y: 20}
+      clampXrot: {x: -30, y: 30}
+      clampYrot: {x: -30, y: 30}
+      clampZrot: {x: -30, y: 30}
     - transform: {fileID: 44595974}
       flipX: 0
       flipY: 0
@@ -267,178 +272,10 @@ MonoBehaviour:
       clampXrot: {x: -30, y: 30}
       clampYrot: {x: -30, y: 30}
       clampZrot: {x: -30, y: 30}
-    cam: {fileID: 1122801504}
-    maximumLength: 50
-    lookAtCollisions: 0
-    lookAtDirection: 0
-    lookAtPlane: 1
-    lookAtPlaneMask:
-      serializedVersion: 2
-      m_Bits: 64
-    contactPoint: {x: 0, y: 0, z: 0}
-  mouseZones:
-    w: 1920
-    h: 1080
-    callbackZones: []
-  turnSlowDownCurveGrounded:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -4.4694753
-      outSlope: -4.4694753
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.06348589
-      value: 0.7162514
-      inSlope: 1.2710813
-      outSlope: 1.2710813
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.41418627
-      outWeight: 0.1121756
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0.30298382
-      outSlope: 0.30298382
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  turnSlowDownCurveInAir:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: -3.3086221
-      outSlope: -3.3086221
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 0.2557221
-      value: 0.15391216
-      inSlope: -0.30818665
-      outSlope: -0.30818665
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 1
-      outWeight: 0.52656716
-    - serializedVersion: 3
-      time: 0.78703165
-      value: 0.2140539
-      inSlope: 0.5320809
-      outSlope: 0.5320809
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 3.6904364
-      outSlope: 3.6904364
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  turnSlowDownDuration: 0.6
-  turnSlowDownMult: 0.5
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  turnSlowDown: {fileID: 11400000, guid: 2d253e366a6dc3940a396789c0b35f5a, type: 2}
   dblJumpMult: 2.2
-  jumpSettings:
-    forceMode: 2
-    direction: {x: 0, y: 1, z: 0}
-    mult:
-      val: 130
-    cooldown:
-      val: 0.2
-    complexJump: 0
-    forceCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: -0.012325287
-        value: 0.9952049
-        inSlope: -1.3179865
-        outSlope: -1.3179865
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.16636556
-        value: 0.7596928
-        inSlope: -1.7852021
-        outSlope: -1.7852021
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 0.36810452
-        value: 0.30529237
-        inSlope: -0.2752931
-        outSlope: -0.2752931
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.84573317
-      - serializedVersion: 3
-        time: 0.7208527
-        value: 0.22617926
-        inSlope: -0.16490132
-        outSlope: -0.16490132
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.76964986
-        outWeight: 1
-      - serializedVersion: 3
-        time: 0.9321661
-        value: 0.0677991
-        inSlope: -0.54540503
-        outSlope: -0.54540503
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: -0.999487
-        outSlope: -0.999487
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    inputMaxDuration:
-      val: 1
-  groundedSettings:
-    feetPoint: {fileID: 0}
-    checkDist: 0.3
-    mask:
-      serializedVersion: 2
-      m_Bits: 63
-  fallSettings:
-    forceMode: 2
-    mult: 5
-    dir: {x: 0, y: -1, z: 0}
-    inAirMoveScalar: 0.5
+  phys: {fileID: 14127279}
 --- !u!114 &14127277
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,6 +292,83 @@ MonoBehaviour:
   moveJitterTolerance: 0.15
   animator: {fileID: 572845870}
   state: 0
+--- !u!114 &14127278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14127272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e9b203b5b7890f42b9e37e32f286173, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
+  posToMouse:
+    cam: {fileID: 1122801504}
+    core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
+    objectToMove: {fileID: 0}
+    offset: {x: 0, y: 0, z: 0}
+    lockX: 0
+    lockY: 1
+    lockZ: 0
+    lockPosX: 0
+    lockPosY: 0
+    lockPosZ: 0
+    lerpSpeed: 5
+    moveOptions: 0
+  effectCallInPrefab: {fileID: 9189904965710387160, guid: bdaafe9b8a6b6a04e81dfb527266f9c0, type: 3}
+  titanPrefab: {fileID: 7852413773931268109, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+  spawnVerticality: 100
+  spawnPointInAir: {x: 0, y: 0, z: 0}
+  titanReady: 0
+  progressTimer: {}
+  spawnTitanTimer: {}
+  progress: 0
+--- !u!114 &14127279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 14127272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6033e6a5120ffc04ebd3c909c9f28260, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpSettings:
+    forceMode: 2
+    direction: {x: 0, y: 1, z: 0}
+    mult:
+      val: 130
+    cooldown:
+      val: 0.2
+    complexJump: 0
+    forceCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    inputMaxDuration:
+      val: 0
+  groundedSettings:
+    feetPoint: {fileID: 0}
+    checkDist: 0.3
+    mask:
+      serializedVersion: 2
+      m_Bits: 63
+  fallSettings:
+    forceMode: 2
+    mult: 5
+    dir: {x: 0, y: -1, z: 0}
+    inAirMoveScalar: 0.5
+  rb: {fileID: 14127273}
+  isGrounded:
+    core:
+      _value: 0
 --- !u!1 &28109236
 GameObject:
   m_ObjectHideFlags: 0
@@ -1104,44 +1018,13 @@ MonoBehaviour:
     active: 1
     rotation: {x: -90, y: 0, z: 0}
     transform: {fileID: 738143149}
---- !u!1 &814281343
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 814281344}
-  m_Layer: 0
-  m_Name: ledge point
-  m_TagString: Untagged
-  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &814281344
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814281343}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.251, y: 7.778, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 348880988}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1051338297
+--- !u!43 &812405612
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-111344(Clone)(Clone)
+  m_Name: pb_Mesh-111344(Clone)(Clone)(Clone)(Clone)
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -1300,6 +1183,37 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &814281343
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 814281344}
+  m_Layer: 0
+  m_Name: ledge point
+  m_TagString: Untagged
+  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &814281344
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 814281343}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3.251, y: 7.778, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 348880988}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1076510151
 GameObject:
   m_ObjectHideFlags: 0
@@ -2736,132 +2650,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5465940246521907071, guid: cbd1d5dbfe05eba4db196be618a8d096, type: 3}
   m_PrefabInstance: {fileID: 1158167883}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1342381012
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1342381017}
-  - component: {fileID: 1342381016}
-  - component: {fileID: 1342381015}
-  - component: {fileID: 1342381014}
-  - component: {fileID: 1342381013}
-  m_Layer: 0
-  m_Name: Cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1342381013
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342381012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b24bd2ad771e814abb7ad2963d65394, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  cam: {fileID: 1122801504}
-  maximumLength: 10
-  flipX: 0
-  flipY: 0
-  flipZ: 0
---- !u!65 &1342381014
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342381012}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &1342381015
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342381012}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1342381016
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342381012}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &1342381017
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1342381012}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.72, z: -3.6}
-  m_LocalScale: {x: 0.5669, y: 0.5669, z: 1.7504927}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1359566435
 GameObject:
   m_ObjectHideFlags: 0
@@ -3631,7 +3419,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1724373274}
-  m_Mesh: {fileID: 1051338297}
+  m_Mesh: {fileID: 812405612}
 --- !u!23 &1724373278
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6072,7 +5860,7 @@ MonoBehaviour:
     m_AreaError: 15
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
-  m_Mesh: {fileID: 1051338297}
+  m_Mesh: {fileID: 812405612}
   m_VersionIndex: 2591
   m_IsSelectable: 1
   m_SelectedFaces: 
@@ -6545,4 +6333,3 @@ SceneRoots:
   - {fileID: 149609204}
   - {fileID: 1122801505}
   - {fileID: 1359566439}
-  - {fileID: 1342381017}

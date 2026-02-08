@@ -4,7 +4,8 @@ using System.Runtime.CompilerServices;
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using static EMILtools.Extensions.MouseLookEX.MouseCallbackZones;
+using static EMILtools.Extensions.MouseCallbackZones;
+using static EMILtools.Extensions.MouseLookEX;
 
 namespace EMILtools.Extensions
 {
@@ -54,43 +55,6 @@ namespace EMILtools.Extensions
             }
         }
 
-        [Serializable]
-        public class MouseCallbackZones
-        { 
-            public float w = Screen.width;
-            public float h = Screen.height;
-            
-            [Serializable]
-            public class CallbackZone
-            {
-                public Rect zone;
-                [ShowInInspector, ReadOnly] bool wasInside;
-                public PersistentAction callback;
-                
-                public void CheckZone(Vector2 mousePos)
-                {
-                    bool inside = zone.Contains(mousePos);
-                    if(inside && !wasInside) callback.Invoke();
-                    wasInside = inside;
-                }
-
-                public CallbackZone(Rect zone)
-                {
-                    this.zone = zone;
-                    wasInside = false;
-                    callback = new PersistentAction();
-                }
-            }
-
-            public void CheckAllZones(Vector2 mousePos)
-            {
-                if(callbackZones == null) Debug.LogError("No callback zones found, make sure to add some with AddInitialZones or AddZone");
-                foreach (var zone in callbackZones)
-                    zone.CheckZone(mousePos);
-            }
-            
-            [BoxGroup("References")] public List<CallbackZone> callbackZones;
-        }
         
         /// <summary>
         /// Add all zones needed in the beginning
@@ -118,12 +82,54 @@ namespace EMILtools.Extensions
             if (zones.callbackZones == null) zones.callbackZones = new List<CallbackZone>();
             zones.callbackZones.AddGet(new CallbackZone(rect)).callback.Add(method);
         }
-        
+
+         
+        [Serializable]
+        public class PositionToMouseWorldSpace
+        {
+            public Camera cam;
+            public MouseToWorldSpace core;
+            
+            bool isLerp => moveOptions == MoveOptions.Lerp;
+            
+            [BoxGroup("References")] public Transform objectToMove;
+            public enum MoveOptions { Teleport, Lerp }
+
+            public Vector3 offset = Vector3.zero;
+            public bool lockX;
+            public bool lockY;
+            public bool lockZ;
+            [ShowIf("lockX")] public float lockPosX;
+            [ShowIf("lockY")]public float lockPosY;
+            [ShowIf("lockZ")]public float lockPosZ;
+            [ShowIf("isLerp")] public float lerpSpeed = 5f;
+
+            public MoveOptions moveOptions;
+            
+            public void Execute()
+            {
+                switch (moveOptions)
+                {
+                    case MoveOptions.Teleport: objectToMove.position = PositionalInteroggative(); break;
+                    case MoveOptions.Lerp: objectToMove.position = Vector3.Lerp(objectToMove.position, PositionalInteroggative() + offset, Time.deltaTime * lerpSpeed); break;
+                }
+            }
+
+            Vector3 PositionalInteroggative()
+            {
+                Vector3 ret = core.GetHitPoint(cam) + offset;
+                if(lockX) ret.x = lockPosX;
+                if(lockY) ret.y = lockPosY;
+                if(lockZ) ret.z = lockPosZ;
+                return ret;
+            }
+        }
 
 
         [Serializable]
         public class RotateToMouseWorldSpace
         {
+            
             [Serializable]
             public struct RotatingObject
             {
@@ -140,55 +146,29 @@ namespace EMILtools.Extensions
                 [ShowIf("clampY")] public Vector2 clampYrot;
                 [ShowIf("clampZ")] public Vector2 clampZrot;
             }
-            
-            
+
+            public Camera cam;
+            public MouseToWorldSpace core;
             [BoxGroup("References")] public RotatingObject[] rotatingObjects;
-            [BoxGroup("References")] public Camera cam;
-            
-            [BoxGroup("Settings")] [SerializeField] float maximumLength;
-            [BoxGroup("Settings")] [SerializeField] public bool lookAtCollisions = false;
-            [BoxGroup("Settings")] [SerializeField] public bool lookAtDirection = true;
-            [BoxGroup("Settings")] [SerializeField] public bool lookAtPlane = false;
-            [BoxGroup("Settings")] [SerializeField] [ShowIf("lookAtPlane")]  public LayerMask lookAtPlaneMask;
-            
-            [BoxGroup("ReadOnly")] [ReadOnly] [ShowIf("lookAtPlane")] public Vector3 contactPoint; 
-            [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Vector3 direction;
-            [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion rotation;
-            Ray rayMouse;
+            [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public Quaternion rotation;
 
 
-            public void LateUpdateMouseLook()
-            {
-                RaycastHit hit;
-                var mousePos = Input.mousePosition;
-                rayMouse = cam.ScreenPointToRay(mousePos);
-                Debug.DrawRay(rayMouse.origin, rayMouse.direction * maximumLength, Color.red);
-                int layermask = 0;
-                if(lookAtPlane) layermask = lookAtPlaneMask.value;
-                if(Physics.Raycast (rayMouse.origin, rayMouse.direction, out hit, maximumLength, layermask))
-                {
-                    if(lookAtCollisions || lookAtPlane) RotateToMouseDirection(rotatingObjects,
-                        contactPoint = hit.point);
-                }
-                else if(lookAtDirection)
-                {
-                    var pos = rayMouse.GetPoint(maximumLength);
-                    RotateToMouseDirection(rotatingObjects, pos);
-                }
-            }
+
+            public void Execute()
+            => RotateToMouseDirection(rotatingObjects, core.GetHitPoint(cam));
 
             void RotateToMouseDirection (RotatingObject[] transform, Vector3 destination)
             {
                 foreach (var ro in transform)
                 {
-                    direction = destination - ro.transform.position;
+                    core.direction = destination - ro.transform.position;
 
-                    if (ro.flipX) direction.x *= -1;
-                    if (ro.flipY) direction.y *= -1;
-                    if (ro.flipZ) direction.z *= -1;
+                    if (ro.flipX) core.direction.x *= -1;
+                    if (ro.flipY) core.direction.y *= -1;
+                    if (ro.flipZ) core.direction.z *= -1;
 
                     // Base rotation
-                    rotation = Quaternion.LookRotation(direction, Vector3.up);
+                    rotation = Quaternion.LookRotation(core.direction, Vector3.up);
 
                     // Convert to euler
                     Vector3 euler = rotation.eulerAngles;
@@ -207,6 +187,8 @@ namespace EMILtools.Extensions
                     ro.transform.localRotation = Quaternion.Euler(euler);
                 }
             }
+            
+            public static implicit operator MouseToWorldSpace(RotateToMouseWorldSpace self) => self.core;
             
             
         }

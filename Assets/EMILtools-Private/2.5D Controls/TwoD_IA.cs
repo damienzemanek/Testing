@@ -80,6 +80,15 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CallInTitan"",
+                    ""type"": ""Button"",
+                    ""id"": ""01cb7729-cb60-44b4-9eb9-a8d990b04203"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -377,6 +386,17 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d36d4c19-2565-42bc-a900-21c32d734823"",
+                    ""path"": ""<Keyboard>/v"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CallInTitan"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -970,6 +990,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_CallInTitan = m_Player.FindAction("CallInTitan", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1055,6 +1076,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_CallInTitan;
     public struct PlayerActions
     {
         private @TwoD_IA m_Wrapper;
@@ -1065,6 +1087,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         public InputAction @Run => m_Wrapper.m_Player_Run;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @CallInTitan => m_Wrapper.m_Player_CallInTitan;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1092,6 +1115,9 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @CallInTitan.started += instance.OnCallInTitan;
+            @CallInTitan.performed += instance.OnCallInTitan;
+            @CallInTitan.canceled += instance.OnCallInTitan;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1114,6 +1140,9 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @CallInTitan.started -= instance.OnCallInTitan;
+            @CallInTitan.performed -= instance.OnCallInTitan;
+            @CallInTitan.canceled -= instance.OnCallInTitan;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1302,6 +1331,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnCallInTitan(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
