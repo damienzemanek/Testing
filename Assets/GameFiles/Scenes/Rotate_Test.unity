@@ -9626,12 +9626,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d919be5ed9b830549bba32732f1e6c9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  input: {fileID: 11400000, guid: aecffd41cac4d114ba09acf466c3578f, type: 2}
-  rb: {fileID: 1915108324}
-  camTransform: {fileID: 918446693}
-  cam: {fileID: 918446692}
-  shipCameraObject: {fileID: 1645503715}
-  cannonCameraComponent: {fileID: 748329305}
+  <Input>k__BackingField: {fileID: 11400000, guid: aecffd41cac4d114ba09acf466c3578f, type: 2}
+  <Functionality>k__BackingField:
+    modules: []
+    _update: []
+    _fixed:
+    - rid: 8765532302706213020
+    - rid: 8765532302706213031
+    - rid: 8765532302706213045
+    - rid: 8765532302706213047
+    - rid: 8765532302706213050
+    - rid: 8765532302706213051
+    - rid: 8765532302706213056
+    - rid: 8765532302706213057
+    - rid: 8765532302706213063
+    _late: []
+  <Config>k__BackingField: {fileID: 11400000, guid: 06fdabbc4faf46b459c06dce13f448ab, type: 2}
+  <Blackboard>k__BackingField:
+    <rb>k__BackingField: {fileID: 1915108324}
+    <camTransform>k__BackingField: {fileID: 918446693}
+    <transform>k__BackingField: {fileID: 1915108322}
+    <cam>k__BackingField: {fileID: 918446692}
+    <shipCameraObject>k__BackingField: {fileID: 1645503715}
+    <cannonCameraComponent>k__BackingField: {fileID: 748329305}
   thrustForceMode: 0
   thrustForce: 4
   thrustFOV:
@@ -9664,8 +9681,6 @@ MonoBehaviour:
     pauseProgress: 0
   defaultFOV: 70
   vfx_Thrust: {fileID: 1035236482}
-  rotateForceMode: 0
-  rotationScalar: 35
   cannonMouseLook:
     look: {x: 0, y: 0}
     rot: {x: 0, y: 0}
@@ -9691,6 +9706,94 @@ MonoBehaviour:
     fireInterval:
       val: 0.5
     fireTimer: {}
+    targetSetDirection: 0
+    direction: {x: 0, y: 0, z: 0}
+    targetAPosition: 0
+    targetPosition: {x: 0, y: 0, z: 0}
+  references:
+    version: 2
+    RefIds:
+    - rid: 8765532302706213020
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213031
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213045
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213047
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213050
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 1
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213051
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213056
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213057
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
+    - rid: 8765532302706213063
+      type: {class: ShipFunctionality/RotateModule, ns: , asm: Assembly-CSharp}
+      data:
+        isActive: 0
+        SetGateFlowOut:
+          links: []
+        ExecuteGateFlowOut:
+          links: []
+        <facade>k__BackingField: {fileID: 1915108321}
 --- !u!4 &1915108322
 Transform:
   m_ObjectHideFlags: 0

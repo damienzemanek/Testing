@@ -1,21 +1,26 @@
 using System;
+using EMILtools.Core;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static Ship_IA;
 
+[Serializable]
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader, IInterior<ShipController>
 {
+    public ShipController facade { get; set; }
+    
     public Ship_IA ia;
-    
-    public UnityAction<bool> Thrust = delegate { };
-    public UnityAction<Vector3, bool> Rotate = delegate { };
-    public UnityAction<bool> Fire = delegate { };
 
-    
-    public UnityAction Move = delegate { };
-    public UnityAction SwitchCam = delegate { };
+    public PersistentAction<bool> Thrust = new PersistentAction<bool>();
+    public PersistentAction<Vector3, bool> Rotate = new PersistentAction<Vector3, bool>();
+    public PersistentAction<bool> Fire = new  PersistentAction<bool>();
+
+
+    public PersistentAction Move;
+    public PersistentAction SwitchCam;
 
     public Vector3 rotation;
     public Vector2 mouse { get; set; }
@@ -41,12 +46,17 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
 
         void DoRotate()
         {
-            //Debug.Log("held");
+            Debug.Log("held count is " + Rotate.Count);
+            Rotate.PrintInvokeListNames();
             Vector2 v = context.ReadValue<Vector2>();
             rotation = new Vector3(v.y, 0f, -v.x);
             Rotate?.Invoke(rotation, true);
+            
         }
     }
+    
+    [Button]
+    void ButtonRotate() => Rotate?.Invoke(new Vector3(50, 1, 1), true);
 
     public void OnLook(InputAction.CallbackContext context)
     {

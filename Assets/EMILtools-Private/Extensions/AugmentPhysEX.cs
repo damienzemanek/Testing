@@ -18,6 +18,5 @@ public class AugmentPhysEX : MonoBehaviour
     {
         isGrounded.Value = transform.IsGrounded(ref groundedSettings);
         rb.FallFaster(fallSettings);
-
     }
 }

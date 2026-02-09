@@ -4,6 +4,7 @@ using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using static CamEX;
 using static CamEX.CurveValue;
@@ -11,25 +12,17 @@ using static Effectability;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static LifecycleEX;
+using static ShipFunctionality;
 
-public class ShipController : MonoBehaviour, ITimerUser
+[Serializable]
+public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, ShipConfig, ShipBlackboard, ShipController> , ITimerUser
 {
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Vector3 rotationVector;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isRotating;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isThrusting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isFiring;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] Quaternion camOffset => camTransform != null ? camTransform.rotation : Quaternion.identity;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool usingCannonCam = false;
-
     
-    [BoxGroup("References")] [SerializeField] ShipInputReader input;
-    [BoxGroup("References")] [SerializeField] Rigidbody rb;
-    [BoxGroup("References")] [SerializeField] Transform camTransform;
-    [BoxGroup("References")] [SerializeField] CinemachineCamera cam;
-    [BoxGroup("References")] [SerializeField] GameObject shipCameraObject;
-    [BoxGroup("References")] [SerializeField] Camera cannonCameraComponent;
-
     
     [BoxGroup("Thrust")] [SerializeField] ForceMode thrustForceMode = ForceMode.Force;
     [BoxGroup("Thrust")] [SerializeField] float thrustForce;
@@ -37,52 +30,56 @@ public class ShipController : MonoBehaviour, ITimerUser
     [BoxGroup("Thrust")] [SerializeField] float defaultFOV = 70f;
     [BoxGroup("Thrust")] [SerializeField] ParticleSystem vfx_Thrust;
     
-    [BoxGroup("Rotation")] [SerializeField] ForceMode rotateForceMode = ForceMode.Force;
-    [BoxGroup("Rotation")] [SerializeField] float rotationScalar;
-    
     [BoxGroup("Cannons")] [SerializeField] MouseLookSettings cannonMouseLook;
     [BoxGroup("Cannons")] [SerializeField] ProjectileSpawnManager cannonProjectileSpawner;
-
-
+    
+    
     private void Awake()
     {
+        Init();   
+        
         thrustFOV.SetInitialTime(1f);
         this.InitializeTimers((thrustFOV, false));
+        
+        
     }
 
     void Start()
     {
         CursorEX.Set(false, CursorLockMode.Locked);
         cannonMouseLook.updateMouseLook = false;
-        cannonCameraComponent.enabled = false;
+        Blackboard.cannonCameraComponent.enabled = false;
     }
 
     private void OnEnable()
     {
         CursorEX.Set(false, CursorLockMode.Locked);
-        input.Thrust += Thrust;
-        input.Rotate += Rotate;
-        input.SwitchCam += SwitchCam;
-        input.Fire += Fire;
+
+
+        Input.Thrust.Add(Thrust);
+        Input.SwitchCam.Add(SwitchCam);
+        Input.Fire.Add(Fire);
+        Functionality.Bind();
     }
 
     private void OnDisable()
     {
-        input.Thrust -= Thrust;
-        input.Rotate -= Rotate;
-        input.SwitchCam -= SwitchCam;
-        input.Fire -= Fire;
+        Input.Thrust.Remove(Thrust);
+        Input.SwitchCam.Remove(SwitchCam);
+        Input.Fire.Remove(Fire);
+        Functionality.Unbind();
     }
 
-    private void Update()
+    protected override void Update()
     {
-        cam.Lens.FieldOfView = thrustFOV.Evaluate * defaultFOV;
+        base.Update();
+        Blackboard.cam.Lens.FieldOfView = thrustFOV.Evaluate * defaultFOV;
         cannonMouseLook.UpdateMouseLook();
     }
 
-    private void FixedUpdate()
+    protected override void FixedUpdate()
     {
-        HandleRotation();
+        base.FixedUpdate();
         HandleThrust();
         HandleFiring();
     }
@@ -103,19 +100,13 @@ public class ShipController : MonoBehaviour, ITimerUser
             vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
         }
     }
-    void Rotate(Vector3 rotation, bool active)
-    {
-        if (usingCannonCam) return;
-        
-        rotationVector = rotation;
-        isRotating = active;
-    }
+    
     void SwitchCam()
     {
         usingCannonCam = !usingCannonCam;
         cannonMouseLook.updateMouseLook = usingCannonCam;
-        shipCameraObject.SetActive(!usingCannonCam);
-        cannonCameraComponent.enabled = usingCannonCam;
+        Blackboard.shipCameraObject.SetActive(!usingCannonCam);
+        Blackboard.cannonCameraComponent.enabled = usingCannonCam;
     }
     void Fire(bool active)
     {
@@ -128,24 +119,10 @@ public class ShipController : MonoBehaviour, ITimerUser
     }
     
     
-
-    void HandleRotation()
-    {
-        if (!isRotating)
-        {
-            rb.angularVelocity = Vector3.zero;
-            return;
-        }
-
-        Quaternion deltaScaled = Quaternion.Euler(rotationVector * rotationScalar);
-        Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * transform.rotation;
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, newRot, 0.1f);
-    }
     void HandleThrust()
     {
         if (!isThrusting) return;
-        rb.AddForce(transform.up * thrustForce, thrustForceMode);
+        Blackboard.rb.AddForce(transform.up * thrustForce, thrustForceMode);
     }
 
     void HandleFiring()
