@@ -13,22 +13,14 @@ public class ShipFunctionality : Functionalities, IInterior<ShipController>
 {
     public ShipController facade { get; set; }
 
-    public void MoreInit()
+    public void InitImplementation()
     {
-        Debug.Log(facade.Input);
-        Debug.Log(facade.Config);
-        AddRotateModule();
+        if (facade == null) Debug.LogError("missing facade");
         
-    }
-
-
-    [Button]
-    public void AddRotateModule()
-    {
-        if (facade == null) return;
-        Debug.Log(facade.Input.Rotate);
+        
         AddModule(new RotateModule(facade.Input.Rotate, facade));
     }
+
     
     
     [Serializable]
@@ -47,11 +39,7 @@ public class ShipFunctionality : Functionalities, IInterior<ShipController>
         [ShowInInspector, ReadOnly] Vector3 rotationVector;
 
 
-        public RotateModule(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade)
-        {
-            Debug.Log(action);
-            Debug.Log(facade.Config);
-        }
+        public RotateModule(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade) { }
 
         public override void InitImplementation()
             => ExecuteGateFlowOut.Add(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero);
@@ -61,11 +49,6 @@ public class ShipFunctionality : Functionalities, IInterior<ShipController>
 
         public override void ExecuteImplementation(float dt)
         {
-            Debug.Log(facade);
-            Debug.Log(facade.Config);
-            Debug.Log(facade.Config.rotate);
-            Debug.Log(facade.Config.rotate.scalar);
-            
             Quaternion deltaScaled = Quaternion.Euler(rotationVector * facade.Config.rotate.scalar);
             Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * facade.Blackboard.transform.rotation;
 

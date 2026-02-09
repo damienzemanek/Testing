@@ -11,8 +11,8 @@ public interface ICoreFacade { }
 public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCoreFacade>: ValidatedMonoBehaviour, ICoreFacade
     where TInputReader : ScriptableObject, IInputReader,      IInterior<TCoreFacade>
     where TFunctionality : Functionalities,                   IInterior<TCoreFacade>
-    where TConfig : Config,                                   IInterior<TCoreFacade>
     where TBlackboard : Blackboard,                           IInterior<TCoreFacade>
+    where TConfig : Config                                    // Config does not need to be an interior because it should not have a reference to the facade, it is just data
     where TCoreFacade : ICoreFacade       
 {
     bool coreFacadeInitialized = false;
@@ -35,7 +35,6 @@ public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCor
         Debug.Assert(Functionality != null, $"{name}: Functionality not assigned");
         
         Input.Init(this);
-        Config.Init(this);        // move up
         Blackboard.Init(this);    // move up
         
         // Functionality must be last because it depends on the Config and the Blackboard
@@ -63,6 +62,7 @@ public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCor
     }
 }
 
+
 public interface IInterior<TCoreFacade>
     where TCoreFacade : ICoreFacade
 {
@@ -72,8 +72,8 @@ public interface IInterior<TCoreFacade>
     {
         if (f is TCoreFacade t) facade = t;
         else Debug.LogError($"Facade of type {f.GetType()} is not of type {typeof(TCoreFacade)}" );
-        MoreInit();
+        InitImplementation();
     }
     
-    public virtual void MoreInit() { }
+    public virtual void InitImplementation() { }
 }

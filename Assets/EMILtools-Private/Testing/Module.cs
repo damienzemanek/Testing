@@ -42,7 +42,7 @@ public abstract class InputModuleInterior<TPublisherArgs, SetGateFlow, TCoreFaca
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, ICoreFacade
 {
-    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeReference] public TCoreFacade facade { get; set; }
+    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
 
     protected InputModuleInterior(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade) :
         base(action)
@@ -59,11 +59,8 @@ public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityMo
 
     public InputModule(PersistentAction<TPublisherArgs, bool> action)
     {
-        Debug.Log("recieved " + action);
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
-        Debug.Log("new action is " + this.action);
-
     }
     
     public bool isActive;
@@ -72,15 +69,7 @@ public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityMo
     public FlowMutable ExecuteGateFlowOut;
 
 
-    [Button]
-    public override void Bind()
-    {
-        Debug.Log(action);
-        Debug.Log(action.Count);
-        action.Add(OnSet);
-        Debug.Log(action.Count);
-
-    }
+    public override void Bind() => action.Add(OnSet);
     public override void Unbind() => action.Remove(OnSet);
     
     public override void Init()
@@ -94,11 +83,9 @@ public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityMo
     
     public void OnSet(TPublisherArgs args, bool v)
     {
-        Debug.Log("b");
         if (SetGateFlowOut != null && SetGateFlowOut.TryEarlyExit()) return;
         isActive = v;
         OnSetImplementation(args);
-        Debug.Log("a");
     }
     public abstract void OnSetImplementation(TPublisherArgs args);
 
