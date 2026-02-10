@@ -125,11 +125,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 
 
         cantJumpFlowOut = new FlowImmutable(
-            BranchIf("Is Mantled", () => isMantled, "Climb", HandleClimb),
-            BranchIf("Can Mantle", () => canMantle, "Mantle", HandleMantleLedge),
-            BranchIf("Has Jumped", () => hasJumped, "Double Jump", HandleDoubleJump),
-            ReturnIf("Jump Cooldown", () => jumpOnCooldown),
-            ReturnIf("In the Air", () => !phys.isGrounded));
+            Branch("Is Mantled", () => isMantled, "Climb", HandleClimb),
+            Branch("Can Mantle", () => canMantle, "Mantle", HandleMantleLedge),
+            Branch("Has Jumped", () => hasJumped, "Double Jump", HandleDoubleJump),
+            Return("Jump Cooldown", () => jumpOnCooldown),
+            Return("In the Air", () => !phys.isGrounded));
     }
     
     

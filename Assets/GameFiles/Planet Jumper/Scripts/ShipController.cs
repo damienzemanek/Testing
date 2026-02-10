@@ -17,21 +17,12 @@ using static ShipFunctionality;
 [Serializable]
 public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, ShipConfig, ShipBlackboard, ShipController> , ITimerUser
 {
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isRotating;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isFiring;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool usingCannonCam = false;
+    [BoxGroup("Mouse")] [PropertyOrder(-1)] [SerializeField] public MouseLookSettings cannonMouseLook;
     
     
-    
-    [BoxGroup("Cannons")] [SerializeField] MouseLookSettings cannonMouseLook;
-    [BoxGroup("Cannons")] [SerializeField] ProjectileSpawnManager cannonProjectileSpawner;
-    
-    
-    private void Awake()
+    void Awake()
     {
         Init();   
-        
     }
 
     void Start()
@@ -44,17 +35,11 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
     private void OnEnable()
     {
         CursorEX.Set(false, CursorLockMode.Locked);
-
-
-        Input.SwitchCam.Add(SwitchCam);
-        Input.Fire.Add(Fire);
         Functionality.Bind();
     }
 
     private void OnDisable()
     {
-        Input.SwitchCam.Remove(SwitchCam);
-        Input.Fire.Remove(Fire);
         Functionality.Unbind();
     }
 
@@ -63,45 +48,13 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
         base.Update();
         cannonMouseLook.UpdateMouseLook();
     }
-
-    protected override void FixedUpdate()
-    {
-        base.FixedUpdate();
-        HandleFiring();
-    }
     
     
     
-    void SwitchCam()
-    {
-        usingCannonCam = !usingCannonCam;
-        cannonMouseLook.updateMouseLook = usingCannonCam;
-        Blackboard.shipCameraObject.SetActive(!usingCannonCam);
-        Blackboard.cannonCameraComponent.enabled = usingCannonCam;
-    }
-    void Fire(bool active)
-    {
-        if (!usingCannonCam)
-        {
-            isFiring = false;
-            return;
-        }
-        isFiring = active;
-    }
-    
-    
-
-    void HandleFiring()
-    {
-        if (!isFiring) return;
-       cannonProjectileSpawner.Spawn();
-    }
-    
-
 
     private void OnDestroy()
     {
         this.ShutdownTimers();
-        cannonProjectileSpawner.ShutdownTimers();
+        Blackboard.cannonProjectileSpawner.ShutdownTimers();
     }
 }

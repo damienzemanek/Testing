@@ -17,7 +17,7 @@ namespace EMILtools_Private.Testing
     
         public Functionalities() => modules = new List<FunctionalityModule>();
 
-        public void Awake() { foreach (var t in modules)  t.AwakeTemplate(); }
+        public void Awake() { foreach (var t in modules)  t.AwakeTemplateCall(); }
         public void Bind() { foreach (var t in modules) t.Bind(); }
         public void Unbind() { foreach (var t in modules) t.Unbind(); }
     
@@ -50,7 +50,7 @@ namespace EMILtools_Private.Testing
         public void OnAwake()
         {
             AddModulesHere();
-            foreach (var t in modules)  t.AwakeTemplate();
+            foreach (var t in modules)  t.AwakeTemplateCall();
         }
 
         public abstract void AddModulesHere();

@@ -5,6 +5,6 @@ using UnityEngine;
 [Serializable]
 public class ShipConfig : Config
 {
-    public ShipFunctionality.RotateModuleSub.Config rotate;
+    public ShipFunctionality.RotateModuleToggleSub.Config rotate;
     public ShipFunctionality.ThrustModuleSub.Config thrust;
 }

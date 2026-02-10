@@ -31,50 +31,60 @@ public interface NO_PUBLISHER_ARGS { }
 [Serializable]
 public abstract class FunctionalityModule : IModule
 {
-    public abstract void AwakeTemplate();
+    public abstract void AwakeTemplateCall();
     public abstract void Bind();
     public abstract void Unbind();
-    public abstract void Execute(float dt);
+    public virtual void ExecuteTemplateCall(float dt) { }
 }
 
 
 [Serializable]
-public abstract class InputModuleSubInterior<TPublisherArgs, SetGateFlow, TCoreFacade> : InputModule<TPublisherArgs, SetGateFlow>
+public abstract class InputModuleHeldSubInterior<TPublisherArgs, SetGateFlow, TCoreFacade> : InputModuleHeld<TPublisherArgs, SetGateFlow>
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, ICoreFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
 
-    protected InputModuleSubInterior(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade) :
+    protected InputModuleHeldSubInterior(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade) :
         base(action)
     => this.facade = facade;
 }
 
 [Serializable]
-public abstract class InputModuleSubInterior<SetGateFlow, TCoreFacade> : InputModule<SetGateFlow>
+public abstract class InputModuleHeldSubInterior<SetGateFlow, TCoreFacade> : InputModuleHeld<SetGateFlow>
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, ICoreFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
 
-    protected InputModuleSubInterior(PersistentAction<bool> action, TCoreFacade facade) : base(action)
+    protected InputModuleHeldSubInterior(PersistentAction<bool> action, TCoreFacade facade) : base(action)
+        => this.facade = facade;
+    
+}
+
+[Serializable]
+public abstract class InputModulePressSubInterior<SetGateFlow, TCoreFacade> : InputModulePress<SetGateFlow>
+    where SetGateFlow : FlowOutChain, new()
+    where TCoreFacade : class, ICoreFacade
+{
+    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
+
+    protected InputModulePressSubInterior(PersistentAction action, TCoreFacade facade) : base(action)
         => this.facade = facade;
     
 }
 
 
 
-
-
 [Serializable]
-public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityModule
+public abstract class InputModuleHeld<TPublisherArgs, SetGateFlow> : FunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
     bool initialized;
 
     [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction<TPublisherArgs, bool> action;
 
-    public InputModule(PersistentAction<TPublisherArgs, bool> action)
+    public InputModuleHeld(PersistentAction<TPublisherArgs, bool> action)
     {
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
@@ -83,16 +93,16 @@ public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityMo
     public bool isActive;
 
     public SetGateFlow SetGateFlowOut;
-    public FlowMutable ExecuteGateFlowOut;
+    public FlowMutable ExecuteFlowOut;
 
 
     public override void Bind() => action.Add(OnSet);
     public override void Unbind() => action.Remove(OnSet);
     
-    public override void AwakeTemplate()
+    public override void AwakeTemplateCall()
     {
         if (initialized) return; initialized = true;
-        ExecuteGateFlowOut = new FlowMutable( ReturnIf("Not Active", () => !isActive) );
+        ExecuteFlowOut = new FlowMutable( Return("Not Active", () => !isActive) );
         Awake();
     }
 
@@ -106,23 +116,23 @@ public abstract class InputModule<TPublisherArgs, SetGateFlow> : FunctionalityMo
     }
     public abstract void OnSetImplementation(TPublisherArgs args);
 
-    public override void Execute(float dt) 
+    public override void ExecuteTemplateCall(float dt) 
     {
-        if (ExecuteGateFlowOut.TryEarlyExit()) return;
+        if (ExecuteFlowOut.TryEarlyExit()) return;
         Implementation(dt);
     }
     public abstract void Implementation(float dt);
 }
 
 [Serializable]
-public abstract class InputModule<SetGateFlow> : FunctionalityModule
+public abstract class InputModuleHeld<SetGateFlow> : FunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
     bool initialized;
 
     [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction<bool> action;
 
-    public InputModule(PersistentAction<bool> action)
+    public InputModuleHeld(PersistentAction<bool> action)
     {
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
@@ -131,35 +141,72 @@ public abstract class InputModule<SetGateFlow> : FunctionalityModule
     public bool isActive;
 
     public SetGateFlow SetGateFlowOut;
-    public FlowMutable ExecuteGateFlowOut;
+    public FlowMutable ExecuteFlowOut;
 
 
-    public override void Bind() => action.Add(OnSet);
-    public override void Unbind() => action.Remove(OnSet);
+    public override void Bind() => action.Add(OnSetTemplateCall);
+    public override void Unbind() => action.Remove(OnSetTemplateCall);
     
-    public override void AwakeTemplate()
+    public override void AwakeTemplateCall()
     {
         if (initialized) return; initialized = true;
-        ExecuteGateFlowOut = new FlowMutable( ReturnIf("Not Active", () => !isActive) );
+        ExecuteFlowOut = new FlowMutable( Return("Not Active", () => !isActive) );
         Awake();
     }
     
     public virtual void Awake() { }
     
-    public void OnSet(bool v)
+    public void OnSetTemplateCall(bool v)
     {
         if (SetGateFlowOut != null && SetGateFlowOut.TryEarlyExit()) return;
         isActive = v;
-        OnSetImplementation();
+        OnSet();
     }
-    public abstract void OnSetImplementation();
+    public abstract void OnSet();
 
-    public override void Execute(float dt) 
+    public override void ExecuteTemplateCall(float dt) 
     {
-        if (ExecuteGateFlowOut.TryEarlyExit()) return;
-        Implementation(dt);
+        if (ExecuteFlowOut.TryEarlyExit()) return;
+        Execute(dt);
     }
-    public abstract void Implementation(float dt);
+    public abstract void Execute(float dt);
+}
+
+[Serializable]
+public abstract class InputModulePress<SetGateFlow> : FunctionalityModule
+    where SetGateFlow : FlowOutChain, new()
+{
+    bool initialized;
+
+    [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction action;
+
+    public InputModulePress(PersistentAction action)
+    {
+        this.action = action;
+        OnPressFlowOut = new();
+    }
+    
+    public SetGateFlow OnPressFlowOut;
+
+
+    public override void Bind() => action.Add(OnPressTemplateCall);
+    public override void Unbind() => action.Remove(OnPressTemplateCall);
+    
+    public override void AwakeTemplateCall()
+    {
+        if (initialized) return; initialized = true;
+        Awake();
+    }
+    
+    public virtual void Awake() { }
+    
+    public void OnPressTemplateCall()
+    {
+        if (OnPressFlowOut.TryEarlyExit()) return;
+        OnPress();
+    }
+    public abstract void OnPress();
+    
 }
 
 

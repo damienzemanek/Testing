@@ -17,12 +17,51 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
 {
     public override void AddModulesHere()
     {
-        AddModule(new RotateModuleSub(facade.Input.Rotate, facade));
+        AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
         AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
+        AddModule(new FireModule(facade.Input.Fire, facade));
+        AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
     }
 
+
+
     [Serializable]
-    public class ThrustModuleSub : InputModuleSubInterior<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
+    public class SwitchCamModule : InputModulePressSubInterior<FlowMutable, ShipController>
+    {
+        public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
+
+        
+        public override void OnPress()
+        {
+            facade.Blackboard.usingCannonCam = !facade.Blackboard.usingCannonCam;
+            facade.cannonMouseLook.updateMouseLook = facade.Blackboard.usingCannonCam;
+            facade.Blackboard.shipCameraObject.SetActive(!facade.Blackboard.usingCannonCam);
+            facade.Blackboard.cannonCameraComponent.enabled = facade.Blackboard.usingCannonCam;
+        }
+        
+    }
+
+    
+
+    [Serializable]
+    public class FireModule : InputModuleHeldSubInterior<FlowMutable, ShipController>, FIXEDUPDATE
+    {
+        public FireModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
+
+        public override void Awake()
+            => ExecuteFlowOut.Add(Return(() => !facade.Blackboard.usingCannonCam));
+        
+        public override void OnSet() { }
+
+        public override void Execute(float dt)
+        => facade.Blackboard.cannonProjectileSpawner.Spawn();
+        
+        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+    }
+    
+
+    [Serializable]
+    public class ThrustModuleSub : InputModuleHeldSubInterior<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -45,7 +84,7 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
         }
 
 
-        public override void OnSetImplementation()
+        public override void OnSet()
         {
             if (isActive)
             {
@@ -61,20 +100,20 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
             }
         }
 
-        public override void Implementation(float dt)
+        public override void Execute(float dt)
         => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
 
         
         public void OnUpdateTick(float dt) => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
         
-        public void OnFixedTick(float dt) => Execute(dt);
+        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
     }
     
     
     
     
     [Serializable]
-    public class RotateModuleSub : InputModuleSubInterior<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
+    public class RotateModuleToggleSub : InputModuleHeldSubInterior<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -89,11 +128,11 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
         [ShowInInspector, ReadOnly] Vector3 rotationVector;
 
 
-        public RotateModuleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade) { }
+        public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade) { }
 
         public override void Awake()
         {
-            ExecuteGateFlowOut.Add(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero);
+            ExecuteFlowOut.Add(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero);
             Debug.Log("inited rotate module");
         }
         public override void OnSetImplementation(Vector3 rotation)
@@ -110,7 +149,7 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
 
         public void OnFixedTick(float dt)
         {
-            Execute(dt);
+            ExecuteTemplateCall(dt);
         }
     }
 
