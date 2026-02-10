@@ -9,9 +9,9 @@ public interface ICoreFacade { }
 
 [Serializable]
 public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCoreFacade>: ValidatedMonoBehaviour, ICoreFacade
-    where TInputReader : ScriptableObject, IInputReader,      IInterior<TCoreFacade>
-    where TFunctionality : Functionalities,                   IInterior<TCoreFacade>
-    where TBlackboard : Blackboard,                           IInterior<TCoreFacade>
+    where TInputReader : ScriptableObject, IInputReader,      IInteriorElement<TCoreFacade>
+    where TFunctionality : Functionalities<TCoreFacade>,      IInteriorElement<TCoreFacade>
+    where TBlackboard : Blackboard,                           IInteriorElement<TCoreFacade>
     where TConfig : Config                                    // Config does not need to be an interior because it should not have a reference to the facade, it is just data
     where TCoreFacade : ICoreFacade       
 {
@@ -46,7 +46,7 @@ public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCor
     protected virtual void Update()
     {
         if (!coreFacadeInitialized) return;
-        Functionality.Tick(Time.deltaTime);
+        Functionality.UpdateTick(Time.deltaTime);
     }
     
     protected virtual void FixedUpdate()
@@ -63,7 +63,7 @@ public class CoreFacade<TInputReader, TFunctionality, TConfig, TBlackboard, TCor
 }
 
 
-public interface IInterior<TCoreFacade>
+public interface IInteriorElement<TCoreFacade>
     where TCoreFacade : ICoreFacade
 {
     public TCoreFacade facade { get; set; }
@@ -72,8 +72,12 @@ public interface IInterior<TCoreFacade>
     {
         if (f is TCoreFacade t) facade = t;
         else Debug.LogError($"Facade of type {f.GetType()} is not of type {typeof(TCoreFacade)}" );
-        InitImplementation();
+        
+        Debug.Log("awaking " + GetType().Name + " from facade " + facade.GetType().Name);
+        OnAwake();
     }
     
-    public virtual void InitImplementation() { }
+    public virtual void OnAwake() { }
 }
+
+

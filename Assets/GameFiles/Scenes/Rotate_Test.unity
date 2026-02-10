@@ -9627,6 +9627,42 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Input>k__BackingField: {fileID: 11400000, guid: aecffd41cac4d114ba09acf466c3578f, type: 2}
+  <Config>k__BackingField: {fileID: 11400000, guid: 06fdabbc4faf46b459c06dce13f448ab, type: 2}
+  <Blackboard>k__BackingField:
+    <rb>k__BackingField: {fileID: 1915108324}
+    <camTransform>k__BackingField: {fileID: 918446693}
+    <cam>k__BackingField: {fileID: 918446692}
+    <shipCameraObject>k__BackingField: {fileID: 1645503715}
+    <cannonCameraComponent>k__BackingField: {fileID: 748329305}
+    <vfx_Thrust>k__BackingField: {fileID: 1035236482}
+    thrustFOV:
+      curve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0.018825531
+          value: 0.70695496
+          inSlope: 0.2986676
+          outSlope: 0.2986676
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0.2986676
+          outSlope: 0.2986676
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      operationScalar: 0.5
+      operation: 0
+      pauseProgress: 0
   <Functionality>k__BackingField:
     modules: []
     _update: []
@@ -9641,46 +9677,6 @@ MonoBehaviour:
     - rid: 8765532302706213057
     - rid: 8765532302706213063
     _late: []
-  <Config>k__BackingField: {fileID: 11400000, guid: 06fdabbc4faf46b459c06dce13f448ab, type: 2}
-  <Blackboard>k__BackingField:
-    <rb>k__BackingField: {fileID: 1915108324}
-    <camTransform>k__BackingField: {fileID: 918446693}
-    <transform>k__BackingField: {fileID: 1915108322}
-    <cam>k__BackingField: {fileID: 918446692}
-    <shipCameraObject>k__BackingField: {fileID: 1645503715}
-    <cannonCameraComponent>k__BackingField: {fileID: 748329305}
-  thrustForceMode: 0
-  thrustForce: 4
-  thrustFOV:
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0.024002075
-        value: 0.7010803
-        inSlope: 0.3062708
-        outSlope: 0.3062708
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0.3062708
-        outSlope: 0.3062708
-        tangentMode: 34
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    operationScalar: 0.5
-    operation: 0
-    pauseProgress: 0
-  defaultFOV: 70
-  vfx_Thrust: {fileID: 1035236482}
   cannonMouseLook:
     look: {x: 0, y: 0}
     rot: {x: 0, y: 0}

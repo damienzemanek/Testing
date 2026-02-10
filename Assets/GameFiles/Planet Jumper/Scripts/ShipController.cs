@@ -18,17 +18,11 @@ using static ShipFunctionality;
 public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, ShipConfig, ShipBlackboard, ShipController> , ITimerUser
 {
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isRotating;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isThrusting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isFiring;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] float cachedFOV;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool usingCannonCam = false;
     
     
-    [BoxGroup("Thrust")] [SerializeField] ForceMode thrustForceMode = ForceMode.Force;
-    [BoxGroup("Thrust")] [SerializeField] float thrustForce;
-    [BoxGroup("Thrust")] [SerializeField] CurveValue thrustFOV;
-    [BoxGroup("Thrust")] [SerializeField] float defaultFOV = 70f;
-    [BoxGroup("Thrust")] [SerializeField] ParticleSystem vfx_Thrust;
     
     [BoxGroup("Cannons")] [SerializeField] MouseLookSettings cannonMouseLook;
     [BoxGroup("Cannons")] [SerializeField] ProjectileSpawnManager cannonProjectileSpawner;
@@ -37,10 +31,6 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
     private void Awake()
     {
         Init();   
-        
-        thrustFOV.SetInitialTime(1f);
-        this.InitializeTimers((thrustFOV, false));
-        
         
     }
 
@@ -56,7 +46,6 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
         CursorEX.Set(false, CursorLockMode.Locked);
 
 
-        Input.Thrust.Add(Thrust);
         Input.SwitchCam.Add(SwitchCam);
         Input.Fire.Add(Fire);
         Functionality.Bind();
@@ -64,7 +53,6 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
 
     private void OnDisable()
     {
-        Input.Thrust.Remove(Thrust);
         Input.SwitchCam.Remove(SwitchCam);
         Input.Fire.Remove(Fire);
         Functionality.Unbind();
@@ -73,33 +61,16 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
     protected override void Update()
     {
         base.Update();
-        Blackboard.cam.Lens.FieldOfView = thrustFOV.Evaluate * defaultFOV;
         cannonMouseLook.UpdateMouseLook();
     }
 
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
-        HandleThrust();
         HandleFiring();
     }
     
     
-    void Thrust(bool active)
-    {
-        isThrusting = active;
-
-        if (active)
-        {
-            thrustFOV.DynamicStart(Operation.Increase);
-            vfx_Thrust.Play();
-        }
-        else
-        {
-            thrustFOV.DynamicStart(Operation.Decrease);
-            vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        }
-    }
     
     void SwitchCam()
     {
@@ -119,18 +90,12 @@ public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, Shi
     }
     
     
-    void HandleThrust()
-    {
-        if (!isThrusting) return;
-        Blackboard.rb.AddForce(transform.up * thrustForce, thrustForceMode);
-    }
 
     void HandleFiring()
     {
         if (!isFiring) return;
        cannonProjectileSpawner.Spawn();
     }
-    
     
 
 

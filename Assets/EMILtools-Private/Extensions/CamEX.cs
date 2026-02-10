@@ -22,6 +22,11 @@ public static class CamEX
         [ReadOnly] public float pauseProgress = NO_PAUSE;
         [ShowInInspector, ReadOnly] public virtual float Evaluate => (curve != null) ? curve.Evaluate(Progress) : 0;
 
+        public CurveValue() : base(new Ref<float>(1f))
+        {
+            curve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(1f, 1f));
+        }
+        
         public CurveValue(float _initialTime, AnimationCurve curve) : base(_initialTime)
             =>  this.curve = curve;
         public CurveValue(Ref<float> _initialTime, AnimationCurve curve) : base(_initialTime) 
@@ -32,6 +37,7 @@ public static class CamEX
         
         public override void TickImplementation(float deltaTime)
         {
+            Debug.Log("tick");
             if (operation == Operation.Increase)
             {
                 if (Time < initialTime)

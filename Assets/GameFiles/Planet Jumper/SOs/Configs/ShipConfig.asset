@@ -14,3 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotate:
     scalar: 30
+  thrust:
+    thrustForceMode: 0
+    thrustForce: 5
+    defaultFOV: 70

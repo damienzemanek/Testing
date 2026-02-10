@@ -5,22 +5,34 @@ using UnityEngine;
 namespace EMILtools_Private.Testing
 {
     [Serializable]
-    public abstract class Functionalities
+    public abstract class Functionalities<TCoreFacade> : IInteriorElement<TCoreFacade>
+        where TCoreFacade : ICoreFacade
     {
-        [SerializeReference] List<FunctionalityModule> modules;
-        [SerializeReference, HideInInspector] List<UPDATE> _update = new();
-        [SerializeReference, HideInInspector] List<FIXEDUPDATE> _fixed = new();
-        [SerializeReference, HideInInspector] List<LATEUPDATE> _late = new();
+        public TCoreFacade facade { get; set; }
+        
+        [SerializeReference] List<FunctionalityModule> modules; 
+        List<UPDATE> _update = new();
+        List<FIXEDUPDATE> _fixed = new();
+        List<LATEUPDATE> _late = new();
     
         public Functionalities() => modules = new List<FunctionalityModule>();
 
-        public void Init() { foreach (var t in modules)  t.Init(); }
+        public void Awake() { foreach (var t in modules)  t.AwakeTemplate(); }
         public void Bind() { foreach (var t in modules) t.Bind(); }
         public void Unbind() { foreach (var t in modules) t.Unbind(); }
     
     
-        public void Tick(float dt) { foreach (var t in _update) t.Tick(dt); }
-        public void FixedTick(float fdt) { foreach (var t in _fixed) t.FixedTick(fdt); }
+        public void UpdateTick(float dt) { foreach (var t in _update) t.OnUpdateTick(dt); }
+
+        public void FixedTick(float fdt)
+        {
+            Debug.Log("size of fixed : " + _fixed.Count);
+            foreach (var t in _fixed)
+            {
+                Debug.Log("t : " + t + " fdt : " + fdt);
+                t.OnFixedTick(fdt);
+            }
+        }
         public void LateTick(float dt) { foreach (var t in _late) t.LateTick(dt); }
     
     
@@ -34,5 +46,13 @@ namespace EMILtools_Private.Testing
             if (module is LATEUPDATE l) _late.Add(l);
         }
 
+
+        public void OnAwake()
+        {
+            AddModulesHere();
+            foreach (var t in modules)  t.AwakeTemplate();
+        }
+
+        public abstract void AddModulesHere();
     }
 }
