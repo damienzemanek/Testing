@@ -238,7 +238,7 @@ GameObject:
   m_Component:
   - component: {fileID: 187606656}
   m_Layer: 0
-  m_Name: SP 1
+  m_Name: SP LEFT
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2082,6 +2082,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 532235198}
+  - component: {fileID: 532235199}
   m_Layer: 0
   m_Name: Guns
   m_TagString: Untagged
@@ -2106,6 +2107,28 @@ Transform:
   - {fileID: 741091775}
   m_Father: {fileID: 748329302}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &532235199
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532235197}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 36adc5f25c8f46646b1be067d3f44d9c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &580003276
 GameObject:
   m_ObjectHideFlags: 0
@@ -9679,6 +9702,7 @@ MonoBehaviour:
       direction: {x: 0, y: 0, z: 1}
       targetAPosition: 0
       targetPosition: {x: 0, y: 0, z: 0}
+    gunAnimator: {fileID: 532235199}
   <Functionality>k__BackingField:
     modules: []
   cannonMouseLook:
@@ -9774,7 +9798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1915498036}
   m_Layer: 0
-  m_Name: SP 2
+  m_Name: SP RIGHT
   m_TagString: Untagged
   m_Icon: {fileID: 7866945982896999795, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

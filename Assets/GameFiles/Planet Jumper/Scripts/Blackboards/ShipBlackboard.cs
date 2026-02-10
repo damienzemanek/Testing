@@ -23,9 +23,7 @@ public class ShipBlackboard : Blackboard, IInteriorElement<ShipController>
     
     
     [BoxGroup("Fire")] [SerializeField] public ProjectileSpawnManager cannonProjectileSpawner;
-    
-    
-
+    [BoxGroup("Fire")] [SerializeField] public Animator gunAnimator;
 
     
     

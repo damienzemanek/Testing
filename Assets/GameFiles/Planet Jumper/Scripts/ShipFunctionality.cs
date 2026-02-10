@@ -13,7 +13,7 @@ using static FlowOutChain;
 using static EMILtools.Timers.TimerUtility;
 
 [Serializable]
-public class ShipFunctionality : Functionalities<ShipController>, IInteriorElement<ShipController>
+public class ShipFunctionality : Functionalities<ShipController>
 {
     public override void AddModulesHere()
     {
@@ -46,10 +46,19 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
     [Serializable]
     public class FireModule : InputModuleHeldSubInterior<FlowMutable, ShipController>, FIXEDUPDATE
     {
+
+        static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
+        static readonly int fireAnimNameRight = Animator.StringToHash("fireRight");
+        bool shootDirToggle = true;
+        
         public FireModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
 
         public override void Awake()
-            => ExecuteFlowOut.Add(Return(() => !facade.Blackboard.usingCannonCam));
+        {
+            facade.Blackboard.cannonProjectileSpawner.OnSpawn = new PersistentAction();
+            facade.Blackboard.cannonProjectileSpawner.OnSpawn.Add(ShootAnim);
+            ExecuteFlowOut.Add(Return(() => !facade.Blackboard.usingCannonCam));
+        }
         
         public override void OnSet() { }
 
@@ -57,6 +66,17 @@ public class ShipFunctionality : Functionalities<ShipController>, IInteriorEleme
         => facade.Blackboard.cannonProjectileSpawner.Spawn();
         
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+
+
+
+        void ShootAnim()
+        {
+            if (shootDirToggle)
+                facade.Blackboard.gunAnimator.Play(fireAnimNameLeft, 0, 0f);
+            else
+                facade.Blackboard.gunAnimator.Play(fireAnimNameRight, 0, 0f);
+            shootDirToggle = !shootDirToggle;
+        }
     }
     
 

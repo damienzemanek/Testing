@@ -1,4 +1,5 @@
 using System;
+using EMILtools.Core;
 using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
@@ -17,6 +18,8 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
     [SerializeField] [ShowIf("targetSetDirection")] public Vector3 direction;
     [SerializeField] bool targetAPosition = false;
     [SerializeField] [ShowIf("targetAPosition")] public Vector3 targetPosition;
+
+    [NonSerialized] public PersistentAction OnSpawn;
 
     protected override void InitializationImplementation()
     {
@@ -46,5 +49,6 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
             proj.transform.SetPositionAndRotation(proj.transform.position, Quaternion.LookRotation(launchDir));
         }
         proj.rb.AddForce(launchDir * data[0].forceScalar, data[0].forceMode);
+        OnSpawn?.Invoke();
     }
 }
