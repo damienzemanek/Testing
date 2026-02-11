@@ -39,7 +39,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
 
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveInterceptVT<bool> isRunning;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
     float speedAlpha // Represents the move alpha 
@@ -110,7 +110,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
                                 (jumpDelay, false),
                                 (turnSlowdown, true));
         
-        phys.isGrounded.core.Reactions.Add(OnLand);
+        phys.isGrounded.Reactions.Add(OnLand);
         
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;

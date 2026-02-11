@@ -12,7 +12,7 @@ public class AugmentPhysEX : MonoBehaviour
     public FallSettings fallSettings;
 
     [BoxGroup("Rigidbody")] [SerializeField] Rigidbody rb;
-    [BoxGroup("ReadOnly")] [ReadOnly] public ReactiveInterceptVT<bool> isGrounded;
+    [BoxGroup("ReadOnly")] [ReadOnly] public ReactiveIntercept<bool> isGrounded;
 
     void FixedUpdate()
     {
