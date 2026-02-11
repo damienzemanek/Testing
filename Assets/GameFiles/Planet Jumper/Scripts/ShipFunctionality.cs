@@ -28,7 +28,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
 
         
-        public override void OnPress()
+        protected override void OnPress()
         {
             facade.Blackboard.usingCannonCam = !facade.Blackboard.usingCannonCam;
             facade.cannonMouseLook.updateMouseLook = facade.Blackboard.usingCannonCam;
@@ -49,16 +49,16 @@ public class ShipFunctionality : Functionalities<ShipController>
         
         public FireModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
 
-        public override void Awake()
+        protected override void Awake()
         {
             facade.Blackboard.cannonProjectileSpawner.OnSpawn = new PersistentAction();
             facade.Blackboard.cannonProjectileSpawner.OnSpawn.Add(ShootAnim);
             ExecuteFlowOut.Add(Return(() => !facade.Blackboard.usingCannonCam));
         }
         
-        public override void OnSet() { }
+        protected override void OnSet() { }
 
-        public override void Execute(float dt)
+        protected override void Execute(float dt)
         => facade.Blackboard.cannonProjectileSpawner.Spawn();
         
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
@@ -91,7 +91,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         public ThrustModuleSub(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
         
 
-        public override void Awake()
+        protected override void Awake()
         {
             facade.Blackboard.thrustFOV.SetInitialTime(1f);
             facade.InitializeTimers((facade.Blackboard.thrustFOV, false));
@@ -99,7 +99,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         }
 
 
-        public override void OnSet()
+        protected override void OnSet()
         {
             if (isActive)
             {
@@ -115,7 +115,7 @@ public class ShipFunctionality : Functionalities<ShipController>
             }
         }
 
-        public override void Execute(float dt)
+        protected override void Execute(float dt)
         => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
 
         
@@ -144,15 +144,15 @@ public class ShipFunctionality : Functionalities<ShipController>
 
         public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade) { }
 
-        public override void Awake()
+        protected override void Awake()
         {
             ExecuteFlowOut.Add(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero);
             Debug.Log("inited rotate module");
         }
-        public override void OnSetImplementation(Vector3 rotation)
+        protected override void OnSetImplementation(Vector3 rotation)
             => rotationVector = rotation;
 
-        public override void Implementation(float dt)
+        protected override void Implementation(float dt)
         {
             Quaternion deltaScaled = Quaternion.Euler(rotationVector * facade.Config.rotate.scalar);
             Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * facade.transform.rotation;

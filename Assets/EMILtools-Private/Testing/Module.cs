@@ -30,7 +30,7 @@ public interface LATEUPDATE : IModuleTick
 public abstract class MonoFunctionalityModule : IModule
 {
     public abstract void SetupModule();
-    public virtual void ExecuteTemplateCall(float dt) { }
+    protected virtual void ExecuteTemplateCall(float dt) { }
     public abstract void Bind();
     public abstract void Unbind();
 }
@@ -74,16 +74,14 @@ public abstract class InputPressedModuleFacade<SetGateFlow, TCoreFacade> : Input
 public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
-    bool initialized;
-
-    [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction<TPublisherArgs, bool> action;
-
     public InputHeldModule(PersistentAction<TPublisherArgs, bool> action)
     {
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
     }
-
+    
+    bool initialized;
+    PersistentAction<TPublisherArgs, bool> action;
     [ShowInInspector] protected bool isActive;
     [ShowInInspector] protected SetGateFlow SetGateFlowOut;
     [ShowInInspector] protected FlowMutable ExecuteFlowOut;
@@ -99,7 +97,7 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
         Awake();
     }
 
-    public abstract void Awake();
+    protected abstract void Awake();
     
     public void OnSet(TPublisherArgs args, bool v)
     {
@@ -107,29 +105,27 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
         isActive = v;
         OnSetImplementation(args);
     }
-    public abstract void OnSetImplementation(TPublisherArgs args);
+    protected abstract void OnSetImplementation(TPublisherArgs args);
 
-    public override void ExecuteTemplateCall(float dt) 
+    protected override void ExecuteTemplateCall(float dt) 
     {
         if (ExecuteFlowOut.TryEarlyExit()) return;
         Implementation(dt);
     }
-    public abstract void Implementation(float dt);
+    protected abstract void Implementation(float dt);
 }
 
 public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
-    bool initialized;
-
-    [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction<bool> action;
-
     public InputHeldModule(PersistentAction<bool> action)
     {
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
     }
     
+    bool initialized;
+    PersistentAction<bool> action;
     [ShowInInspector] protected bool isActive;
     [ShowInInspector] protected SetGateFlow SetGateFlowOut;
     [ShowInInspector] protected FlowMutable ExecuteFlowOut;
@@ -145,37 +141,36 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
         Awake();
     }
     
-    public virtual void Awake() { }
+    protected virtual void Awake() { }
     
-    public void OnSetTemplateCall(bool v)
+    protected void OnSetTemplateCall(bool v)
     {
         if (SetGateFlowOut != null && SetGateFlowOut.TryEarlyExit()) return;
         isActive = v;
         OnSet();
     }
-    public abstract void OnSet();
+    protected abstract void OnSet();
 
-    public override void ExecuteTemplateCall(float dt) 
+    protected override void ExecuteTemplateCall(float dt) 
     {
         if (ExecuteFlowOut.TryEarlyExit()) return;
         Execute(dt);
     }
-    public abstract void Execute(float dt);
+    protected abstract void Execute(float dt);
 }
 
 public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
-    bool initialized;
-
-    [ShowInInspector, NonSerialized, ReadOnly] public PersistentAction action;
-
+    
     public InputPressedModule(PersistentAction action)
     {
         this.action = action;
         OnPressFlowOut = new();
     }
     
+    bool initialized;
+    PersistentAction action;
     [ShowInInspector] protected SetGateFlow OnPressFlowOut;
     
     
@@ -188,14 +183,14 @@ public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
         Awake();
     }
     
-    public virtual void Awake() { }
+    protected virtual void Awake() { }
     
-    public void OnPressTemplateCall()
+    void OnPressTemplateCall()
     {
         if (OnPressFlowOut.TryEarlyExit()) return;
         OnPress();
     }
-    public abstract void OnPress();
+    protected abstract void OnPress();
     
 }
 
