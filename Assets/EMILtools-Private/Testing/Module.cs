@@ -42,7 +42,7 @@ public abstract class InputHeldModuleFacade<TPublisherArgs, SetGateFlow, TCoreFa
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
 {
-    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
+    [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] public TCoreFacade facade { get; set; }
 
     protected InputHeldModuleFacade(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade) :
         base(action)
@@ -54,7 +54,7 @@ public abstract class InputHeldModuleFacade<SetGateFlow, TCoreFacade> : InputHel
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
 {
-    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
+    [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] public TCoreFacade facade { get; set; }
 
     protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade) : base(action)
         => this.facade = facade;
@@ -66,7 +66,7 @@ public abstract class InputPressedModuleFacade<SetGateFlow, TCoreFacade> : Input
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
 {
-    [field:ReadOnly] [field:ShowInInspector] [field:Required] [field:SerializeField] public TCoreFacade facade { get; set; }
+    [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] public TCoreFacade facade { get; set; }
 
     protected InputPressedModuleFacade(PersistentAction action, TCoreFacade facade) : base(action)
         => this.facade = facade;

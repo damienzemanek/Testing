@@ -12,7 +12,6 @@ using static CamEX.CurveValue;
 using static FlowOutChain;
 using static EMILtools.Timers.TimerUtility;
 
-[Serializable]
 public class ShipFunctionality : Functionalities<ShipController>
 {
     public override void AddModulesHere()
@@ -24,8 +23,6 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
 
 
-
-    [Serializable]
     public class SwitchCamModule : InputPressedModuleFacade<FlowMutable, ShipController>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
@@ -43,7 +40,6 @@ public class ShipFunctionality : Functionalities<ShipController>
 
     
 
-    [Serializable]
     public class FireModule : InputHeldModuleFacade<FlowMutable, ShipController>, FIXEDUPDATE
     {
 
@@ -80,15 +76,14 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
     
 
-    [Serializable]
     public class ThrustModuleSub : InputHeldModuleFacade<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
         {
-            [SerializeField] public ForceMode thrustForceMode;
-            [SerializeField] public float thrustForce;
-            [SerializeField] public float defaultFOV;
+            [field: SerializeField] public ForceMode thrustForceMode { get; private set; }
+            [field: SerializeField] public float thrustForce { get; private set; }
+            [field: SerializeField] public float defaultFOV { get; private set; }
         }
 
         Config config => facade.Config.thrust;
@@ -132,13 +127,12 @@ public class ShipFunctionality : Functionalities<ShipController>
     
     
     
-    [Serializable]
     public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
         {
-            [ShowInInspector] public float scalar;
+            [field: SerializeField] public float scalar { get; private set; }
         }
         
         [ShowInInspector, ReadOnly] Quaternion camOffset => facade != null 

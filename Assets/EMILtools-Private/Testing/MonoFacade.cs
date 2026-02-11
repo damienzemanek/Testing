@@ -9,9 +9,9 @@ public interface IFacade { }
 [Serializable]
 public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: ValidatedMonoBehaviour, IFacade
     where TMonoFacade : IFacade    
-    where TConfig : Config                                    // Config does not need to be an interior because it should not have a reference to the facade, it is just data
-    where TBlackboard : Blackboard,                           IFacadeCompositionElement<TMonoFacade>
-    where TFunctionality : Functionalities<TMonoFacade>,      IFacadeCompositionElement<TMonoFacade>
+    where TConfig : Config                                 // Config does not need to be an interior because it should not have a reference to the facade, it is just data
+    where TBlackboard : Blackboard,                        IFacadeCompositionElement<TMonoFacade>
+    where TFunctionality : Functionalities<TMonoFacade>,   IFacadeCompositionElement<TMonoFacade>, new()
 {
     bool coreFacadeInitialized = false;
     
@@ -20,20 +20,20 @@ public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: Vali
     [field: Title("Blackboard")]
     [field:SerializeField, Required] [field:HideLabel] public TBlackboard Blackboard { get; private set; }
     [field: Title("Functionality Modules")]
-    [field:SerializeField, Required] [field:HideLabel] public TFunctionality Functionality { get; private set; }
+    [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
     
 
     public virtual void InitializeFacade()
     {
+        Functionality = new ();
+        
         Debug.Assert(Config != null, $"{name}: Config not assigned");
         Debug.Assert(Blackboard != null, $"{name}: Blackboard not assigned");
-        Debug.Assert(Functionality != null, $"{name}: Functionality not assigned");
+        Debug.Assert(Functionality != null, $"{name}: Functionality did not initialize");
         
-        Blackboard.ComposeElement(this);    // move up
+        Blackboard.ComposeElement(this);   
+        Functionality.ComposeElement(this);   // Functionality must be last because it depends on the Config and the Blackboard
         
-        // Functionality must be last because it depends on the Config and the Blackboard
-        Functionality.ComposeElement(this);
-
         coreFacadeInitialized = true;
     }
     

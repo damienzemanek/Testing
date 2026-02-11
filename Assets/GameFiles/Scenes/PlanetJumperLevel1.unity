@@ -20287,8 +20287,6 @@ MonoBehaviour:
       targetAPosition: 0
       targetPosition: {x: 0, y: 0, z: 0}
     gunAnimator: {fileID: 532235199}
-  <Functionality>k__BackingField:
-    modules: []
   <Input>k__BackingField: {fileID: 11400000, guid: aecffd41cac4d114ba09acf466c3578f, type: 2}
   cannonMouseLook:
     look: {x: 0, y: 0}
@@ -20304,9 +20302,6 @@ MonoBehaviour:
     sensitivity: {x: 1, y: 1}
     clampX: {x: -90, y: 90}
     clampY: {x: -90, y: 90}
-  references:
-    version: 2
-    RefIds: []
 --- !u!4 &1915108322
 Transform:
   m_ObjectHideFlags: 0

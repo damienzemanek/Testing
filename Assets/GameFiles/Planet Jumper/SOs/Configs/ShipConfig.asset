@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: ShipConfig
   m_EditorClassIdentifier: 
   rotate:
-    scalar: 30
+    <scalar>k__BackingField: 30
   thrust:
-    thrustForceMode: 0
-    thrustForce: 5
-    defaultFOV: 70
+    <thrustForceMode>k__BackingField: 0
+    <thrustForce>k__BackingField: 5
+    <defaultFOV>k__BackingField: 70

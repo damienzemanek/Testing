@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace EMILtools_Private.Testing
 {
-    [Serializable]
     public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>
         where TMonoFacade : IFacade
     {
-        public TMonoFacade facade { get; set; }
+        [field: NonSerialized] public TMonoFacade facade { get; set; }
         
-        [SerializeReference] List<MonoFunctionalityModule> modules; 
+        [ShowInInspector] List<MonoFunctionalityModule> modules; 
         List<UPDATE> _update = new();
         List<FIXEDUPDATE> _fixed = new();
         List<LATEUPDATE> _late = new();
