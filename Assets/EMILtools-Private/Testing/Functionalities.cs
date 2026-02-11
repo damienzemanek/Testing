@@ -5,19 +5,24 @@ using UnityEngine;
 namespace EMILtools_Private.Testing
 {
     [Serializable]
-    public abstract class Functionalities<TCoreFacade> : IInteriorElement<TCoreFacade>
-        where TCoreFacade : ICoreFacade
+    public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>
+        where TMonoFacade : IFacade
     {
-        public TCoreFacade facade { get; set; }
+        public TMonoFacade facade { get; set; }
         
-        [SerializeReference] List<FunctionalityModule> modules; 
+        [SerializeReference] List<MonoFunctionalityModule> modules; 
         List<UPDATE> _update = new();
         List<FIXEDUPDATE> _fixed = new();
         List<LATEUPDATE> _late = new();
     
-        public Functionalities() => modules = new List<FunctionalityModule>();
+        public Functionalities() => modules = new List<MonoFunctionalityModule>();
 
-        public void Awake() { foreach (var t in modules)  t.AwakeTemplateCall(); }
+
+        public void OnAwakeCompositionalElement()
+        {
+            AddModulesHere();
+            foreach (var t in modules)  t.SetupModule();
+        }
         public void Bind() { foreach (var t in modules) t.Bind(); }
         public void Unbind() { foreach (var t in modules) t.Unbind(); }
     
@@ -36,7 +41,7 @@ namespace EMILtools_Private.Testing
         public void LateTick(float dt) { foreach (var t in _late) t.LateTick(dt); }
     
     
-        public void AddModule(FunctionalityModule module)
+        public void AddModule(MonoFunctionalityModule module)
         {
             modules.Add(module);
             Debug.Log("added module " + module.GetType().Name + " new count is " + modules.Count);
@@ -46,12 +51,6 @@ namespace EMILtools_Private.Testing
             if (module is LATEUPDATE l) _late.Add(l);
         }
 
-
-        public void OnAwake()
-        {
-            AddModulesHere();
-            foreach (var t in modules)  t.AwakeTemplateCall();
-        }
 
         public abstract void AddModulesHere();
     }

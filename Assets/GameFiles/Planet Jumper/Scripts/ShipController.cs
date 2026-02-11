@@ -15,14 +15,14 @@ using static LifecycleEX;
 using static ShipFunctionality;
 
 [Serializable]
-public class ShipController : CoreFacade<ShipInputReader, ShipFunctionality, ShipConfig, ShipBlackboard, ShipController> , ITimerUser
+public class ShipController : ControlledMonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipInputReader> , ITimerUser
 {
     [BoxGroup("Mouse")] [PropertyOrder(-1)] [SerializeField] public MouseLookSettings cannonMouseLook;
     
     
     void Awake()
     {
-        Init();   
+        InitializeFacade();   
     }
 
     void Start()

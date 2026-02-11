@@ -6,7 +6,7 @@ using static CamEX;
 
 
 [Serializable]
-public class ShipBlackboard : Blackboard, IInteriorElement<ShipController>
+public class ShipBlackboard : Blackboard, IFacadeCompositionElement<ShipController>
 {
     public ShipController facade { get; set; }
     

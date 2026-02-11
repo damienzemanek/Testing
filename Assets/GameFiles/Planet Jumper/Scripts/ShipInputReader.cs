@@ -8,7 +8,7 @@ using static Ship_IA;
 
 [Serializable]
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader, IInteriorElement<ShipController>
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader, IFacadeCompositionElement<ShipController>
 {
     public ShipController facade { get; set; }
     

@@ -26,7 +26,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
 
     [Serializable]
-    public class SwitchCamModule : InputModulePressSubInterior<FlowMutable, ShipController>
+    public class SwitchCamModule : InputPressedModuleFacade<FlowMutable, ShipController>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
 
@@ -44,7 +44,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     
 
     [Serializable]
-    public class FireModule : InputModuleHeldSubInterior<FlowMutable, ShipController>, FIXEDUPDATE
+    public class FireModule : InputHeldModuleFacade<FlowMutable, ShipController>, FIXEDUPDATE
     {
 
         static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
@@ -81,7 +81,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     
 
     [Serializable]
-    public class ThrustModuleSub : InputModuleHeldSubInterior<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
+    public class ThrustModuleSub : InputHeldModuleFacade<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -133,7 +133,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     
     
     [Serializable]
-    public class RotateModuleToggleSub : InputModuleHeldSubInterior<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
+    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
