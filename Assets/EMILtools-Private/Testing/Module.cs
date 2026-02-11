@@ -27,7 +27,6 @@ public interface LATEUPDATE : IModuleTick
 }
 
 
-[Serializable]
 public abstract class MonoFunctionalityModule : IModule
 {
     public abstract void SetupModule();
@@ -37,7 +36,6 @@ public abstract class MonoFunctionalityModule : IModule
 }
 
 
-[Serializable]
 public abstract class InputHeldModuleFacade<TPublisherArgs, SetGateFlow, TCoreFacade> : InputHeldModule<TPublisherArgs, SetGateFlow>
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
@@ -49,7 +47,6 @@ public abstract class InputHeldModuleFacade<TPublisherArgs, SetGateFlow, TCoreFa
     => this.facade = facade;
 }
 
-[Serializable]
 public abstract class InputHeldModuleFacade<SetGateFlow, TCoreFacade> : InputHeldModule<SetGateFlow>
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
@@ -61,7 +58,6 @@ public abstract class InputHeldModuleFacade<SetGateFlow, TCoreFacade> : InputHel
     
 }
 
-[Serializable]
 public abstract class InputPressedModuleFacade<SetGateFlow, TCoreFacade> : InputPressedModule<SetGateFlow>
     where SetGateFlow : FlowOutChain, new()
     where TCoreFacade : class, IFacade
@@ -75,7 +71,6 @@ public abstract class InputPressedModuleFacade<SetGateFlow, TCoreFacade> : Input
 
 
 
-[Serializable]
 public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
@@ -88,11 +83,10 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
         this.action = action;
         SetGateFlowOut = new SetGateFlow();
     }
-    
-    public bool isActive;
 
-    public SetGateFlow SetGateFlowOut;
-    public FlowMutable ExecuteFlowOut;
+    [ShowInInspector] protected bool isActive;
+    [ShowInInspector] protected SetGateFlow SetGateFlowOut;
+    [ShowInInspector] protected FlowMutable ExecuteFlowOut;
 
 
     public override void Bind() => action.Add(OnSet);
@@ -123,7 +117,6 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
     public abstract void Implementation(float dt);
 }
 
-[Serializable]
 public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
@@ -137,10 +130,9 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
         SetGateFlowOut = new SetGateFlow();
     }
     
-    public bool isActive;
-
-    public SetGateFlow SetGateFlowOut;
-    public FlowMutable ExecuteFlowOut;
+    [ShowInInspector] protected bool isActive;
+    [ShowInInspector] protected SetGateFlow SetGateFlowOut;
+    [ShowInInspector] protected FlowMutable ExecuteFlowOut;
 
 
     public override void Bind() => action.Add(OnSetTemplateCall);
@@ -171,7 +163,6 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
     public abstract void Execute(float dt);
 }
 
-[Serializable]
 public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
     where SetGateFlow : FlowOutChain, new()
 {
@@ -185,9 +176,9 @@ public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
         OnPressFlowOut = new();
     }
     
-    public SetGateFlow OnPressFlowOut;
-
-
+    [ShowInInspector] protected SetGateFlow OnPressFlowOut;
+    
+    
     public override void Bind() => action.Add(OnPressTemplateCall);
     public override void Unbind() => action.Remove(OnPressTemplateCall);
     
