@@ -69,10 +69,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField, Self] AugmentPhysEX phys;
 
     
-    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _moveGuarder;
-    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _shootGuarder;
-    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _lookGuarder;
-    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _mouseZoneGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _moveGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _shootGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _lookGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _mouseZoneGuarder;
     public ActionGuarderImmutable cantJumpGuarder;
     
     void OnEnable()
@@ -96,10 +96,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         
         // Super easy to check what flags influence what methods
-        _moveGuarder = new GuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
-        _shootGuarder = new GuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
-        _lookGuarder = new GuarderImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
-        _mouseZoneGuarder = new GuarderImmutable(("Not Looking", () => !isLooking),
+        _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
+        _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
+        _lookGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
+        _mouseZoneGuarder = new SimpleGuarderImmutable(("Not Looking", () => !isLooking),
                                               ("Mantled", () => isMantled));
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);

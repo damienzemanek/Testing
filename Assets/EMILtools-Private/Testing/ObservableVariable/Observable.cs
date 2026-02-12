@@ -4,15 +4,21 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
+public interface ILazyFunc<T>
+{
+    T InvokeLazy();
+}
+
+
 // Func observing some variable 
 // Func needs to know when variable changes
 // Func then knows the Invoke next time its get
-public class LazyFuncLite<T>
+public class LazyFuncLite<T> : ILazyFunc<T>
     where T : struct
 {
     T storedFuncEvaluation;
     readonly Func<T> func;
-    public T InvokeLazy => storedFuncEvaluation;
+    T ILazyFunc<T>.InvokeLazy() => storedFuncEvaluation;
 
     public LazyFuncLite(PersistentAction onChangedReEvaluate, Func<T> func)
     {
@@ -28,18 +34,20 @@ public class LazyFuncLite<T>
 
     
     void Evaluate() => storedFuncEvaluation = func.Invoke();
+    
 }
 
 
 // Func observing some variable 
 // Func needs to know when variable changes
 // Func then knows the Invoke next time its get
-public class LazyFunc<T>
+public class LazyFunc<T> : ILazyFunc<T>
     where T : struct
 {
     T storedFuncEvaluation;
     readonly Func<T> func;
-    public T InvokeLazy => storedFuncEvaluation;
+    T ILazyFunc<T>.InvokeLazy() => storedFuncEvaluation;
+    
     [NonSerialized] PersistentAction _onChangedReEvaluate;
 
     public LazyFunc(PersistentAction onChangedReEvaluate, Func<T> func)
