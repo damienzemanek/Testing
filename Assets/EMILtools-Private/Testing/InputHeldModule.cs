@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 public abstract class InputHeldModule<TPublisherArgs, TSetActionGuarder> : MonoFunctionalityModule
     where TSetActionGuarder : IActionGuarder, new()
 {
-    public InputHeldModule(PersistentAction<TPublisherArgs, bool> action)
+    public InputHeldModule(PersistentAction<TPublisherArgs, bool> action, string name = "Functionality Module")
     {
         this.action = action;
         setGuarder = new TSetActionGuarder();
