@@ -9,7 +9,6 @@ using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static CamEX;
 using static CamEX.CurveValue;
-using static FlowOutChain;
 using static EMILtools.Timers.TimerUtility;
 
 public class ShipFunctionality : Functionalities<ShipController>
@@ -23,7 +22,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
 
 
-    public class SwitchCamModule : InputPressedModuleFacade<FlowMutable, ShipController>
+    public class SwitchCamModule : InputPressedModuleFacade<ActionGuarderMutable, ShipController>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
 
@@ -40,7 +39,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
     
 
-    public class FireModule : InputHeldModuleFacade<FlowMutable, ShipController>, FIXEDUPDATE
+    public class FireModule : InputHeldModuleFacade<ActionGuarderMutable, ShipController>, FIXEDUPDATE
     {
 
         static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
@@ -53,7 +52,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         {
             facade.Blackboard.cannonProjectileSpawner.OnSpawn = new PersistentAction();
             facade.Blackboard.cannonProjectileSpawner.OnSpawn.Add(ShootAnim);
-            ExecuteFlowOut.Add(Return(() => !facade.Blackboard.usingCannonCam));
+            executeGuarder.Add(new ActionGuard(() => !facade.Blackboard.usingCannonCam, "Not in Cannon Cam"));
         }
         
         protected override void OnSet() { }
@@ -76,7 +75,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
     
 
-    public class ThrustModuleSub : InputHeldModuleFacade<FlowMutable, ShipController>, UPDATE, FIXEDUPDATE
+    public class ThrustModuleSub : InputHeldModuleFacade<ActionGuarderMutable, ShipController>, UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -127,7 +126,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     
     
     
-    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, FlowMutable, ShipController>, FIXEDUPDATE
+    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, ActionGuarderMutable, ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -146,7 +145,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
         protected override void Awake()
         {
-            ExecuteFlowOut.Add(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero);
+            executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
             Debug.Log("inited rotate module");
         }
         protected override void OnSetImplementation(Vector3 rotation)

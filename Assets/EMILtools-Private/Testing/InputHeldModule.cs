@@ -1,21 +1,20 @@
 ﻿using EMILtools.Core;
 using Sirenix.OdinInspector;
-using static FlowOutChain;
 
-public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctionalityModule
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputHeldModule<TPublisherArgs, TSetActionGuarder> : MonoFunctionalityModule
+    where TSetActionGuarder : IActionGuarder, new()
 {
     public InputHeldModule(PersistentAction<TPublisherArgs, bool> action)
     {
         this.action = action;
-        SetGateFlowOut = new SetGateFlow();
+        setGuarder = new TSetActionGuarder();
     }
     
     bool initialized;
     PersistentAction<TPublisherArgs, bool> action;
     [ShowInInspector] protected bool isActive;
-    [ShowInInspector] protected SetGateFlow SetGateFlowOut;
-    [ShowInInspector] protected FlowMutable ExecuteFlowOut;
+    [ShowInInspector] protected TSetActionGuarder setGuarder;
+    [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
 
     public override void Bind() => action.Add(OnSet);
@@ -24,7 +23,7 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
     public override void SetupModule()
     {
         if (initialized) return; initialized = true;
-        ExecuteFlowOut = new FlowMutable( Return("Not Active", () => !isActive) );
+        executeGuarder = new (new ActionGuard(() => !isActive, "Not Active"));
         Awake();
     }
 
@@ -32,7 +31,7 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
     
     public void OnSet(TPublisherArgs args, bool v)
     {
-        if (SetGateFlowOut != null && SetGateFlowOut.TryEarlyExit()) return;
+        if (setGuarder != null && setGuarder.TryEarlyExit()) return;
         isActive = v;
         OnSetImplementation(args);
     }
@@ -40,26 +39,26 @@ public abstract class InputHeldModule<TPublisherArgs, SetGateFlow> : MonoFunctio
 
     protected override void ExecuteTemplateCall(float dt) 
     {
-        if (ExecuteFlowOut.TryEarlyExit()) return;
+        if (executeGuarder.TryEarlyExit()) return;
         Implementation(dt);
     }
     protected abstract void Implementation(float dt);
 }
 
-public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputHeldModule<TSetActionGuarder> : MonoFunctionalityModule
+    where TSetActionGuarder : IActionGuarder, new()
 {
     public InputHeldModule(PersistentAction<bool> action)
     {
         this.action = action;
-        SetGateFlowOut = new SetGateFlow();
+        setGuarder = new();
     }
     
     bool initialized;
     PersistentAction<bool> action;
     [ShowInInspector] protected bool isActive;
-    [ShowInInspector] protected SetGateFlow SetGateFlowOut;
-    [ShowInInspector] protected FlowMutable ExecuteFlowOut;
+    [ShowInInspector] protected TSetActionGuarder setGuarder;
+    [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
 
     public override void Bind() => action.Add(OnSetTemplateCall);
@@ -68,7 +67,7 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
     public override void SetupModule()
     {
         if (initialized) return; initialized = true;
-        ExecuteFlowOut = new FlowMutable( Return("Not Active", () => !isActive) );
+        executeGuarder = new (new ActionGuard(() => !isActive, "Not Active"));
         Awake();
     }
     
@@ -76,7 +75,7 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
     
     protected void OnSetTemplateCall(bool v)
     {
-        if (SetGateFlowOut != null && SetGateFlowOut.TryEarlyExit()) return;
+        if (setGuarder != null && setGuarder.TryEarlyExit()) return;
         isActive = v;
         OnSet();
     }
@@ -84,7 +83,7 @@ public abstract class InputHeldModule<SetGateFlow> : MonoFunctionalityModule
 
     protected override void ExecuteTemplateCall(float dt) 
     {
-        if (ExecuteFlowOut.TryEarlyExit()) return;
+        if (executeGuarder.TryEarlyExit()) return;
         Execute(dt);
     }
     protected abstract void Execute(float dt);

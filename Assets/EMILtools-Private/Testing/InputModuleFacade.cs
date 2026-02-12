@@ -5,12 +5,11 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using static FlowOutChain;
 
 
 
-public abstract class InputHeldModuleFacade<TPublisherArgs, SetGateFlow, TCoreFacade> : InputHeldModule<TPublisherArgs, SetGateFlow>
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputHeldModuleFacade<TPublisherArgs, TSetActionGuarder, TCoreFacade> : InputHeldModule<TPublisherArgs, TSetActionGuarder>
+    where TSetActionGuarder : IActionGuarder, new()
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
@@ -20,8 +19,8 @@ public abstract class InputHeldModuleFacade<TPublisherArgs, SetGateFlow, TCoreFa
     => this.facade = facade;
 }
 
-public abstract class InputHeldModuleFacade<SetGateFlow, TCoreFacade> : InputHeldModule<SetGateFlow>
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputHeldModuleFacade<TSetActionGuarder, TCoreFacade> : InputHeldModule<TSetActionGuarder>
+    where TSetActionGuarder : IActionGuarder, new()
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
@@ -31,8 +30,8 @@ public abstract class InputHeldModuleFacade<SetGateFlow, TCoreFacade> : InputHel
     
 }
 
-public abstract class InputPressedModuleFacade<SetGateFlow, TCoreFacade> : InputPressedModule<SetGateFlow>
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputPressedModuleFacade<TSetActionGuarder, TCoreFacade> : InputPressedModule<TSetActionGuarder>
+    where TSetActionGuarder : IActionGuarder, new()
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }

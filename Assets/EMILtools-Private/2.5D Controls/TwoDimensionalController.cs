@@ -12,7 +12,6 @@ using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Timers.TimerUtility;
-using static FlowOutChain;
 using static Ledge;
 
 public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
@@ -50,11 +49,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir moveDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isMantled;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> isMantled;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isShooting;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasJumped;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> hasJumped;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool canMantle;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> canMantle;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
@@ -70,11 +69,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField, Self] AugmentPhysEX phys;
 
     
-    [BoxGroup("Guards")] [SerializeField] GuardsImmutable MoveGuards;
-    [BoxGroup("Guards")] [SerializeField] GuardsImmutable ShootGuards;
-    [BoxGroup("Guards")] [SerializeField] GuardsImmutable LookGuards;
-    [BoxGroup("Guards")] [SerializeField] GuardsImmutable MouseZoneGuards;
-    public FlowImmutable cantJumpFlowOut;
+    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _moveGuarder;
+    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _shootGuarder;
+    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _lookGuarder;
+    [BoxGroup("Guards")] [SerializeField] GuarderImmutable _mouseZoneGuarder;
+    public ActionGuarderImmutable cantJumpGuarder;
     
     void OnEnable()
     {
@@ -97,10 +96,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         
         // Super easy to check what flags influence what methods
-        MoveGuards = new GuardsImmutable(("Not Moving", () => !moving)); // Cant move is !moving
-        ShootGuards = new GuardsImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
-        LookGuards = new GuardsImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
-        MouseZoneGuards = new GuardsImmutable(("Not Looking", () => !isLooking),
+        _moveGuarder = new GuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
+        _shootGuarder = new GuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
+        _lookGuarder = new GuarderImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
+        _mouseZoneGuarder = new GuarderImmutable(("Not Looking", () => !isLooking),
                                               ("Mantled", () => isMantled));
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
@@ -124,12 +123,12 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
 
-        cantJumpFlowOut = new FlowImmutable(
-            Branch("Is Mantled", () => isMantled, "Climb", HandleClimb),
-            Branch("Can Mantle", () => canMantle, "Mantle", HandleMantleLedge),
-            Branch("Has Jumped", () => hasJumped, "Double Jump", HandleDoubleJump),
-            Return("Jump Cooldown", () => jumpOnCooldown),
-            Return("In the Air", () => !phys.isGrounded));
+        cantJumpGuarder = new ActionGuarderImmutable(
+            new LazyActionGuard(isMantled.SimpleReactions, () => isMantled, HandleClimb, "Is Mantled", "Climb"),
+            new LazyActionGuard(canMantle.SimpleReactions, () => canMantle, HandleMantleLedge, "Can Mantle", "Mantle"),
+            new LazyActionGuard(hasJumped.SimpleReactions, () => hasJumped, HandleDoubleJump, "Has Jumped", "Double Jump"),
+            new ActionGuard(() => jumpOnCooldown, "Jump On Cooldown"),
+            new ActionGuard(() => !phys.isGrounded, "In the Air"));
     }
     
     
@@ -140,7 +139,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         if(animController.state == AnimState.Locomotion)
             animController.UpdateLocomotion(facingDir, moveDir, speedAlpha);
-        if(!MouseZoneGuards) mouseZones.CheckAllZones(input.mouse);
+        if(!_mouseZoneGuarder) mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
@@ -161,11 +160,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 
     void Jump()
     {
-        if (cantJumpFlowOut) return;
+        if (cantJumpGuarder) return;
             
         animController.Play(animController.jump);
         rb.Jump(phys.jumpSettings);
-        hasJumped = true;
+        hasJumped.Value = true;
     }
     
     void HandleDoubleJump()
@@ -186,7 +185,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     /// <summary>
     /// Sequencing for movement
     /// </summary>
-    void HandleMovement() { if (MoveGuards) return;
+    void HandleMovement() { if (_moveGuarder) return;
         
         if (!isRunning) Walk();
         else Run();
@@ -239,7 +238,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             rb.AddForce(dir * actualSpeed, movement.forceMode);
         }
     }
-    void HandleShooting() { if (ShootGuards) return;
+    void HandleShooting() { if (_shootGuarder) return;
         
         if (isShooting) StartCoroutine(ShootImplementation());
         else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);
@@ -253,7 +252,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             bulletSpawner.Spawn();
         }
     }
-    void HandleLooking() { if (LookGuards) return;
+    void HandleLooking() { if (_lookGuarder) return;
         
         mouseLook.Execute();
     }
@@ -272,7 +271,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         animController.state = AnimState.Locomotion;
         jumpDelay.Start();
         animController.Play(animController.land);
-        hasJumped = false;
+        hasJumped.Value = false;
         hasDoubleJumped = false;
     }
     
@@ -282,7 +281,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     void HandleMantleLedge()
     {
         if(ledgeData.dir == facingDir) return;
-        isMantled = true;
+        isMantled.Value = true;
         rb.isKinematic = true;
         float offset = movement.mantleXOffset;
         if(ledgeData.dir == LookDir.Right) offset *= -1;
@@ -293,7 +292,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     void HandleUnMantleLedge()
     {
-        isMantled = false;
+        isMantled.Value = false;
         rb.isKinematic = false;
         animController.state = AnimState.InAir;
         animController.animator.CrossFade(animController.airtime, 0.1f);
@@ -306,7 +305,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     public void CompleteClimb()
     {
-        isMantled = false;
+        isMantled.Value = false;
         rb.isKinematic = false;
         animController.state = AnimState.Locomotion;
         float offset = movement.mantleXOffset;
@@ -317,11 +316,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     public void CanMantleLedge(LedgeData ledgeData)
     {
-        canMantle = true;
+        canMantle.Value = true;
         this.ledgeData = ledgeData;
     }
 
-    public void CantMantleLedge() => canMantle = false;
+    public void CantMantleLedge() => canMantle.Value = false;
     
 
                     #endregion

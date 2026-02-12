@@ -1,19 +1,19 @@
 ﻿using EMILtools.Core;
 using Sirenix.OdinInspector;
 
-public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
-    where SetGateFlow : FlowOutChain, new()
+public abstract class InputPressedModule<TSetActionGuarder> : MonoFunctionalityModule
+    where TSetActionGuarder : IActionGuarder, new()
 {
     
     public InputPressedModule(PersistentAction action)
     {
         this.action = action;
-        OnPressFlowOut = new();
+        onPressGuarder = new();
     }
     
     bool initialized;
     PersistentAction action;
-    [ShowInInspector] protected SetGateFlow OnPressFlowOut;
+    [ShowInInspector] protected TSetActionGuarder onPressGuarder;
     
     
     public override void Bind() => action.Add(OnPressTemplateCall);
@@ -29,7 +29,7 @@ public abstract class InputPressedModule<SetGateFlow> : MonoFunctionalityModule
     
     void OnPressTemplateCall()
     {
-        if (OnPressFlowOut.TryEarlyExit()) return;
+        if (onPressGuarder.TryEarlyExit()) return;
         OnPress();
     }
     protected abstract void OnPress();
