@@ -60,6 +60,8 @@ namespace EMILtools.Core
             
     }
     
+    
+    
     [Serializable]
     public readonly struct LazyActionGuard<TLazyFunc>
         where TLazyFunc : class, ILazyFunc<bool>, new()
@@ -75,14 +77,13 @@ namespace EMILtools.Core
         [HorizontalGroup("Top")] [ShowInInspector, ReadOnly, HideLabel]
         public bool Blocked => observed.InvokeLazy() == false;
         [NonSerialized] public readonly TLazyFunc observed;
-        
-// Need a facotry
+
 
 
         public LazyActionGuard( PersistentAction onChanged, Func<bool> @if, Action then,  
             string ifName, string thenName)
         {
-            observed = new TLazyFunc(onChanged, @if);
+            observed = new LazyFuncFactory<TLazyFunc, bool>().CreateLazyFuncBool(onChanged, @if);
             this.then = then;
 
             If = string.IsNullOrWhiteSpace(ifName) ? @if?.Method.Name : ifName;
@@ -95,7 +96,7 @@ namespace EMILtools.Core
 
         public LazyActionGuard(PersistentAction onChanged, Func<bool> @if, Action then)
         {
-            observed = new LazyFuncLite<bool>(onChanged, @if);
+            observed = new LazyFuncFactory<TLazyFunc, bool>().CreateLazyFuncBool(onChanged, @if);
             this.then = then;
 
             If = @if?.Method.Name ?? "null-check";
@@ -106,7 +107,7 @@ namespace EMILtools.Core
         {
             If = CANACCESS;
             Then = CANACCESS;
-            observed = new LazyFuncLite<bool>(null, null);
+            observed = new LazyFuncFactory<TLazyFunc, bool>().CreateLazyFuncBool(null, null);
             then = null;
         }
 
@@ -116,7 +117,8 @@ namespace EMILtools.Core
     public abstract class ActionGuarder : IActionGuarder
     {
         public static readonly string NONE = "CAN ACCESS";
-        public static readonly IGuardReaction NoneResponsiveGuardCondition = new LazyActionGuard(NONE);
+        public static readonly LazyActionGuard<LazyFunc<bool>> NoneResponsiveGuardConditionNonLazy = new(NONE);
+
         public abstract IGuardReaction CurrentBlocker { get; }
         public abstract bool TryEarlyExit();
 
