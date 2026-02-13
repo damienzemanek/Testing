@@ -38,6 +38,8 @@ public class LazyFuncLite<T> : ILazyFunc<T>
     readonly Func<T> func;
     T ILazyFunc<T>.InvokeLazy() => storedFuncEvaluation;
 
+    public LazyFuncLite() { }
+    
     public LazyFuncLite(PersistentAction onChangedReEvaluate, Func<T> func)
     {
         this.func = func;  
@@ -72,10 +74,15 @@ public class LazyFunc<T> : ILazyFunc<T>
     
     public LazyFunc(PersistentAction onChangedReEvaluate, Func<T> func)
     {
-        this.func = func;  
-        storedFuncEvaluation = func.Invoke();
-        this._onChangedReEvaluate = onChangedReEvaluate;
-        this._onChangedReEvaluate.Add(Evaluate);
+        this.func = func;
+        if(func == null) storedFuncEvaluation = default;
+        else storedFuncEvaluation = func.Invoke();
+        if (onChangedReEvaluate == null) _onChangedReEvaluate = null;
+        else
+        {
+            _onChangedReEvaluate = onChangedReEvaluate;
+            _onChangedReEvaluate.Add(Evaluate);
+        }
     }
     
     public void Dispose() => _onChangedReEvaluate.Remove(Evaluate);

@@ -226,7 +226,8 @@ MonoBehaviour:
   moveDecay: {}
   jumpDelay: {}
   turnSlowdown: {}
-  canMantle: 0
+  canMantle:
+    _value: 0
   ledgeData:
     dir: 0
     point: {fileID: 0}
@@ -259,8 +260,8 @@ MonoBehaviour:
       clampX: 1
       clampY: 1
       clampZ: 1
-      clampXrot: {x: -30, y: 30}
-      clampYrot: {x: -30, y: 30}
+      clampXrot: {x: -60, y: 60}
+      clampYrot: {x: -15, y: 15}
       clampZrot: {x: -30, y: 30}
     - transform: {fileID: 44595974}
       flipX: 0
@@ -367,8 +368,7 @@ MonoBehaviour:
     inAirMoveScalar: 0.5
   rb: {fileID: 14127273}
   isGrounded:
-    core:
-      _value: 0
+    _value: 0
 --- !u!1 &28109236
 GameObject:
   m_ObjectHideFlags: 0
@@ -5861,7 +5861,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 812405612}
-  m_VersionIndex: 2591
+  m_VersionIndex: 2594
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

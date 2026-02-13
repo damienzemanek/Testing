@@ -38,7 +38,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
 
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
     float speedAlpha // Represents the move alpha 
@@ -49,11 +49,12 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir moveDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> isMantled;
+
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> isMantled = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isShooting;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> hasJumped;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> hasJumped = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> canMantle;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> canMantle = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
@@ -73,7 +74,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _shootGuarder;
     [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _lookGuarder;
     [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _mouseZoneGuarder;
-    public ActionGuarderImmutable cantJumpGuarder;
+    [ShowInInspector, ReadOnly] public ActionGuarderImmutable cantJumpGuarder;
     
     void OnEnable()
     {
@@ -124,9 +125,9 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 
 
         cantJumpGuarder = new ActionGuarderImmutable(
-            new LazyActionGuard(isMantled.SimpleReactions, () => isMantled, HandleClimb, "Is Mantled", "Climb"),
-            new LazyActionGuard(canMantle.SimpleReactions, () => canMantle, HandleMantleLedge, "Can Mantle", "Mantle"),
-            new LazyActionGuard(hasJumped.SimpleReactions, () => hasJumped, HandleDoubleJump, "Has Jumped", "Double Jump"),
+            new LazyActionGuard<LazyFuncLite<bool>>(isMantled.SimpleReactions, () => isMantled, then: HandleClimb, "Is Mantled", "Climb"),
+            new LazyActionGuard<LazyFuncLite<bool>>(canMantle.SimpleReactions, () => canMantle, HandleMantleLedge, "Can Mantle", "Mantle"),
+            new LazyActionGuard<LazyFuncLite<bool>>(hasJumped.SimpleReactions, () => hasJumped, HandleDoubleJump, "Has Jumped", "Double Jump"),
             new ActionGuard(() => jumpOnCooldown, "Jump On Cooldown"),
             new ActionGuard(() => !phys.isGrounded, "In the Air"));
     }

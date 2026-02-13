@@ -9,7 +9,7 @@ using UnityEngine;
 namespace EMILtools.Core
 {
     [Serializable]
-    public readonly struct ActionGuard
+    public readonly struct ActionGuard : IGuardAction
     {
 
         [HorizontalGroup("Top", 250)] [ShowInInspector, ReadOnly] public string If { get; }
@@ -63,10 +63,10 @@ namespace EMILtools.Core
     
     
     [Serializable]
-    public readonly struct LazyActionGuard<TLazyFunc>
+    public readonly struct LazyActionGuard<TLazyFunc> : IGuardAction
         where TLazyFunc : class, ILazyFunc<bool>, new()
     {
-        [HorizontalGroup("Top", 250)] [ShowInInspector, ReadOnly]     public string If { get; }
+        [HorizontalGroup("Top", 250), PropertyOrder(-1)] [ShowInInspector, ReadOnly]     public string If { get; }
         [HorizontalGroup("Bottom", 250)] [ShowInInspector, ReadOnly]  public readonly string Then;
 
         
@@ -74,8 +74,8 @@ namespace EMILtools.Core
         [NonSerialized] public readonly Action then;
         
         
-        [HorizontalGroup("Top")] [ShowInInspector, ReadOnly, HideLabel]
-        public bool Blocked => observed.InvokeLazy() == false;
+        [HorizontalGroup("Top"), PropertyOrder(-1)] [ShowInInspector, ReadOnly, HideLabel]
+        public bool Blocked => observed.InvokeLazy();
         [NonSerialized] public readonly TLazyFunc observed;
 
 
@@ -119,10 +119,10 @@ namespace EMILtools.Core
         public static readonly string NONE = "CAN ACCESS";
         public static readonly LazyActionGuard<LazyFunc<bool>> NoneResponsiveGuardConditionNonLazy = new(NONE);
 
-        public abstract IGuardReaction CurrentBlocker { get; }
+        public abstract IGuardAction CurrentBlocker { get; }
         public abstract bool TryEarlyExit();
 
-        public bool TryEarlyExit(IEnumerable<IGuardReaction> guards)
+        public bool TryEarlyExit(IEnumerable<IGuardAction> guards)
         {
             foreach (var guard in guards)
             {
@@ -140,19 +140,19 @@ namespace EMILtools.Core
 
     public class ActionGuarderImmutable : ActionGuarder, IActionGuarder
     {
-        [ShowInInspector, PropertyOrder(-1)] public override IGuardReaction CurrentBlocker
+        [ShowInInspector, PropertyOrder(-1)] public override IGuardAction CurrentBlocker
         {
             get
             {
                 for(int i = 0; i < guards.Length; i++)
                     if (guards[i].Blocked) return guards[i];
-                return NoneResponsiveGuardCondition;
+                return NoneResponsiveGuardConditionNonLazy;
             }
         }
             
-        [ShowInInspector] public readonly IGuardReaction[] guards;
+        [ShowInInspector] public readonly IGuardAction[] guards;
 
-        public ActionGuarderImmutable(params IGuardReaction[] guards) => this.guards = guards;
+        public ActionGuarderImmutable(params IGuardAction[] guards) => this.guards = guards;
 
         public override bool TryEarlyExit() => base.TryEarlyExit(guards);
 
@@ -161,27 +161,27 @@ namespace EMILtools.Core
 
     public class ActionGuarderMutable : ActionGuarder, IActionGuarder
     {
-        [ShowInInspector, PropertyOrder(-1)] public override IGuardReaction CurrentBlocker
+        [ShowInInspector, PropertyOrder(-1)] public override IGuardAction CurrentBlocker
         {
             get
             {
                 for(int i = 0; i < guards.Count; i++)
                     if (guards[i].Blocked) return guards[i];
-                return NoneResponsiveGuardCondition;
+                return NoneResponsiveGuardConditionNonLazy;
             }
         }
             
-        [ShowInInspector] public List<IGuardReaction> guards;
+        [ShowInInspector] public List<IGuardAction> guards;
 
         public ActionGuarderMutable()
         {
-            guards = new List<IGuardReaction>();
+            guards = new List<IGuardAction>();
         }
         
         
-        public ActionGuarderMutable(params IGuardReaction[] links) => this.guards = new List<IGuardReaction>(links);
+        public ActionGuarderMutable(params IGuardAction[] links) => this.guards = new List<IGuardAction>(links);
             
-        public ActionGuarderMutable Add(IGuardReaction guard)
+        public ActionGuarderMutable Add(IGuardAction guard)
         {
             guards.Add(guard);
             return this;
