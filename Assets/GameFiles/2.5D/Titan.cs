@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using EMILtools.Core;
 using EMILtools.Extensions;
 using EMILtools.Timers;
@@ -44,6 +45,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
     [SerializeField] Rigidbody rb;
     [SerializeField] Animator animator;
     static readonly int Speed = Animator.StringToHash("Speed");
+    static readonly int mountFrontAnim = Animator.StringToHash("mountFront");
 
     float speedAlpha // Represents the move alpha 
     {
@@ -81,7 +83,8 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
 
     void Update()
     {
-        HandleMount();
+        if(!hasMounted && mountZone.inZone && mountZone.playerRequestedMount)
+            StartCoroutine(HandleMount());
         HandleMovement();
         if(!input._mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
         animator.SetFloat(Speed, speedAlpha);
@@ -109,13 +112,10 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         facingDir = dir;
     }
 
-    void HandleMount()
+    IEnumerator HandleMount()
     {
-        if (hasMounted) return;
-        if (!mountZone.inZone) return;
-        if (!mountZone.playerRequestedMount) return;
-        
-        mountZone.playerTransform.position = mountLocation.position;
+        mountZone.playerTransform.position = mountLocation.position; 
+        mountZone.playerTransform.parent = mountLocation;
         cinemachineCamera.Target.TrackingTarget = transform;
         ApplyCamSettings();
         hasMounted = true;
@@ -124,7 +124,10 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         input.FaceDirection = FaceDirection;
         this.InitializeTimers((moveDecay, true));
         moveDecay.Start();
+        animator.Play(mountFrontAnim);
+        mountZone.playerTransform.Get<Collider>().enabled = false;
 
+        yield return new WaitForSeconds(1f);
         mountZone.playerTransform.gameObject.SetActive(false);
     }
 

@@ -999,7 +999,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1241
+  m_VersionIndex: 1262
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1428,7 +1428,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 599
+  m_VersionIndex: 620
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2512,7 +2512,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1241
+  m_VersionIndex: 1262
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3201,7 +3201,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 990
+  m_VersionIndex: 1011
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3314,6 +3314,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4411788939215993462}
+  - {fileID: 1587827224923140999}
   m_Father: {fileID: 2679990526794055348}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5501971800230726982
@@ -3431,11 +3432,12 @@ Transform:
   m_GameObject: {fileID: 3728297200071479310}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1.16}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -6.6454096}
+  m_LocalScale: {x: 5.7287993, y: 8.651633, z: 5.7287993}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2679990526794055348}
+  m_Children:
+  - {fileID: 5034543955943256831}
+  m_Father: {fileID: 6750087468273335289}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4097763500127374763
 GameObject:
@@ -5137,7 +5139,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4150
+  m_VersionIndex: 4171
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -5498,7 +5500,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 599
+  m_VersionIndex: 620
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6252,7 +6254,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 990
+  m_VersionIndex: 1011
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6334,6 +6336,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7244560361238292770}
   m_Mesh: {fileID: 0}
+--- !u!1 &7361410262818069660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5034543955943256831}
+  m_Layer: 0
+  m_Name: PlayerMountParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5034543955943256831
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7361410262818069660}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1587827224923140999}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7852413773931268109
 GameObject:
   m_ObjectHideFlags: 0
@@ -6429,13 +6462,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e7e3b4986879ed4ab370b20907a8438, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveDecay: {}
+  moveDecayScalar:
+    val: 3
   input: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
   facing: {fileID: 2679990526794055348}
   mountZone: {fileID: 5035040401915420724}
   hasMounted: 0
   followCamOffset: {x: 0, y: 14, z: -18}
   targetCamOffset: {x: 0, y: 7, z: 0}
-  speed: 2500
+  speed: 2000
   moveForceMode: 0
   mountLocation: {fileID: 1587827224923140999}
   cinemachineCamera: {fileID: 0}
@@ -6447,6 +6483,7 @@ MonoBehaviour:
     rotatingObjects: []
     rotation: {x: 0, y: 0, z: 0, w: 0}
   rb: {fileID: 6340075715979246663}
+  animator: {fileID: 5501971800230726982}
   isMoving: 0
   isShooting: 0
   isLooking: 0
@@ -7181,7 +7218,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 146
+  m_VersionIndex: 167
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8353,7 +8390,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1094
+  m_VersionIndex: 1115
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8466,7 +8503,6 @@ Transform:
   m_Children:
   - {fileID: 6750087468273335289}
   - {fileID: 5782797032821570299}
-  - {fileID: 1587827224923140999}
   - {fileID: 2160234298491644932}
   m_Father: {fileID: 6976002013261386727}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
