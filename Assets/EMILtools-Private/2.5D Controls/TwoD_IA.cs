@@ -381,7 +381,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""ad80a1d4-eec1-4445-a2a2-d20c417da7c5"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

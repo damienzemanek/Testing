@@ -1,8 +1,13 @@
 using System;
+using EMILtools.Core;
+using EMILtools.Extensions;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using static EMILtools.Extensions.MouseLookEX;
 using static TwoD_IA;
+using static TwoDimensionalController;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
 public class TwoD_InputReader : ScriptableObject, IPlayerActions
@@ -14,12 +19,22 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
     public UnityAction<bool> Look = delegate { };
     public UnityAction<bool> Shoot = delegate { };
 
+    
+    public UnityAction<LookDir> FaceDirection = delegate { };
+
+    
     public UnityAction Jump = delegate { };
     public UnityAction Interact = delegate { };
     public UnityAction CallInTitan = delegate { };
 
     public Vector2 movement;
     public Vector2 mouse;
+    [BoxGroup("Orientation")] public MouseCallbackZones mouseZones;
+
+    public SimpleGuarderMutable _lookGuarder = new SimpleGuarderMutable();
+    [ShowInInspector] public SimpleGuarderMutable _mouseZoneGuarder;
+    
+    
 
     private void OnEnable()
     {
@@ -28,12 +43,24 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
         ia.Player.Disable();
         ia.Player.SetCallbacks(this);
         ia.Player.Enable();
+        
+        // Looking at the player from the front, reverses the directions (like a mirror)
+        float halfScreenWidth = mouseZones.w * 0.5f;
+        float screenHeight = mouseZones.h;
+        mouseZones.callbackZones = null;
+        mouseZones.AddInitalZones(
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); Debug.Log("FaceDirection subscribers: " + FaceDirection?.GetInvocationList().Length);
+            }),
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left);  Debug.Log("FaceDirection subscribers: " + FaceDirection?.GetInvocationList().Length);
+            }));
     }
 
 
     private void OnDisable()
     {
         ia.Player.Disable();
+        mouseZones.callbackZones = null;
+
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -86,7 +113,7 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
 
     public void OnInteract(InputAction.CallbackContext context)
     {
-        Interact?.Invoke();
+        if(context.phase == InputActionPhase.Performed) Interact?.Invoke();
     }
 
     public void OnCallInTitan(InputAction.CallbackContext context)

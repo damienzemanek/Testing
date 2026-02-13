@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using EMILtools.Core;
 using EMILtools.Extensions;
-using EMILtools.Signals;
 using EMILtools.Timers;
 using KBCore.Refs;
 using Sirenix.OdinInspector;
@@ -11,6 +10,7 @@ using Sirenix.Utilities;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
+using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
 
@@ -24,19 +24,22 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
      public enum LookDir { None, Left, Right }
      public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb }
-     public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
+     public Dictionary<Type, IStat> Stats { get; set; }
 
     
     [BoxGroup("References")] [SerializeField] Animator animator; 
     [BoxGroup("References")] [SerializeField] TwoD_InputReader input;
     [BoxGroup("References")] [SerializeField] Rigidbody rb;
     [BoxGroup("References")] [SerializeField] Transform facing;
-    
+    [BoxGroup("Orientation")] public RotateToMouseWorldSpace mouseLook;
+
     [BoxGroup("Timers")] [SerializeField] DecayTimer moveDecay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpDelay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;
+    public bool requestedMount = false;
 
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
@@ -63,8 +66,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
     [SerializeField, Self] AnimatorController_TwoD animController;
-    [BoxGroup("Orientation")] [SerializeField] MouseCallbackZones mouseZones;
-    [BoxGroup("Orientation")] [SerializeField] RotateToMouseWorldSpace mouseLook;
     [SerializeField] TurnSlowDown turnSlowDown;
     [BoxGroup("PhysEX")] [SerializeField] private float dblJumpMult = 1.5f;
     [BoxGroup("PhysEX")] [SerializeField, Self] AugmentPhysEX phys;
@@ -72,8 +73,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _moveGuarder;
     [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _shootGuarder;
-    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _lookGuarder;
-    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _mouseZoneGuarder;
     [ShowInInspector, ReadOnly] public ActionGuarderImmutable cantJumpGuarder;
     
     void OnEnable()
@@ -83,6 +82,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         input.Jump += Jump;
         input.Look += Look;
         input.Shoot += Shoot;
+        input.Interact += HandleMountTitan; 
+        input.FaceDirection += FaceDirection;
     }
     void OnDisable()
     {
@@ -91,6 +92,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         input.Jump -= Jump;
         input.Look -= Look;
         input.Shoot -= Shoot;
+        input.Interact -= HandleMountTitan; 
+        input.FaceDirection -= FaceDirection;
     }
 
     void Awake()
@@ -99,8 +102,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         // Super easy to check what flags influence what methods
         _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
         _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
-        _lookGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // CAnt look if mantled
-        _mouseZoneGuarder = new SimpleGuarderImmutable(("Not Looking", () => !isLooking),
+        input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
+        input._mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
                                               ("Mantled", () => isMantled));
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
@@ -115,13 +118,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         rb.maxLinearVelocity = movement.maxVelMagnitude;
         rb.maxAngularVelocity = movement.maxVelMagnitude;
         
-        // Looking at the player from the front, reverses the directions (like a mirror)
-        float halfScreenWidth = mouseZones.w * 0.5f;
-        float screenHeight = mouseZones.h;
-        mouseZones.callbackZones = null;
-        mouseZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left); }));
 
 
         cantJumpGuarder = new ActionGuarderImmutable(
@@ -140,24 +136,33 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         if(animController.state == AnimState.Locomotion)
             animController.UpdateLocomotion(facingDir, moveDir, speedAlpha);
-        if(!_mouseZoneGuarder) mouseZones.CheckAllZones(input.mouse);
+        if(!input._mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
     {
         HandleMovement();
         HandleShooting();
+        if (!canMount) requestedMount = false;
     }
-
+    
     void LateUpdate()
     {
         HandleLooking(); // Needs to be constantly polled for or else player will reset rot when not "looking"
     }
     
-    
-    
-    
-    
+    public void HandleLooking()
+    {
+        if (input._lookGuarder) return;
+        mouseLook.Execute();
+    }
+
+
+
+    void HandleMountTitan()
+    {
+        if (canMount) requestedMount = true;
+    }
 
     void Jump()
     {
@@ -253,10 +258,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             bulletSpawner.Spawn();
         }
     }
-    void HandleLooking() { if (_lookGuarder) return;
-        
-        mouseLook.Execute();
-    }
+
 
     void FaceDirection(LookDir dir)
     {

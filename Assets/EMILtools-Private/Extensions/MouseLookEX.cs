@@ -159,6 +159,8 @@ namespace EMILtools.Extensions
 
             void RotateToMouseDirection (RotatingObject[] transform, Vector3 destination)
             {
+                if (rotatingObjects == null) return;
+                
                 foreach (var ro in transform)
                 {
                     core.direction = destination - ro.transform.position;

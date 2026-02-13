@@ -7,8 +7,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 11f1af86f820a7744a2a82424256f9ad, type: 3}
   m_Name: 2D Input Reader
   m_EditorClassIdentifier: 
+  movement: {x: -1, y: 0}
+  mouse: {x: 366.63315, y: 1557.8894}
+  mouseZones: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
