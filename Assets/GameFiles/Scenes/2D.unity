@@ -277,7 +277,7 @@ MonoBehaviour:
       data:
       - {fileID: 11400000, guid: 5751d9994f40b5343b5b268105382a11, type: 2}
       fireInterval:
-        val: 1
+        val: 0.1
       fireTimer: {}
       targetSetDirection: 0
       direction: {x: 0, y: 0, z: 0}
@@ -289,7 +289,17 @@ MonoBehaviour:
     <mouseLook>k__BackingField:
       cam: {fileID: 1122801504}
       core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
-      rotatingObjects: []
+      rotatingObjects:
+      - transform: {fileID: 95751647}
+        flipX: 0
+        flipY: 0
+        flipZ: 0
+        clampX: 1
+        clampY: 1
+        clampZ: 1
+        clampXrot: {x: -60, y: 40}
+        clampYrot: {x: 0, y: 0}
+        clampZrot: {x: -30, y: 30}
       rotation: {x: 0, y: 0, z: 0, w: 0}
     <moveDecay>k__BackingField: {}
     <jumpDelay>k__BackingField: {}
@@ -297,7 +307,6 @@ MonoBehaviour:
     facingDir: 0
     moveDir: 0
     canMount: 0
-    isLooking: 0
     isShooting: 0
     hasDoubleJumped: 0
     hasRequestedMount: 0
@@ -654,6 +663,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 87182076}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &95751647 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8021001004253913084, guid: cbd1d5dbfe05eba4db196be618a8d096, type: 3}
+  m_PrefabInstance: {fileID: 1158167883}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &114472627
 GameObject:
   m_ObjectHideFlags: 0

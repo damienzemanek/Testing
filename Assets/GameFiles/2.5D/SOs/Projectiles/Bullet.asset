@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bullet
   m_EditorClassIdentifier: 
   prefab: {fileID: 6928260419626528790, guid: 104859321223571459fa3be2da0ccc26, type: 3}
-  forceScalar: 300
+  forceScalar: -300
   forceMode: 2
   tag: Hittable
   hitEffectPrefab: {fileID: 1370874438154576190, guid: c02083b1627cc40449e4e7c3ed1f2a65, type: 3}
