@@ -41,7 +41,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;
     public bool requestedMount = false;
 
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning = false;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] ReactiveIntercept<bool> isRunning = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
     float speedAlpha // Represents the move alpha 
@@ -53,11 +53,11 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir moveDir;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isLooking;
 
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> isMantled = false;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> isMantled = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool isShooting;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> hasJumped = false;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] ReactiveIntercept<bool> hasJumped = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] bool hasDoubleJumped;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> canMantle = false;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> canMantle = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 

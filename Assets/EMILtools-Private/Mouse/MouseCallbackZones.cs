@@ -29,8 +29,8 @@ namespace EMILtools.Extensions
                 if (inside && !wasInside)
                 {
                     callback.Invoke();
-                    Debug.Log("Invoking " + callback.Count);
-                    callback.PrintInvokeListNames();
+                    //Debug.Log("Invoking " + callback.Count);
+                    //callback.PrintInvokeListNames();
                 }
                 wasInside = inside;
             }
@@ -45,13 +45,13 @@ namespace EMILtools.Extensions
 
         public void CheckAllZones(Vector2 mousePos)
         {
-            Debug.Log("checking zoneszx");
+            //Debug.Log("checking zoneszx");
             if(callbackZones == null) Debug.LogError("No callback zones found, make sure to add some with AddInitialZones or AddZone");
-            Debug.Log(callbackZones.Count);
+           // Debug.Log(callbackZones.Count);
 
             foreach (var zone in callbackZones)
             {
-                Debug.Log(zone);
+                //Debug.Log(zone);
                 zone.CheckZone(mousePos);
             }
         }

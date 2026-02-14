@@ -59,9 +59,9 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
         float screenHeight = mouseZones.h;
         mouseZones.callbackZones = null;
         mouseZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Right, true); Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Left, true);  Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }));
     }
 

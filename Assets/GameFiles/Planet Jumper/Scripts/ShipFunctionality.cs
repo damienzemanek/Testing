@@ -13,7 +13,7 @@ using static EMILtools.Timers.TimerUtility;
 
 public class ShipFunctionality : Functionalities<ShipController>
 {
-    public override void AddModulesHere()
+    protected override void AddModulesHere()
     {
         AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
         AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
@@ -142,7 +142,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
 
         public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
-
+ 
         protected override void Awake()
         {
             executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));

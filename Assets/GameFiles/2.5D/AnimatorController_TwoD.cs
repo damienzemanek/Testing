@@ -41,7 +41,7 @@ public class AnimatorController_TwoD : MonoBehaviour
     public void UpdateLocomotion(LookDir facingDir, LookDir moveDir, float currentSpeed)
     {
         animator.SetFloat(Speed, currentSpeed);
-        if (facingDir != moveDir) Play(moveback);
+        if (facingDir == moveDir) Play(moveback);
         else Play(move);
     }
     

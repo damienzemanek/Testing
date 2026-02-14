@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using static InterfaceEX;
 
 namespace EMILtools_Private.Testing
 {
     public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>
         where TMonoFacade : IFacade
     {
+        readonly Dictionary<Type, MonoFunctionalityModule> API_Modules = new();
         [field: NonSerialized] public TMonoFacade facade { get; set; }
         
         [ShowInInspector] List<MonoFunctionalityModule> modules; 
@@ -23,6 +25,7 @@ namespace EMILtools_Private.Testing
             AddModulesHere();
             foreach (var t in modules)  t.SetupModule();
             Debug.Log("Functionality modules succesfully setup");
+            Debug.Log("API count: " + API_Modules.Count);
         }
         public void Bind() 
         { 
@@ -49,9 +52,22 @@ namespace EMILtools_Private.Testing
             if (module is UPDATE u) _update.Add(u);
             if (module is FIXEDUPDATE f) _fixed.Add(f);
             if (module is LATEUPDATE l) _late.Add(l);
+            if (module is IAPI_Module)
+            {
+                foreach (var iface in GetInterfacesAssignableTo<IAPI_Module>(module.GetType()))
+                {
+                    if (!API_Modules.TryAdd(iface, module)) throw new InvalidOperationException($"API interface {iface.Name} already registered.");
+                    else Debug.Log("Added interface to modules API dictionary, new API add is : " + iface + " new count is " + API_Modules.Count);
+                }                
+            }
         }
 
+        public Dictionary<Type, MonoFunctionalityModule> APIs() => API_Modules;
 
-        public abstract void AddModulesHere();
+
+        protected abstract void AddModulesHere();
     }
 }
+
+public interface IAPI_Module { }
+

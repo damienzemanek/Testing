@@ -9,7 +9,7 @@ using UnityEngine;
 namespace EMILtools.Core
 {
     [Serializable]
-    public readonly struct ActionGuard : IGuardAction
+    public class ActionGuard : IGuardAction
     {
 
         [HorizontalGroup("Top", 250)] [ShowInInspector, ReadOnly] public string If { get; }
@@ -72,7 +72,7 @@ namespace EMILtools.Core
     
     
     [Serializable]
-    public readonly struct LazyActionGuard<TLazyFunc> : IGuardAction
+    public class LazyActionGuard<TLazyFunc> : IGuardAction
         where TLazyFunc : class, ILazyFunc<bool>, new()
     {
         [HorizontalGroup("Top", 250), PropertyOrder(-1)] [ShowInInspector, ReadOnly]     public string If { get; }

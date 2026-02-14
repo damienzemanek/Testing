@@ -6,11 +6,12 @@ using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
+using static Ledge;
 using static TwoD_Config;
 
 public class TwoD_Functionality : Functionalities<TwoD_Controller>
 {
-    public override void AddModulesHere()
+    protected override void AddModulesHere()
     {
         // Layer 1
         AddModule(new MoveModule(facade.Input.Move, facade));
@@ -22,18 +23,30 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         // Layer 2
         AddModule(new LandModule(facade.Input.Land, facade));
         AddModule(new ClimbModule(facade.Input.ClimbLedge, facade));
+        AddModule(new MantleModule(facade.Input.MantleLedge, facade));
     }
 
-    public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_Controller>, IAPI_Climb
     {
         public ClimbModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
 
         protected override void Awake() => facade.Input.ClimbLedge.Add(Execute);
 
         public override void Execute() => facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.climb, 0.1f);
+
+        public void CompleteClimb()
+        {
+            facade.Blackboard.isMantled.Value = false;
+            facade.Blackboard.rb.isKinematic = false;
+            facade.Blackboard.animController.state = AnimState.Locomotion;
+            float offset = facade.Config.move.mantleXOffset;
+            if(facade.Blackboard.ledgeData.dir == LookDir.Right) offset *= -1;
+            facade.transform.position = facade.Blackboard.ledgeData.point.position.With(
+                x: facade.Blackboard.ledgeData.point.position.x - offset);
+        }
     }
 
-    public class MantleModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    public class MantleModule : BasicFunctionalityModuleFacade<TwoD_Controller>, IAPI_Mantler
     {
         public MantleModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
 
@@ -41,7 +54,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
         public override void Execute()
         {
-            if(facade.Blackboard.ledgeData.dir == facade.Blackboard.facingDir) return;
+            if(facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir) return;
             
             facade.Blackboard.isMantled.Value = true;
             facade.Blackboard.rb.isKinematic = true;
@@ -52,8 +65,16 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
                 x: facade.Blackboard.ledgeData.point.position.x + offset);
             facade.Blackboard.animController.state = AnimState.Mantle;
             facade.Blackboard.animController.Play(facade.Blackboard.animController.mantle);
-            
         }
+
+        public void CanMantleLedge(LedgeData data)
+        {
+            Debug.Log("Can Mantle");
+            facade.Blackboard.canMantle.Value = true;
+            facade.Blackboard.ledgeData = data;
+        }
+
+        public void CantMantleLedge() => facade.Blackboard.canMantle.Value = false;
     }
 
     public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_Controller>
@@ -115,8 +136,8 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
         protected override void Implementation(float dt)
         {
-            if (dir == LookDir.Left) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (dir == LookDir.Right) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            if (dir == LookDir.Right) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+            if (dir == LookDir.Left) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
             facade.Blackboard.facingDir = dir;
         }
 
@@ -159,7 +180,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
                 facade.Blackboard.animController.animator.Play(facade.Blackboard.animController.shoot, layer: 1, normalizedTime: 0f);
                 yield return null;
                 facade.Blackboard.bulletSpawner.Spawn();
-                Debug.Log("Spawning Projectile");
+                //Debug.Log("Spawning Projectile");
             }
         }
         
@@ -197,7 +218,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
         protected override void Implementation(float dt)
         {
-            Debug.Log("Attempting move, input is : " + facade.Input.movement);
+            //Debug.Log("Attempting move, input is : " + facade.Input.movement);
             if (!facade.Blackboard.isRunning) Walk();
             else Run();
             Move(facade.Input.movement);

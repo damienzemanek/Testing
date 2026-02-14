@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using EMILtools_Private.Testing;
 using KBCore.Refs;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public interface IFacade { }
+public interface IFacade
+{
+    
+}
 
 [Serializable]
 public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: ValidatedMonoBehaviour, IFacade
@@ -21,7 +25,14 @@ public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: Vali
     [field:SerializeField, Required] [field:HideLabel] public TBlackboard Blackboard { get; private set; }
     [field: Title("Functionality Modules")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
-    
+
+    public T GetFunctionality<T>() where T : class, IAPI_Module
+    {
+        if (Functionality.APIs().TryGetValue(typeof(T), out var module))
+            return module as T;
+        if(module == null) Debug.LogWarning("Did not find module of type " + typeof(T));
+        return null;
+    }
 
     public virtual void InitializeFacade()
     {
