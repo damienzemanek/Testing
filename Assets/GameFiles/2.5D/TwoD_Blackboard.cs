@@ -1,4 +1,5 @@
-﻿using EMILtools.Core;
+﻿using System;
+using EMILtools.Core;
 using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
@@ -8,33 +9,27 @@ using static EMILtools.Extensions.NumEX;
 using static Ledge;
 using static TwoD_Config;
 
-public class TwoD_Blackboard : Blackboard, IFacadeCompositionElement<TwoD_Controller>
+[Serializable]
+public class TwoD_Blackboard : Blackboard
 {
-    public TwoD_Controller facade { get; set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public Rigidbody rb { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public CapsuleCollider capsuleCollider { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public WeaponManager weapons { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public ProjectileSpawnManager bulletSpawner { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public AnimatorController_TwoD animController { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField]  public TurnSlowDown turnSlowDown { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     
-    public Animator animator { get; private set; } 
-    public TwoD_InputReader input { get; private set; }
-    public Rigidbody rb { get; private set; }
-    public Transform facing { get; private set; }
-    public CapsuleCollider capsuleCollider { get; private set; }
-    
-    public Movement_TwoD_Config movement { get; private set; }
-    public WeaponManager weapons { get; private set; }
-    public ProjectileSpawnManager bulletSpawner { get; private set; }
-    public AnimatorController_TwoD animController { get; private set; }
-    public TurnSlowDown turnSlowDown { get; private set; }
-    public AugmentPhysEX phys { get; private set; }
-    
-    [BoxGroup("Orientation")] public RotateToMouseWorldSpace mouseLook { get; private set; }
-    [BoxGroup("Timers")] public DecayTimer moveDecay { get; private set; }
-    [BoxGroup("Timers")] public CountdownTimer jumpDelay { get; private set; }
-    [BoxGroup("Timers")] public CountdownTimer turnSlowdown { get; private set; }
+    [BoxGroup("Orientation")] [field: SerializeField] public RotateToMouseWorldSpace mouseLook { get; private set; }
+    [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; private set; }
+    [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer jumpDelay { get; private set; }
+    [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; private set; }
     
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir;
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir moveDir;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isLooking;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasDoubleJumped;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool hasRequestedMount = false;
@@ -47,8 +42,9 @@ public class TwoD_Blackboard : Blackboard, IFacadeCompositionElement<TwoD_Contro
     
     // Dynamic Variables
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => capsuleCollider.height;
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool jumpOnCooldown => jumpDelay.isRunning;
+
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => capsuleCollider != null ? capsuleCollider.height : 0;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] private bool jumpOnCooldown => jumpDelay != null ? jumpDelay.isRunning : true;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public float speedAlpha // Represents the move alpha 
     {
         get => moveDecay != null ? moveDecay.Time : ZeroF;

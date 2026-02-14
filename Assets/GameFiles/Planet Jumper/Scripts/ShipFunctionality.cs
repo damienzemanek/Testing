@@ -46,7 +46,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         static readonly int fireAnimNameRight = Animator.StringToHash("fireRight");
         bool shootDirToggle = true;
         
-        public FireModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
+        public FireModule(PersistentAction<bool> action, ShipController facade) : base(action, facade, true) { }
 
         protected override void Awake()
         {
@@ -57,7 +57,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         
         protected override void OnSet() { }
 
-        protected override void Execute(float dt)
+        protected override void Implementation(float dt)
         => facade.Blackboard.cannonProjectileSpawner.Spawn();
         
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
@@ -87,7 +87,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
         Config config => facade.Config.thrust;
         
-        public ThrustModuleSub(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
+        public ThrustModuleSub(PersistentAction<bool> action, ShipController facade) : base(action, facade, true) { }
         
 
         protected override void Awake()
@@ -114,7 +114,7 @@ public class ShipFunctionality : Functionalities<ShipController>
             }
         }
 
-        protected override void Execute(float dt)
+        protected override void Implementation(float dt)
         => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
 
         
@@ -141,7 +141,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         [ShowInInspector, ReadOnly] Vector3 rotationVector;
 
 
-        public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade) { }
+        public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
 
         protected override void Awake()
         {

@@ -39,7 +39,6 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
         
         switch (context.phase) 
         {
-            case InputActionPhase.Started: DoRotate(); break; 
             case InputActionPhase.Canceled: Rotate?.Invoke(Vector3.zero, false); break; 
         }
 

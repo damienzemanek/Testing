@@ -8,7 +8,7 @@ using UnityEngine;
 public class ControlledMonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard, TInputReader>: MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>
     where TMonoFacade : IFacade    
     where TConfig : Config                                    // Config does not need to be an interior because it should not have a reference to the facade, it is just data
-    where TBlackboard : Blackboard,                           IFacadeCompositionElement<TMonoFacade>
+    where TBlackboard : Blackboard                           
     where TFunctionality : Functionalities<TMonoFacade>,      IFacadeCompositionElement<TMonoFacade>, new()
     where TInputReader : ScriptableObject, IInputReader,      IFacadeCompositionElement<TMonoFacade>
 {

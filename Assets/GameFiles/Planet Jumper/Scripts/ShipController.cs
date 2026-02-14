@@ -50,8 +50,6 @@ public class ShipController : ControlledMonoFacade<ShipController, ShipFunctiona
     }
     
     
-    
-
     private void OnDestroy()
     {
         this.ShutdownTimers();

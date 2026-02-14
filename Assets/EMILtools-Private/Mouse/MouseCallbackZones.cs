@@ -29,7 +29,6 @@ namespace EMILtools.Extensions
                 if (inside && !wasInside)
                 {
                     callback.Invoke();
-                    
                     Debug.Log("Invoking " + callback.Count);
                     callback.PrintInvokeListNames();
                 }

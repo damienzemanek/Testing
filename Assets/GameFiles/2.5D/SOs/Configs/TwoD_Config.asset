@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab7d6de56aaf4b968b59af39d94f4135, type: 3}
+  m_Name: TwoD_Config
+  m_EditorClassIdentifier: 
+  <move>k__BackingField:
+    moveForce: 90
+    forceMode: 0
+    decayScalar:
+      val: 2.5
+    mantleXOffset: 1
+    mantleDelay: 1
+    maxVelMagnitude: 100
+    maxSpeed: 290
+    walkAlphaMax: 1
+    runAlphaMax: 2.2

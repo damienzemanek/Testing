@@ -14,8 +14,8 @@ public abstract class InputHeldModuleFacade<TPublisherArgs, TSetActionGuarder, T
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
 
-    protected InputHeldModuleFacade(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade)
-        : base(action)
+    protected InputHeldModuleFacade(PersistentAction<TPublisherArgs, bool> action, TCoreFacade facade, bool useIsActiveGuard)
+        : base(action, useIsActiveGuard: useIsActiveGuard)
     => this.facade = facade;
 }
 
@@ -25,7 +25,7 @@ public abstract class InputHeldModuleFacade<TSetActionGuarder, TCoreFacade> : In
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
 
-    protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade) : base(action)
+    protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade, bool useIsActiveGuard) : base(action, useIsActiveGuard)
         => this.facade = facade;
 }
 
@@ -38,7 +38,17 @@ public abstract class InputPressedModuleFacade<TSetActionGuarder, TCoreFacade> :
     protected InputPressedModuleFacade(PersistentAction action, TCoreFacade facade)
         : base(action)
     => this.facade = facade;
-    
+}
+
+public abstract class InputPressedModuleFacade<T, TSetActionGuarder, TCoreFacade> : InputPressedModule<T, TSetActionGuarder>
+    where TSetActionGuarder : IActionGuarder, new()
+    where TCoreFacade : class, IFacade
+{
+    [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
+
+    protected InputPressedModuleFacade(PersistentAction<T> action, TCoreFacade facade)
+        : base(action)
+        => this.facade = facade;
 }
 
 

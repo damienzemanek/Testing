@@ -23,7 +23,7 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
     public PersistentAction<bool> Look = new();
     public PersistentAction<bool> Shoot = new();
     
-    public PersistentAction<LookDir> FaceDirection = new();
+    public PersistentAction<LookDir, bool> FaceDirection = new();
     
     public PersistentAction Jump = new();
     public PersistentAction Interact = new();
@@ -35,7 +35,7 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
     [BoxGroup("Orientation")] public MouseCallbackZones mouseZones;
 
     public SimpleGuarderMutable _lookGuarder = new SimpleGuarderMutable();
-    [ShowInInspector] public SimpleGuarderMutable _mouseZoneGuarder;
+    [ShowInInspector] public SimpleGuarderMutable mouseZoneGuarder = new();
     
     
 
@@ -52,9 +52,9 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
         float screenHeight = mouseZones.h;
         mouseZones.callbackZones = null;
         mouseZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Right); Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Right, true); Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Left);  Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Left, true);  Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }));
     }
 
@@ -68,15 +68,16 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
 
     public void OnMove(InputAction.CallbackContext context)
     {
+        if (ia.Player.Move.IsPressed())
+        {
+            movement = context.ReadValue<Vector2>();
+            Move?.Invoke(true); 
+        }
         switch (context.phase)
         {
-            case InputActionPhase.Started: 
-                movement = context.ReadValue<Vector2>();
-                Move?.Invoke(true); break;
             case InputActionPhase.Canceled: 
                 Move?.Invoke(false); break;
         }
-
     }
 
     public void OnLook(InputAction.CallbackContext context)

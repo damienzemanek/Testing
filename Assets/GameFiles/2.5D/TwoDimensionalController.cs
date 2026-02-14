@@ -63,7 +63,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
     
-    [InlineEditor] public Movement_TwoD_Config movement;
+    [InlineEditor] public TwoD_Functionality.MoveModule.Config movement;
     [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
     [SerializeField, Self] AnimatorController_TwoD animController;
@@ -104,7 +104,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
         _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
         input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
-        input._mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
+        input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
                                               ("Mantled", () => isMantled));
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
@@ -137,7 +137,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         if(animController.state == AnimState.Locomotion)
             animController.UpdateLocomotion(facingDir, moveDir, speedAlpha);
-        if(!input._mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
+        if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
@@ -263,7 +263,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     }
 
 
-    void FaceDirection(LookDir dir)
+    void FaceDirection(LookDir dir, bool active)
     {
         print("looking in dir: " + dir);
         if (dir == LookDir.Left) facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);

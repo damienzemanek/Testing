@@ -10,7 +10,7 @@ public interface IFacade { }
 public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: ValidatedMonoBehaviour, IFacade
     where TMonoFacade : IFacade    
     where TConfig : Config                                 // Config does not need to be an interior because it should not have a reference to the facade, it is just data
-    where TBlackboard : Blackboard,                        IFacadeCompositionElement<TMonoFacade>
+    where TBlackboard : Blackboard                       
     where TFunctionality : Functionalities<TMonoFacade>,   IFacadeCompositionElement<TMonoFacade>, new()
 {
     bool coreFacadeInitialized = false;
@@ -31,7 +31,6 @@ public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: Vali
         Debug.Assert(Blackboard != null, $"{name}: Blackboard not assigned");
         Debug.Assert(Functionality != null, $"{name}: Functionality did not initialize");
         
-        Blackboard.ComposeElement(this);   
         Functionality.ComposeElement(this);   // Functionality must be last because it depends on the Config and the Blackboard
         
         coreFacadeInitialized = true;

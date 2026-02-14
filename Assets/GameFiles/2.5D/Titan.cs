@@ -90,7 +90,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         if(!hasMounted && mountZone.inZone && mountZone.playerRequestedMount)
             StartCoroutine(HandleMount());
         HandleMovement();
-        if(!input._mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
+        if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
         animator.SetFloat(Speed, speedAlpha);
 
     }
@@ -105,7 +105,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         mouseLook.Execute();
     }
     
-    void FaceDirection(LookDir dir)
+    void FaceDirection(LookDir dir, bool active)
     {
         print("a"); 
         if (!hasMounted) return;
@@ -123,9 +123,9 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         cinemachineCamera.Target.TrackingTarget = transform;
         ApplyCamSettings();
         hasMounted = true;
-        input._mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
+        input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
         input._lookGuarder = new SimpleGuarderMutable();
-        input.FaceDirection = new PersistentAction<LookDir>();
+        input.FaceDirection = new PersistentAction<LookDir, bool>();
         input.FaceDirection.Add(FaceDirection);
         this.InitializeTimers((moveDecay, true));
         moveDecay.Start();
