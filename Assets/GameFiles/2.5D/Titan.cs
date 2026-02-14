@@ -79,6 +79,9 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
     void Start()
     {
         if(cinemachineCamera == null) cinemachineCamera = FindFirstObjectByType(typeof(CinemachineCamera)) as CinemachineCamera;
+        if (follow == null) follow = cinemachineCamera.Get<CinemachineFollow>();
+        if (rotation == null) rotation = cinemachineCamera.Get<CinemachineRotationComposer>();
+        mouseLook.cam = Camera.main;
     }
 
     void Update()
