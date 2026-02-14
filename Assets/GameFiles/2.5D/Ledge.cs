@@ -27,7 +27,15 @@ public class Ledge : MonoBehaviour
     void CheckForPlayer(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        var player = other.Get<TwoDimensionalController>();
-        player.CanMantleLedge(data);
+        var player = other.Get<TwoD_Controller>();
+        player.
     }
+    
+    public void CanMantleLedge(LedgeData ledgeData)
+    {
+        canMantle.Value = true;
+        this.ledgeData = ledgeData;
+    }
+
+    public void CantMantleLedge() => canMantle.Value = false;
 }

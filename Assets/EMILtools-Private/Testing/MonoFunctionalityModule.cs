@@ -1,5 +1,4 @@
-﻿
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
 public interface IModule { }
@@ -29,6 +28,4 @@ public abstract class MonoFunctionalityModule : IModule
     protected virtual void ExecuteTemplateCall(float dt) { }
     public abstract void Bind();
     public abstract void Unbind();
-    
 }
-

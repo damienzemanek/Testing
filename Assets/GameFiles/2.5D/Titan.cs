@@ -123,7 +123,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         cinemachineCamera.Target.TrackingTarget = transform;
         ApplyCamSettings();
         hasMounted = true;
-        input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
+        //input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
         input._lookGuarder = new SimpleGuarderMutable();
         input.FaceDirection = new PersistentAction<LookDir, bool>();
         input.FaceDirection.Add(FaceDirection);

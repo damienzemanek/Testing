@@ -44,7 +44,7 @@ public class TwoD_Blackboard : Blackboard
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LedgeData ledgeData;
 
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => capsuleCollider != null ? capsuleCollider.height : 0;
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] private bool jumpOnCooldown => jumpDelay != null ? jumpDelay.isRunning : true;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool jumpOnCooldown => jumpDelay != null ? jumpDelay.isRunning : true;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public float speedAlpha // Represents the move alpha 
     {
         get => moveDecay != null ? moveDecay.Time : ZeroF;

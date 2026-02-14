@@ -22,7 +22,6 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
-     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb }
      public Dictionary<Type, IStat> Stats { get; set; }
      
     [BoxGroup("References")] [SerializeField] Animator animator; 
@@ -104,8 +103,10 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
         _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
         input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
-        input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
-                                              ("Mantled", () => isMantled));
+        
+        // input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
+        //     ("Mantled", () => isMantled));
+
         
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
         jumpDelay = new CountdownTimer(phys.jumpSettings.cooldown);

@@ -23,7 +23,8 @@ public class TwoD_Controller : ControlledMonoFacade<TwoD_Controller, TwoD_Functi
         Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
         Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;
         
-        Input.mouseZoneGuarder = new SimpleGuarderMutable(("Mantled", () => Blackboard.isMantled));
+        Input.mouseZoneGuarder = new LazyGuarderMutable(
+            (new LazyGuard(Blackboard.isMantled.SimpleReactions, () => Blackboard.isMantled, "Is Mantled")));
     }
 
     protected override void Update()

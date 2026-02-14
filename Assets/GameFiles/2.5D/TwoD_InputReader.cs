@@ -18,24 +18,31 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, 
     
     TwoD_IA ia;
 
+    // Layer 1 -> Invoked by Player Input
     public PersistentAction<bool> Move = new();
     public PersistentAction<bool> Run = new();
     public PersistentAction<bool> Look = new();
     public PersistentAction<bool> Shoot = new();
-    
     public PersistentAction<LookDir, bool> FaceDirection = new();
-    
     public PersistentAction Jump = new();
     public PersistentAction Interact = new();
     public PersistentAction CallInTitan = new();
+    
+    
+    // Layer 2 -> Invoked in a Functionality Module
     public PersistentAction UnMantleLedge = new();
+    public PersistentAction MantleLedge = new();
+    public PersistentAction DoubleJump = new();
+    public PersistentAction ClimbLedge = new();
+    public PersistentAction<bool> Land = new();
 
+    
     public Vector2 movement;
     public Vector2 mouse;
     [BoxGroup("Orientation")] public MouseCallbackZones mouseZones;
 
     public SimpleGuarderMutable _lookGuarder = new SimpleGuarderMutable();
-    [ShowInInspector] public SimpleGuarderMutable mouseZoneGuarder = new();
+    [ShowInInspector] public LazyGuarderMutable mouseZoneGuarder = new();
     
     
 

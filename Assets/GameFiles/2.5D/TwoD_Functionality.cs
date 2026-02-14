@@ -2,6 +2,7 @@
 using System.Collections;
 using EMILtools_Private.Testing;
 using EMILtools.Core;
+using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
@@ -11,12 +12,98 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 {
     public override void AddModulesHere()
     {
+        // Layer 1
         AddModule(new MoveModule(facade.Input.Move, facade));
         AddModule(new ShootModule(facade.Input.Shoot, facade));
         AddModule(new LookModule(facade.Input.Look, facade));
         AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
+        AddModule(new JumpModule(facade.Input.Jump, facade));
+        
+        // Layer 2
+        AddModule(new LandModule(facade.Input.Land, facade));
+        AddModule(new ClimbModule(facade.Input.ClimbLedge, facade));
     }
 
+    public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    {
+        public ClimbModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake() => facade.Input.ClimbLedge.Add(Execute);
+
+        public override void Execute() => facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.climb, 0.1f);
+    }
+
+    public class MantleModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    {
+        public MantleModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake() => facade.Input.MantleLedge.Add(Execute);
+
+        public override void Execute()
+        {
+            if(facade.Blackboard.ledgeData.dir == facade.Blackboard.facingDir) return;
+            
+            facade.Blackboard.isMantled.Value = true;
+            facade.Blackboard.rb.isKinematic = true;
+            float offset = facade.Config.move.mantleXOffset;
+            if(facade.Blackboard.ledgeData.dir == LookDir.Right) offset *= -1;
+            facade.transform.position = facade.transform.position.With(
+                y: facade.Blackboard.ledgeData.point.position.y - facade.Blackboard.playerHeight, 
+                x: facade.Blackboard.ledgeData.point.position.x + offset);
+            facade.Blackboard.animController.state = AnimState.Mantle;
+            facade.Blackboard.animController.Play(facade.Blackboard.animController.mantle);
+            
+        }
+    }
+
+    public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_Controller>
+    {
+        public LandModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake() => facade.Blackboard.phys.isGrounded.Reactions.Add(facade.Input.Land.Invoke);
+
+        public override void Execute(bool landed)
+        {
+            Debug.Log("attempted land");
+            if (!landed) return;
+            Debug.Log("failed land");
+
+            facade.Blackboard.animController.state = AnimState.Locomotion;
+            facade.Blackboard.jumpDelay.Start();
+            facade.Blackboard.animController.Play(facade.Blackboard.animController.land);
+            facade.Blackboard.hasJumped.Value = false;
+            facade.Blackboard.hasDoubleJumped = false;
+        }
+    }
+
+    public class JumpModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    {
+        public JumpModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake()
+        {
+
+            onPressGuarder = new ActionGuarderMutable(
+                new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.isMantled.SimpleReactions, 
+                                () => facade.Blackboard.isMantled, () => facade.Input.ClimbLedge.Invoke(), "Is Mantled", "Climb"),
+                
+                        new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.canMantle.SimpleReactions,
+                                () => facade.Blackboard.canMantle, () => facade.Input.MantleLedge.Invoke(), "Can Mantle", "Mantle"),
+                
+                        new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.hasJumped.SimpleReactions,
+                                () => facade.Blackboard.hasJumped, () => facade.Input.DoubleJump.Invoke(), "Has Jumped", "Double Jump"),
+                
+                        new ActionGuard(() => facade.Blackboard.jumpOnCooldown, "Jump On Cooldown"),
+                        new ActionGuard(() => !facade.Blackboard.phys.isGrounded, "In the Air"));
+        }
+
+        protected override void OnPress()
+        {
+            facade.Blackboard.animController.Play(facade.Blackboard.animController.jump);
+            PhysEX.Jump(facade.Blackboard.rb, facade.Blackboard.phys.jumpSettings);
+            facade.Blackboard.hasJumped.Value = true;
+        }
+    }
 
     public class FaceDirectionModule : InputHeldModuleFacade<LookDir, ActionGuarderMutable, TwoD_Controller>, UPDATE
     {
