@@ -999,7 +999,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1262
+  m_VersionIndex: 1268
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1142,6 +1142,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2160234298491644932}
   - {fileID: 5072530999014116398}
   - {fileID: 9204394908462720857}
   - {fileID: 7283120428065655541}
@@ -1459,7 +1460,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 620
+  m_VersionIndex: 626
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2543,7 +2544,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1262
+  m_VersionIndex: 1268
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3232,7 +3233,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1011
+  m_VersionIndex: 1017
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3496,12 +3497,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4097763500127374763}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 1.528, z: -0.87}
-  m_LocalScale: {x: 0.2333181, y: 0.112449, z: 1.1457012}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.8996959, z: -4.9840574}
+  m_LocalScale: {x: 1.3366326, y: 0.9728675, z: 6.563493}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2679990526794055348}
+  m_Father: {fileID: 491018500400846660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6941068152589869825
 MeshFilter:
@@ -5170,7 +5171,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4171
+  m_VersionIndex: 4177
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -5531,7 +5532,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 620
+  m_VersionIndex: 626
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6285,7 +6286,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1011
+  m_VersionIndex: 1017
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6483,8 +6484,8 @@ MonoBehaviour:
   hasMounted: 0
   followCamOffset: {x: 0, y: 14, z: -18}
   targetCamOffset: {x: 0, y: 7, z: 0}
-  speed: 7
-  moveForceMode: 2
+  speed: 2600
+  moveForceMode: 0
   mountLocation: {fileID: 1587827224923140999}
   cinemachineCamera: {fileID: 0}
   follow: {fileID: 0}
@@ -6492,7 +6493,17 @@ MonoBehaviour:
   mouseLook:
     cam: {fileID: 0}
     core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
-    rotatingObjects: []
+    rotatingObjects:
+    - transform: {fileID: 491018500400846660}
+      flipX: 0
+      flipY: 1
+      flipZ: 0
+      clampX: 1
+      clampY: 1
+      clampZ: 1
+      clampXrot: {x: -60, y: 60}
+      clampYrot: {x: -15, y: 15}
+      clampZrot: {x: -30, y: 30}
     rotation: {x: 0, y: 0, z: 0, w: 0}
   rb: {fileID: 6340075715979246663}
   animator: {fileID: 5501971800230726982}
@@ -6538,6 +6549,7 @@ MonoBehaviour:
     mult: 30
     dir: {x: 0, y: -1, z: 0}
     inAirMoveScalar: 0
+  fallFaster: 1
   rb: {fileID: 6340075715979246663}
   isGrounded:
     _value: 0
@@ -7295,7 +7307,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 167
+  m_VersionIndex: 173
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8467,7 +8479,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1115
+  m_VersionIndex: 1121
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8580,6 +8592,5 @@ Transform:
   m_Children:
   - {fileID: 6750087468273335289}
   - {fileID: 5782797032821570299}
-  - {fileID: 2160234298491644932}
   m_Father: {fileID: 6976002013261386727}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}

@@ -100,7 +100,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
     
     public void HandleLooking()
     {
-        if (input._lookGuarder) return;
+        if (input._lookGuarder || !hasMounted) return;
         mouseLook.Execute();
     }
     
@@ -129,6 +129,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         moveDecay.Start();
         animator.Play(mountFrontAnim);
         mountZone.playerTransform.Get<Collider>().enabled = false;
+        this.Get<AugmentPhysEX>().fallFaster = false;
 
         yield return new WaitForSeconds(1f);
         mountZone.playerTransform.gameObject.SetActive(false);

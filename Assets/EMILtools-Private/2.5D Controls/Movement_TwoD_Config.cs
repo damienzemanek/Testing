@@ -12,7 +12,7 @@ using static EMILtools.Signals.StatTags;
 [CreateAssetMenu(fileName = "Movement 2D Config", menuName = "ScriptableObjects/Movement/2D Config", order = 0)]
 public class Movement_TwoD_Config : ScriptableObject, IStatHolder
 {
-    [ShowInInspector] public readonly float moveForce = 200f;
+    [SerializeField] public float moveForce = 90;
     [SerializeField] public ForceMode forceMode = ForceMode.Force;
     [SerializeField] public Ref<float> decayScalar = 2.5f;
     [SerializeField] public float mantleXOffset = 1f;

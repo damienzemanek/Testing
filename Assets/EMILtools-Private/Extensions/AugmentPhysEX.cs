@@ -11,12 +11,14 @@ public class AugmentPhysEX : MonoBehaviour
     public GroundedSettings groundedSettings;
     public FallSettings fallSettings;
 
+    public bool fallFaster = true;
+
     [BoxGroup("Rigidbody")] [SerializeField] Rigidbody rb;
     [BoxGroup("ReadOnly")] [ReadOnly] public ReactiveIntercept<bool> isGrounded;
 
     void FixedUpdate()
     {
         isGrounded.Value = transform.IsGrounded(ref groundedSettings);
-        rb.FallFaster(fallSettings);
+        if(!isGrounded && fallFaster) rb.FallFaster(fallSettings);
     }
 }

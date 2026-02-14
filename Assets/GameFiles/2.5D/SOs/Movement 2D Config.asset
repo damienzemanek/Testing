@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b80e1e3fc080ff45afbbd5cddf239e2, type: 3}
   m_Name: Movement 2D Config
   m_EditorClassIdentifier: 
+  moveForce: 90
   forceMode: 0
   decayScalar:
     val: 2.5
   mantleXOffset: 1
   mantleDelay: 1
   maxVelMagnitude: 100
-  maxSpeed: 390
+  maxSpeed: 290
