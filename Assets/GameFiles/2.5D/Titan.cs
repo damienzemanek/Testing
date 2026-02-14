@@ -9,6 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
+using static TwoD_Config;
 using static TwoDimensionalController;
 
 public class Titan : ValidatedMonoBehaviour, ITimerUser
@@ -64,16 +65,16 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
 
     void OnEnable()
     {
-        input.Move += Move;
-        input.Look += Look;
+        input.Move.Add(Move);
+        input.Look.Add(Look);
     }
 
     void OnDisable()
     {
-        input.Move -= Move;
-        input.Look -= Look;
+        input.Move.Remove(Move);
+        input.Look.Remove(Look);
 
-        input.FaceDirection -= FaceDirection;
+        input.FaceDirection.Remove(FaceDirection);
     }
 
     void Start()
@@ -124,7 +125,8 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         hasMounted = true;
         input._mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
         input._lookGuarder = new SimpleGuarderMutable();
-        input.FaceDirection = FaceDirection;
+        input.FaceDirection = new PersistentAction<LookDir>();
+        input.FaceDirection.Add(FaceDirection);
         this.InitializeTimers((moveDecay, true));
         moveDecay.Start();
         animator.Play(mountFrontAnim);

@@ -120,7 +120,7 @@ namespace EMILtools.Extensions
 
         public static void JumpComplex(this Rigidbody rb, JumpSettings jump, float progress)
         {
-            float mult = ZEROF;
+            float mult = ZeroF;
             if (!jump.complexJump) mult = jump.mult;
             else mult = jump.mult * jump.forceCurve.Evaluate(Flip01(progress));
            

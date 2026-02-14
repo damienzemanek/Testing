@@ -27,7 +27,6 @@ public abstract class InputHeldModuleFacade<TSetActionGuarder, TCoreFacade> : In
 
     protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade) : base(action)
         => this.facade = facade;
-    
 }
 
 public abstract class InputPressedModuleFacade<TSetActionGuarder, TCoreFacade> : InputPressedModule<TSetActionGuarder>

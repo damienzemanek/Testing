@@ -13,29 +13,30 @@ using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
+using static TwoD_Config;
 
 public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 {
      Vector3 left = Vector3.left;
      Vector3 right = Vector3.right;
-     private const float NINETYF = 90f;
-     private const float ZEROF = 0f;
+
      private const float WALK_ALPHA_MAX = 1f;
      private const float RUN_ALPHA_MAX = 2.2f; // Should be greater than the greatest blend tree value to avoid jitter
-     public enum LookDir { None, Left, Right }
      public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb }
      public Dictionary<Type, IStat> Stats { get; set; }
-
-    
+     
     [BoxGroup("References")] [SerializeField] Animator animator; 
     [BoxGroup("References")] [SerializeField] TwoD_InputReader input;
     [BoxGroup("References")] [SerializeField] Rigidbody rb;
     [BoxGroup("References")] [SerializeField] Transform facing;
+    
     [BoxGroup("Orientation")] public RotateToMouseWorldSpace mouseLook;
-
+    
     [BoxGroup("Timers")] [SerializeField] DecayTimer moveDecay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer jumpDelay;
     [BoxGroup("Timers")] [SerializeField] CountdownTimer turnSlowdown;
+    
+    
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] bool moving = false;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;
@@ -46,7 +47,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector]
     float speedAlpha // Represents the move alpha 
     {
-        get => moveDecay != null ? moveDecay.Time : ZEROF;
+        get => moveDecay != null ? moveDecay.Time : ZeroF;
         set => moveDecay.Time = value;
     }
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] LookDir facingDir;
@@ -77,23 +78,23 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     void OnEnable()
     {
-        input.Move += Move;
-        input.Run += Run;
-        input.Jump += Jump;
-        input.Look += Look;
-        input.Shoot += Shoot;
-        input.Interact += HandleMountTitan; 
-        input.FaceDirection += FaceDirection;
+        input.Move.Add(Move);
+        input.Run.Add(Run);
+        input.Jump.Add(Jump);
+        input.Look.Add(Look);
+        input.Shoot.Add(Shoot);
+        input.Interact.Add(HandleMountTitan); 
+        input.FaceDirection.Add(FaceDirection);
     }
     void OnDisable()
     {
-        input.Move -= Move;
-        input.Run -= Run;
-        input.Jump -= Jump;
-        input.Look -= Look;
-        input.Shoot -= Shoot;
-        input.Interact -= HandleMountTitan; 
-        input.FaceDirection -= FaceDirection;
+        input.Move.Remove(Move);
+        input.Run.Remove(Run);
+        input.Jump.Remove(Jump);
+        input.Look.Remove(Look);
+        input.Shoot.Remove(Shoot);
+        input.Interact.Remove(HandleMountTitan); 
+        input.FaceDirection.Remove(FaceDirection);
     }
 
     void Awake()
@@ -244,7 +245,9 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
             rb.AddForce(dir * actualSpeed, movement.forceMode);
         }
     }
-    void HandleShooting() { if (_shootGuarder) return;
+    void HandleShooting() 
+    {
+        if (_shootGuarder) return;
         
         if (isShooting) StartCoroutine(ShootImplementation());
         else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);

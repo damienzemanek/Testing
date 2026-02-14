@@ -1,13 +1,14 @@
 using System;
 using EMILtools.Extensions;
 using UnityEngine;
+using static TwoD_Config;
 
 public class Ledge : MonoBehaviour
 {
     [Serializable]
     public struct LedgeData
     {
-        public TwoDimensionalController.LookDir dir;
+        public LookDir dir;
         public Transform point;
     }
 

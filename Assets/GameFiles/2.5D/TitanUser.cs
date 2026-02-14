@@ -25,7 +25,7 @@ public class TitanUser : MonoBehaviour, ITimerUser
 
     void Awake()
     {
-        input.CallInTitan += HandleCallInTitan;
+        input.CallInTitan.Add(HandleCallInTitan);
 
         
         progressTimer.OnTimerStop.Add(TitanReady);

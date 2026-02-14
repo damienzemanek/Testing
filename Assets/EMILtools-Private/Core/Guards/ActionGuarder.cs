@@ -47,6 +47,15 @@ namespace EMILtools.Core
             Then = "return";
             If ??= "null-check";
         }
+        
+        public ActionGuard(Func<bool> @if)
+        {
+            observed = @if;
+            this.then = null;
+
+            If = @if?.Method.Name;
+            Then = "return";
+        }
 
         public ActionGuard(Func<bool> @if, Action then)
         {
@@ -101,6 +110,24 @@ namespace EMILtools.Core
 
             If = @if?.Method.Name ?? "null-check";
             Then = then != null ? then.Method.Name : "return";
+        }
+        
+        public LazyActionGuard(PersistentAction onChanged, Func<bool> @if)
+        {
+            observed = new LazyFuncFactory<TLazyFunc, bool>().CreateLazyFuncBool(onChanged, @if);
+            this.then = null;
+
+            If = @if?.Method.Name ?? "null-check";
+            Then = "return";
+        }
+        
+        public LazyActionGuard(PersistentAction onChanged, Func<bool> @if, string ifName)
+        {
+            observed = new LazyFuncFactory<TLazyFunc, bool>().CreateLazyFuncBool(onChanged, @if);
+            this.then = null;
+
+            If = ifName;
+            Then = "return";
         }
         
         public LazyActionGuard(string CANACCESS = "CAN ACCESS")

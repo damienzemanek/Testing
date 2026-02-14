@@ -6,26 +6,29 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static EMILtools.Extensions.MouseLookEX;
+using static TwoD_Config;
 using static TwoD_IA;
 using static TwoDimensionalController;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
-public class TwoD_InputReader : ScriptableObject, IPlayerActions
+public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader, IFacadeCompositionElement<TwoD_Controller>
 {
+    public TwoD_Controller facade { get; set; }
+
+    
     TwoD_IA ia;
-    
-    public UnityAction<bool> Move = delegate { };
-    public UnityAction<bool> Run = delegate { };
-    public UnityAction<bool> Look = delegate { };
-    public UnityAction<bool> Shoot = delegate { };
 
+    public PersistentAction<bool> Move = new();
+    public PersistentAction<bool> Run = new();
+    public PersistentAction<bool> Look = new();
+    public PersistentAction<bool> Shoot = new();
     
-    public UnityAction<LookDir> FaceDirection = delegate { };
-
+    public PersistentAction<LookDir> FaceDirection = new();
     
-    public UnityAction Jump = delegate { };
-    public UnityAction Interact = delegate { };
-    public UnityAction CallInTitan = delegate { };
+    public PersistentAction Jump = new();
+    public PersistentAction Interact = new();
+    public PersistentAction CallInTitan = new();
+    public PersistentAction UnMantleLedge = new();
 
     public Vector2 movement;
     public Vector2 mouse;
@@ -49,9 +52,9 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions
         float screenHeight = mouseZones.h;
         mouseZones.callbackZones = null;
         mouseZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Right); Debug.Log("FaceDirection subscribers: " + FaceDirection?.GetInvocationList().Length);
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Right); Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection(LookDir.Left);  Debug.Log("FaceDirection subscribers: " + FaceDirection?.GetInvocationList().Length);
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { FaceDirection.Invoke(LookDir.Left);  Debug.Log("FaceDirection subscribers: " + FaceDirection.Count);
             }));
     }
 
