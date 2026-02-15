@@ -134,6 +134,11 @@ namespace EMILtools.Extensions
             public struct RotatingObject
             {
                 public Transform transform;
+                
+                public bool rotateX;
+                public bool rotateY;
+                public bool rotateZ;
+                
                 public bool flipX;
                 public bool flipY;
                 public bool flipZ;
@@ -184,8 +189,18 @@ namespace EMILtools.Extensions
                     if (ro.clampX) euler.x = Mathf.Clamp(euler.x, ro.clampXrot.x, ro.clampXrot.y);
                     if (ro.clampY) euler.y = Mathf.Clamp(euler.y, ro.clampYrot.x, ro.clampYrot.y);
                     if (ro.clampZ) euler.z = Mathf.Clamp(euler.z, ro.clampZrot.x, ro.clampZrot.y);
+                    
+                    
+                    // Rotate Angle toggles
+                    Vector3 current = ro.transform.localEulerAngles;
+                    current.x = NormalizeAngle(current.x);
+                    current.y = NormalizeAngle(current.y);
+                    current.z = NormalizeAngle(current.z);
+                    if(!ro.rotateX) euler.x = current.x;
+                    if(!ro.rotateY) euler.y = current.y;
+                    if(!ro.rotateZ) euler.z = current.z;
 
-                    // Rebuild quaternion
+                    // Rebuild quaternion & apply
                     ro.transform.localRotation = Quaternion.Euler(euler);
                 }
             }

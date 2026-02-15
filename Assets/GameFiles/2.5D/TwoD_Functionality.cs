@@ -3,6 +3,7 @@ using System.Collections;
 using EMILtools_Private.Testing;
 using EMILtools.Core;
 using EMILtools.Extensions;
+using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
@@ -19,11 +20,83 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         AddModule(new LookModule(facade.Input.Look, facade));
         AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
         AddModule(new JumpModule(facade.Input.Jump, facade));
+        AddModule(new TitanCallInModule(facade.Input.CallInTitan, facade));
         
         // Layer 2
         AddModule(new LandModule(facade.Input.Land, facade));
         AddModule(new ClimbModule(facade.Input.ClimbLedge, facade));
         AddModule(new MantleModule(facade.Input.MantleLedge, facade));
+        AddModule(new RunModule(facade.Input.Run, facade));
+        AddModule(new DoubleJumpModule(facade.Input.DoubleJump, facade));
+    }
+
+
+    public class TitanCallInModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    {
+        [Serializable]
+        public struct Config
+        { 
+            [field:SerializeField] public GameObject fxCallInPrefab { get; private set; }
+            [field:SerializeField] public GameObject prefab { get; private set; }
+            [field:SerializeField] public float spawnVerticality { get; private set; }
+            [field:SerializeField] public Ref<float> progressTime { get; private set; }
+            [field:SerializeField] public Ref<float> spawnTime { get; private set; }
+        }
+        
+        [ReadOnly] Vector3 spawnPointInAir;
+        
+        public TitanCallInModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake()
+        {
+            onPressGuarder.Add(new LazyActionGuard<LazyFunc<bool>> (facade.Blackboard.titanReady.SimpleReactions, 
+                () => !facade.Blackboard.titanReady, "Titan not ready"));
+            facade.Blackboard.titanProgressTimer = new CountdownTimer(facade.Config.titan.progressTime);
+            facade.Blackboard.spawnTitanTimer = new CountdownTimer(facade.Config.titan.spawnTime);
+            facade.Blackboard.titanProgressTimer.OnTimerStop.Add(TitanReady);
+            facade.Blackboard.spawnTitanTimer.OnTimerStop.Add(SpawnTitan);
+        }
+
+        protected override void OnPress()
+        {
+            facade.Blackboard.posToMouse.objectToMove = GameObject.Instantiate(facade.Config.titan.fxCallInPrefab, null).transform;    
+            facade.Blackboard.posToMouse.Execute();
+            spawnPointInAir = facade.Blackboard.posToMouse.objectToMove.position + Vector3.up * facade.Config.titan.spawnVerticality;
+            facade.Blackboard.spawnTitanTimer.Start();
+        }
+
+        public void TitanReady()
+        {
+            Debug.Log("TITAN READY");
+            facade.Blackboard.titanReady.Value = true;
+        }
+        public void SpawnTitan()
+            => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
+
+        
+        
+    }
+
+    public class DoubleJumpModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    {
+        public DoubleJumpModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+
+        protected override void Awake() => facade.Input.DoubleJump.Add(Execute);
+
+        public override void Execute()
+        {
+            if (facade.Blackboard.hasDoubleJumped) return;
+            facade.Blackboard.animController.Play(facade.Blackboard.animController.dbljump);
+            facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Blackboard.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
+            facade.Blackboard.hasDoubleJumped = true;
+        }
+    }
+
+    public class RunModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    {
+        public RunModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, true) { }
+        protected override void OnSet() => facade.Blackboard.isRunning.Value = isActive;
+        protected override void Implementation(float dt) { }
     }
 
     public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_Controller>, IAPI_Climb
@@ -99,10 +172,17 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
     public class JumpModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_Controller>
     {
+        [Serializable]
+        public struct Config
+        {
+            [field:SerializeField] public Ref<float> delay { get; private set; }
+        }
+        
         public JumpModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
 
         protected override void Awake()
         {
+            facade.Blackboard.jumpDelay = new CountdownTimer(facade.Config.jump.delay);
 
             onPressGuarder = new ActionGuarderMutable(
                 new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.isMantled.SimpleReactions, 
@@ -205,7 +285,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
             public float maxVelMagnitude;
             public float maxSpeed; // run speed
             public float walkAlphaMax;
-            public float runAlphaMax; // Should be greater than the greatest blend tree value to avoid jitter
+            public Ref<float> runAlphaMax; // Should be greater than the greatest blend tree value to avoid jitter
             [Button]
             void Init() => decayScalar = new Ref<float>(1);
         }
@@ -213,7 +293,12 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         Config cfg => facade.Config.move;
         
         public MoveModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, true) { }
-        
+
+        protected override void Awake()
+        {
+            facade.Blackboard.moveDecay = new DecayTimer(facade.Config.move.runAlphaMax, facade.Config.move.decayScalar);
+        }
+
         protected override void OnSet() { }
 
         protected override void Implementation(float dt)

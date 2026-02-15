@@ -12563,7 +12563,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: Invoke
+    functionName: CompleteClimb
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

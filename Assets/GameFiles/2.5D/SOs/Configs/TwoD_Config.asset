@@ -22,4 +22,16 @@ MonoBehaviour:
     maxVelMagnitude: 100
     maxSpeed: 290
     walkAlphaMax: 1
-    runAlphaMax: 2.2
+    runAlphaMax:
+      val: 2.2
+  <titan>k__BackingField:
+    <fxCallInPrefab>k__BackingField: {fileID: 9189904965710387160, guid: bdaafe9b8a6b6a04e81dfb527266f9c0, type: 3}
+    <prefab>k__BackingField: {fileID: 7852413773931268109, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+    <spawnVerticality>k__BackingField: 100
+    <progressTime>k__BackingField:
+      val: 100
+    <spawnTime>k__BackingField:
+      val: 5
+  <jump>k__BackingField:
+    <delay>k__BackingField:
+      val: 0.1

@@ -25,14 +25,14 @@ public class TwoD_Controller : ControlledMonoFacade<
     private void Awake()
     {
         InitializeFacade();
-
-        Blackboard.jumpDelay = new CountdownTimer(0.1f);
-        Blackboard.moveDecay = new DecayTimer(2.2f, 2.5f);
         Blackboard.turnSlowdown = new CountdownTimer(0.5f);
+
         
         this.InitializeTimers((Blackboard.jumpDelay, true), 
                               (Blackboard.moveDecay,true),
-                              (Blackboard.turnSlowdown,true));
+                              (Blackboard.turnSlowdown,true),
+                              (Blackboard.titanProgressTimer,true),
+                              (Blackboard.spawnTitanTimer,true));
         
         Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
         Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;
@@ -44,6 +44,7 @@ public class TwoD_Controller : ControlledMonoFacade<
     void Start()
     {
         Blackboard.moveDecay.Start();
+        Blackboard.titanProgressTimer.Start();
     }
 
     protected override void Update()

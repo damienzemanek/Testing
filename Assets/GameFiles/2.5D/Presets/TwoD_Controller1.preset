@@ -1,0 +1,400 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TwoD_Controller1
+  m_TargetType:
+    m_NativeTypeID: 114
+    m_ManagedTypePPtr: {fileID: 11500000, guid: b6c70b2fb691d094996189879ed1e9ff, type: 3}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorHideFlags
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_EditorClassIdentifier
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Config>k__BackingField
+    value: 
+    objectReference: {fileID: 11400000, guid: 5dd6631f4b818804190b73cce39cfe49, type: 2}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<rb>k__BackingField
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<facing>k__BackingField
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<capsuleCollider>k__BackingField
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<weapons>k__BackingField
+    value: 
+    objectReference: {fileID: 11400000, guid: 51a3f36b700985d43bb47bd56d5a4080, type: 2}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.initialized
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.spawnPointStrategyType
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.spawnPoints.Array.size
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: '<Blackboard>k__BackingField.<bulletSpawner>k__BackingField.spawnPoints.Array.data[0]'
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.data.Array.size
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: '<Blackboard>k__BackingField.<bulletSpawner>k__BackingField.data.Array.data[0]'
+    value: 
+    objectReference: {fileID: 11400000, guid: 5751d9994f40b5343b5b268105382a11, type: 2}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.fireInterval.val
+    value: 0.1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.targetSetDirection
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.direction.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.direction.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.direction.z
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.targetAPosition
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.targetPosition.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.targetPosition.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<bulletSpawner>k__BackingField.targetPosition.z
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<animController>k__BackingField
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<turnSlowDown>k__BackingField
+    value: 
+    objectReference: {fileID: 11400000, guid: 2d253e366a6dc3940a396789c0b35f5a, type: 2}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<phys>k__BackingField
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.cam
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.core
+    value: 
+    objectReference: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.size
+    value: 3
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].transform
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateX
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateZ
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].flipX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].flipY
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].flipZ
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampX
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZ
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampXrot.x
+    value: -60
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampXrot.y
+    value: 40
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampYrot.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampYrot.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZrot.x
+    value: -30
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZrot.y
+    value: 30
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].transform
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].rotateX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].rotateY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].rotateZ
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].flipX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].flipY
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].flipZ
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampZ
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampXrot.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampXrot.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampYrot.x
+    value: -1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampYrot.y
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampZrot.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[1].clampZrot.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].transform
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].rotateX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].rotateY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].rotateZ
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].flipX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].flipY
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].flipZ
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampX
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampY
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampZ
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampXrot.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampXrot.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampYrot.x
+    value: -1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampYrot.y
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampZrot.x
+    value: -1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[2].clampZrot.y
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotation.x
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotation.y
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotation.z
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotation.w
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.facingDir
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.moveDir
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.canMount
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.isShooting
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.hasDoubleJumped
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.hasRequestedMount
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.isRunning._value
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.isMantled._value
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.hasJumped._value
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.canMantle._value
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.dblJumpMult
+    value: 1.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.ledgeData.dir
+    value: 0
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Blackboard>k__BackingField.ledgeData.point
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: <Input>k__BackingField
+    value: 
+    objectReference: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
+  m_ExcludedProperties: []
+  m_CoupledType:
+    m_NativeTypeID: 0
+    m_ManagedTypePPtr: {fileID: 0}
+    m_ManagedTypeFallback: 
+  m_CoupledProperties: []

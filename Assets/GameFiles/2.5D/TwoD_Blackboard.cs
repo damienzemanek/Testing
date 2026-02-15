@@ -22,9 +22,14 @@ public class TwoD_Blackboard : Blackboard
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     
     [BoxGroup("Orientation")] [field: SerializeField] public RotateToMouseWorldSpace mouseLook { get; private set; }
+    [field: SerializeField] public PositionToMouseWorldSpace posToMouse { get; private set; }
+
     [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer jumpDelay { get; set; } 
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; set; }
+    
+    [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer titanProgressTimer { get; set; }
+    [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer spawnTitanTimer { get; set; }
     
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir;
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir moveDir;
@@ -33,6 +38,7 @@ public class TwoD_Blackboard : Blackboard
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasDoubleJumped;
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool hasRequestedMount = false;
+    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public ReactiveIntercept<bool> titanReady = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public ReactiveIntercept<bool> isRunning = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> isMantled = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> hasJumped = new ReactiveIntercept<bool>(false);
