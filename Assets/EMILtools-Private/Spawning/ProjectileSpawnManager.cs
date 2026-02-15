@@ -28,7 +28,7 @@ public class ProjectileSpawnManager : EntitySpawnManager, ITimerUser
             spawnPointStrategy);
 
         fireTimer = new CountdownTimer(fireInterval);
-        this.InitializeTimers((fireTimer, true));
+        this.InitTimers((fireTimer, true));
         
         Debug.Log("Projectile Spawner Initialization Complete");
     }

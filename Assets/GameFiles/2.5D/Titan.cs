@@ -127,7 +127,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         input._lookGuarder = new SimpleGuarderMutable();
         input.FaceDirection = new PersistentAction<LookDir, bool>();
         input.FaceDirection.Add(FaceDirection);
-        this.InitializeTimers((moveDecay, true));
+        this.InitTimers((moveDecay, true));
         moveDecay.Start();
         animator.Play(mountFrontAnim);
         mountZone.playerTransform.Get<Collider>().enabled = false;

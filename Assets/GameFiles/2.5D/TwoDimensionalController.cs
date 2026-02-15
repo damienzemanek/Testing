@@ -111,7 +111,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         moveDecay = new DecayTimer(movement.maxSpeed, movement.decayScalar);
         jumpDelay = new CountdownTimer(phys.jumpSettings.cooldown);
         turnSlowdown = new CountdownTimer(turnSlowDown.duration);
-        this.InitializeTimers((moveDecay, false),
+        this.InitTimers((moveDecay, false),
                                 (jumpDelay, false),
                                 (turnSlowdown, true));
         

@@ -51,10 +51,13 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         {
             onPressGuarder.Add(new LazyActionGuard<LazyFunc<bool>> (facade.Blackboard.titanReady.SimpleReactions, 
                 () => !facade.Blackboard.titanReady, "Titan not ready"));
+            
             facade.Blackboard.titanProgressTimer = new CountdownTimer(facade.Config.titan.progressTime);
             facade.Blackboard.spawnTitanTimer = new CountdownTimer(facade.Config.titan.spawnTime);
             facade.Blackboard.titanProgressTimer.OnTimerStop.Add(TitanReady);
             facade.Blackboard.spawnTitanTimer.OnTimerStop.Add(SpawnTitan);
+            facade.InitTimer(facade.Blackboard.titanProgressTimer, true);
+            facade.InitTimer(facade.Blackboard.spawnTitanTimer, true);
         }
 
         protected override void OnPress()
@@ -183,6 +186,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         protected override void Awake()
         {
             facade.Blackboard.jumpDelay = new CountdownTimer(facade.Config.jump.delay);
+            facade.InitTimer(facade.Blackboard.jumpDelay, true);
 
             onPressGuarder = new ActionGuarderMutable(
                 new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.isMantled.SimpleReactions, 
@@ -208,10 +212,11 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
     public class FaceDirectionModule : InputHeldModuleFacade<LookDir, ActionGuarderMutable, TwoD_Controller>, UPDATE
     {
+        
         public FaceDirectionModule(PersistentAction<LookDir, bool> action, TwoD_Controller facade) : base(action, facade, false) { }
         
         [ShowInInspector] LookDir dir;
-
+        
         protected override void OnSetImplementation(LookDir args) => dir = args;
 
         protected override void Implementation(float dt)
@@ -286,8 +291,11 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
             public float maxSpeed; // run speed
             public float walkAlphaMax;
             public Ref<float> runAlphaMax; // Should be greater than the greatest blend tree value to avoid jitter
+            [field: SerializeField] public Ref<float> slowdownTime { get; private set; }
+
             [Button]
             void Init() => decayScalar = new Ref<float>(1);
+
         }
 
         Config cfg => facade.Config.move;
@@ -297,6 +305,10 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         protected override void Awake()
         {
             facade.Blackboard.moveDecay = new DecayTimer(facade.Config.move.runAlphaMax, facade.Config.move.decayScalar);
+            facade.Blackboard.turnSlowdown = new CountdownTimer(facade.Config.move.slowdownTime);
+
+            facade.InitTimer(facade.Blackboard.moveDecay, true);
+            facade.InitTimer(facade.Blackboard.turnSlowdown, true);
         }
 
         protected override void OnSet() { }

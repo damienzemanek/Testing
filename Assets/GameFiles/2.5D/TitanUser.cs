@@ -31,7 +31,7 @@ public class TitanUser : MonoBehaviour, ITimerUser
         progressTimer.OnTimerStop.Add(TitanReady);
         spawnTitanTimer.OnTimerStop.Add(HandleSpawnTitan);
         
-        this.InitializeTimers((progressTimer, true),
+        this.InitTimers((progressTimer, true),
                              (spawnTitanTimer, true));
         
     }

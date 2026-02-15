@@ -93,7 +93,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         protected override void Awake()
         {
             facade.Blackboard.thrustFOV.SetInitialTime(1f);
-            facade.InitializeTimers((facade.Blackboard.thrustFOV, false));
+            facade.InitTimers((facade.Blackboard.thrustFOV, false));
             Debug.Log("inited thrust module");
         }
 

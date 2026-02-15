@@ -67,7 +67,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
         timer_jumpInput = new CountdownTimer(jumpSettings.inputMaxDuration);
         timer_jumpCooldown = new CountdownTimer(jumpSettings.cooldown);
         
-        this.InitializeTimers(
+        this.InitTimers(
                 (timer_jumpInput, true), 
                 (timer_jumpCooldown, false))
             .Sub (timer_jumpInput.OnTimerStop, timer_jumpCooldown.Start);

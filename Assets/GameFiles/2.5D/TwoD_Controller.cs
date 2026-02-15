@@ -25,14 +25,6 @@ public class TwoD_Controller : ControlledMonoFacade<
     private void Awake()
     {
         InitializeFacade();
-        Blackboard.turnSlowdown = new CountdownTimer(0.5f);
-
-        
-        this.InitializeTimers((Blackboard.jumpDelay, true), 
-                              (Blackboard.moveDecay,true),
-                              (Blackboard.turnSlowdown,true),
-                              (Blackboard.titanProgressTimer,true),
-                              (Blackboard.spawnTitanTimer,true));
         
         Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
         Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;

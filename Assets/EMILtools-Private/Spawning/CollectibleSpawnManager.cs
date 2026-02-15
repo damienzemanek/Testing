@@ -23,7 +23,7 @@ public class CollectibleSpawnManager : EntitySpawnManager, ITimerUser
 
         spawnTimer = new CountdownTimer(spawnInterval);
         
-        this.InitializeTimers((spawnTimer, false))
+        this.InitTimers((spawnTimer, false))
             .Sub(spawnTimer.OnTimerStop, HandleTimerStop);    }
     
     void OnDestroy() => this.ShutdownTimers();
