@@ -367,7 +367,6 @@ MonoBehaviour:
     ledgeData:
       dir: 0
       point: {fileID: 0}
-  <Input>k__BackingField: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
 --- !u!114 &14127282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2094,6 +2093,56 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!1 &441288466
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 441288468}
+  - component: {fileID: 441288467}
+  m_Layer: 0
+  m_Name: Player Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &441288467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441288466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43adea18ad8bf5e4c89ce7fa7a80a53e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Controlled:
+    _implementer: {fileID: 14127280}
+  Reader: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
+  currentMapping: 0
+  <cfg>k__BackingField:
+    <MouseInputZones>k__BackingField: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
+--- !u!4 &441288468
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 441288466}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.0671196, y: -7.8175964, z: 20.650969}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &488889564
 GameObject:
   m_ObjectHideFlags: 0
@@ -2385,7 +2434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a60c01c4d6b69044a8cad0c28f3b2bbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 14127280}
+  pilotController: {fileID: 14127280}
 --- !u!1 &575609749
 GameObject:
   m_ObjectHideFlags: 0
@@ -2568,7 +2617,10 @@ MonoBehaviour:
     maxVelMagnitude: 0
     maxSpeed: 0
     walkAlphaMax: 0
-    runAlphaMax: 0
+    runAlphaMax:
+      val: 0
+    <slowdownTime>k__BackingField:
+      val: 0
   weapons: {fileID: 11400000, guid: 51a3f36b700985d43bb47bd56d5a4080, type: 2}
   bulletSpawner:
     initialized: 0
@@ -11618,3 +11670,4 @@ SceneRoots:
   - {fileID: 14127275}
   - {fileID: 575609756}
   - {fileID: 1359566439}
+  - {fileID: 441288468}

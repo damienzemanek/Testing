@@ -77,23 +77,23 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     void OnEnable()
     {
-        input.Move.Add(Move);
-        input.Run.Add(Run);
-        input.Jump.Add(Jump);
-        input.Look.Add(Look);
-        input.Shoot.Add(Shoot);
-        input.Interact.Add(HandleMountTitan); 
-        input.FaceDirection.Add(FaceDirection);
+        // input.Move.Add(Move);
+        // input.Run.Add(Run);
+        // input.Jump.Add(Jump);
+        // input.Look.Add(Look);
+        // input.Shoot.Add(Shoot);
+        // input.Interact.Add(HandleMountTitan); 
+        // input.FaceDirection.Add(FaceDirection);
     }
     void OnDisable()
     {
-        input.Move.Remove(Move);
-        input.Run.Remove(Run);
-        input.Jump.Remove(Jump);
-        input.Look.Remove(Look);
-        input.Shoot.Remove(Shoot);
-        input.Interact.Remove(HandleMountTitan); 
-        input.FaceDirection.Remove(FaceDirection);
+        // input.Move.Remove(Move);
+        // input.Run.Remove(Run);
+        // input.Jump.Remove(Jump);
+        // input.Look.Remove(Look);
+        // input.Shoot.Remove(Shoot);
+        // input.Interact.Remove(HandleMountTitan); 
+        // input.FaceDirection.Remove(FaceDirection);
     }
 
     void Awake()
@@ -102,7 +102,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         // Super easy to check what flags influence what methods
         _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
         _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
-        input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
+        //input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
         
         // input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
         //     ("Mantled", () => isMantled));
@@ -138,7 +138,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         if(animController.state == AnimState.Locomotion)
             animController.UpdateLocomotion(facingDir, moveDir, speedAlpha);
-        if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
+        //if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
     }
     
     void FixedUpdate()
@@ -155,7 +155,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     
     public void HandleLooking()
     {
-        if (input._lookGuarder) return;
+       // if (input._lookGuarder) return;
         mouseLook.Execute();
     }
 
@@ -197,7 +197,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
         
         if (!isRunning) Walk();
         else Run();
-        Move(input.movement);
+       // Move(input.movement);
         
         void Walk()
         {

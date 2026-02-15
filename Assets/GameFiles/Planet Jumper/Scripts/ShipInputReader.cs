@@ -5,12 +5,16 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using static Ship_IA;
+using static ShipInputReader.ShipInputAuthority;
 
 [Serializable]
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader, IFacadeCompositionElement<ShipController>
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader<ShipInputReader.ShipInputAuthority.ShipInputMap>
 {
-    public ShipController facade { get; set; }
+    public class ShipInputAuthority : IInputAuthority
+    {
+        public class ShipInputMap : IInputMap { }
+    }
     
     public Ship_IA ia;
 
@@ -79,4 +83,6 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
     {
         if(context.phase == InputActionPhase.Performed) SwitchCam?.Invoke();
     }
+
+    public ShipInputMap InputMap { get; set; }
 }

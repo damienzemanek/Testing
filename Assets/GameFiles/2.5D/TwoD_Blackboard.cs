@@ -57,6 +57,8 @@ public class TwoD_Blackboard : Blackboard
         set => moveDecay.Time = value;
     }
     
-    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _shootGuarder;
-    [ShowInInspector, ReadOnly] public ActionGuarderImmutable cantJumpGuarder;
+    [BoxGroup("Guards")] [ShowInInspector, ReadOnly] public SimpleGuarderImmutable shootGuarder;
+    [BoxGroup("Guards")] [ShowInInspector, ReadOnly] public ActionGuarderImmutable cantJumpGuarder;
+    [BoxGroup("Guards")] [ShowInInspector, ReadOnly] public LazyGuarderMutable mouseZoneGuarder;
+
 }

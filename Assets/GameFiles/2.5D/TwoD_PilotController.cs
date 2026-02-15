@@ -4,35 +4,33 @@ using EMILtools_Private.Testing;
 using EMILtools.Core;
 using EMILtools.Signals;
 using EMILtools.Timers;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Timers.TimerUtility;
 using static TwoD_Config;
+using static TwoD_InputAuthority;
 
-public class TwoD_Controller : ControlledMonoFacade<
-        TwoD_Controller,
+public class TwoD_PilotController : MonoFacade<
+        TwoD_PilotController,
         TwoD_Functionality, 
         TwoD_Config, 
         TwoD_Blackboard,
-        TwoD_InputReader>,
-    IStatUser,
-    ITimerUser
+        PilotActionMap>,
+    ITimerUser,
+    IControllable<TwoD_InputMap>,
+    IInitializable
 {
-    public Dictionary<Type, ModifierExtensions.IStat> Stats { get; set; }
+    [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
     
-    
-
-    private void Awake()
+    public void Init()
     {
         InitializeFacade();
-        
         Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
         Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;
-        
-        Input.mouseZoneGuarder = new LazyGuarderMutable(
-            (new LazyGuard(Blackboard.isMantled.SimpleReactions, () => Blackboard.isMantled, "Is Mantled")));
+        Functionality.Bind();
     }
-
+    
     void Start()
     {
         Blackboard.moveDecay.Start();
@@ -42,18 +40,15 @@ public class TwoD_Controller : ControlledMonoFacade<
     protected override void Update()
     {
         base.Update();
-        if(!Input.mouseZoneGuarder) Input.mouseZones.CheckAllZones(Input.mouse);
         if(Blackboard.animController.state == AnimState.Locomotion)
             Blackboard.animController.UpdateLocomotion(Blackboard.facingDir, Blackboard.moveDir, Blackboard.speedAlpha);
     }
-
-    private void OnEnable()
-    {
-        Functionality.Bind();
-    }
+    
 
     private void OnDisable()
     {
         Functionality.Unbind();
     }
+
+
 }

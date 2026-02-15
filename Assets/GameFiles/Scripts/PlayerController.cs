@@ -24,7 +24,7 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
     [SerializeField, Self] Animator animator;
     [SerializeField, Self] Rigidbody rb;
     [SerializeField, Anywhere] CinemachineCamera freelookCam;
-    [SerializeField, Anywhere] InputReader input;
+    //[SerializeField, Anywhere] InputReader input;
 
     [Header("Settings")]
     [SerializeField] public Stat<float, Speed> moveSpeed;
@@ -80,12 +80,12 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
     private void OnEnable()
     {
-        input.Jump += OnJump;
+       // input.Jump += OnJump;
     }
 
     private void OnDisable()
     {
-        input.Jump -= OnJump;
+     //   input.Jump -= OnJump;
 
     }
 
@@ -103,13 +103,13 @@ public class PlayerController : ValidatedMonoBehaviour, ITimerUser, IStatUser
 
     private void Start()
     {
-        input.EnablePlayerActions();
+       // input.EnablePlayerActions();
     }
 
     private void Update()
     {
         isGrounded = transform.IsGrounded(ref groundedSettings);
-        movement = new Vector3(input.move.x, 0, input.move.y);
+     //   movement = new Vector3(input.move.x, 0, input.move.y);
         UpdateAnimator();
     }
 

@@ -1,8 +1,15 @@
+using System;
+using EMILtools.Extensions;
 using UnityEngine;
 
 public class ClimbHandler : MonoBehaviour
 {
-    [SerializeField] TwoD_Controller controller;
+    [SerializeField] TwoD_PilotController pilotController;
 
-    public void CompleteClimb() => controller.GetFunctionality<IAPI_Climb>().CompleteClimb();
+    public void CompleteClimb() => pilotController.GetFunctionality<IAPI_Climb>().CompleteClimb();
+
+    void Awake()
+    {
+        pilotController.Ensure(this);
+    }
 }

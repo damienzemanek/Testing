@@ -11,20 +11,23 @@ public interface IFacade
 }
 
 [Serializable]
-public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: ValidatedMonoBehaviour, IFacade
+public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard, TActionMap>: ValidatedMonoBehaviour, IFacade
     where TMonoFacade : IFacade    
     where TConfig : Config                                 // Config does not need to be an interior because it should not have a reference to the facade, it is just data
     where TBlackboard : Blackboard                       
     where TFunctionality : Functionalities<TMonoFacade>,   IFacadeCompositionElement<TMonoFacade>, new()
+    where TActionMap : class, IActionMap, new()
 {
-    bool coreFacadeInitialized = false;
-    
+    bool initialized = false;
+    [field: Title("Action Mappings")]
+    [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TActionMap Actions { get; protected set; }
     [field: Title("Settings")]
     [field:SerializeField, Required] public TConfig Config { get; private set; }
     [field: Title("Blackboard")]
     [field:SerializeField, Required] [field:HideLabel] public TBlackboard Blackboard { get; private set; }
     [field: Title("Functionality Modules")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
+
 
     public T GetFunctionality<T>() where T : class, IAPI_Module
     {
@@ -34,8 +37,9 @@ public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: Vali
         return null;
     }
 
-    public virtual void InitializeFacade()
+    protected void InitializeFacade()
     {
+        Actions = new();
         Functionality = new ();
         
         Debug.Assert(Config != null, $"{name}: Config not assigned");
@@ -44,25 +48,25 @@ public class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard>: Vali
         
         Functionality.ComposeElement(this);   // Functionality must be last because it depends on the Config and the Blackboard
         
-        coreFacadeInitialized = true;
+        initialized = true;
     }
     
 
     protected virtual void Update()
     {
-        if (!coreFacadeInitialized) return;
+        if (!initialized) return;
         Functionality.UpdateTick(Time.deltaTime);
     }
     
     protected virtual void FixedUpdate()
     {
-        if (!coreFacadeInitialized) return;
+        if (!initialized) return;
         Functionality.FixedTick(Time.deltaTime);
     }
     
     protected virtual void LateUpdate()
     {
-        if (!coreFacadeInitialized) return;
+        if (!initialized) return;
         Functionality.LateTick(Time.deltaTime);
     }
 }

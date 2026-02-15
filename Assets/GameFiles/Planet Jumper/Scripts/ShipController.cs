@@ -12,10 +12,11 @@ using static Effectability;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static LifecycleEX;
+using static ShipController;
 using static ShipFunctionality;
 
 [Serializable]
-public class ShipController : ControlledMonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipInputReader> , ITimerUser
+public class ShipController : MonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipActionMap> , ITimerUser
 {
     [BoxGroup("Mouse")] [PropertyOrder(-1)] [SerializeField] public MouseLookSettings cannonMouseLook;
     
@@ -55,4 +56,6 @@ public class ShipController : ControlledMonoFacade<ShipController, ShipFunctiona
         this.ShutdownTimers();
         Blackboard.cannonProjectileSpawner.ShutdownTimers();
     }
+    
+    public class ShipActionMap : IActionMap { }
 }

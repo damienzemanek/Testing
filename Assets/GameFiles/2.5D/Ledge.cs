@@ -20,14 +20,14 @@ public class Ledge : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        var player = other.Get<TwoD_Controller>();
+        var player = other.Get<TwoD_PilotController>();
         player.GetFunctionality<IAPI_Mantler>().CantMantleLedge();
     }
 
     void CheckForPlayer(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        var player = other.Get<TwoD_Controller>();
+        var player = other.Get<TwoD_PilotController>();
         player.GetFunctionality<IAPI_Mantler>().CanMantleLedge(data);
     }
     

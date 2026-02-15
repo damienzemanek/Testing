@@ -47,9 +47,13 @@ namespace EMILtools_Private.Testing
         public void AddModule(MonoFunctionalityModule module)
         {
             modules.Add(module);
-            Debug.Log("added module " + module.GetType().Name + " new count is " + modules.Count);
-            
-            if (module is UPDATE u) _update.Add(u);
+            Debug.Log("ADDING module " + module.GetType().Name + " new count is " + modules.Count);
+
+            if (module is UPDATE u)
+            {
+                _update.Add(u);
+                Debug.Log("added UPDATE module " + module.GetType().Name + " new UPDATE count is " + _update.Count);
+            }
             if (module is FIXEDUPDATE f) _fixed.Add(f);
             if (module is LATEUPDATE l) _late.Add(l);
             if (module is IAPI_Module)

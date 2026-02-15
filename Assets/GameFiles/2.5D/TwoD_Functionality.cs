@@ -10,7 +10,7 @@ using static EMILtools.Extensions.NumEX;
 using static Ledge;
 using static TwoD_Config;
 
-public class TwoD_Functionality : Functionalities<TwoD_Controller>
+public class TwoD_Functionality : Functionalities<TwoD_PilotController>
 {
     protected override void AddModulesHere()
     {
@@ -21,17 +21,29 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
         AddModule(new JumpModule(facade.Input.Jump, facade));
         AddModule(new TitanCallInModule(facade.Input.CallInTitan, facade));
-        
-        // Layer 2
-        AddModule(new LandModule(facade.Input.Land, facade));
-        AddModule(new ClimbModule(facade.Input.ClimbLedge, facade));
-        AddModule(new MantleModule(facade.Input.MantleLedge, facade));
         AddModule(new RunModule(facade.Input.Run, facade));
-        AddModule(new DoubleJumpModule(facade.Input.DoubleJump, facade));
+
+        // Layer 2
+        AddModule(new LandModule(facade.Actions.Land, facade));
+        AddModule(new ClimbModule(facade.Actions.ClimbLedge, facade));
+        AddModule(new MantleModule(facade.Actions.MantleLedge, facade));
+        AddModule(new DoubleJumpModule(facade.Actions.DoubleJump, facade));
+        AddModule(new MouseModule(facade));
+
     }
 
 
-    public class TitanCallInModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    public class MouseModule : UnboundFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>, UPDATE
+    {
+        public MouseModule(TwoD_PilotController facade) : base(facade, true) { }
+
+        protected override void Awake() => executeGuarder.Add(new LazyActionGuard<LazyFuncLite<bool>>
+                                           (facade.Blackboard.isMantled.SimpleReactions, () => facade.Blackboard.isMantled, "Is Mantled"));
+        public override void Execute() => facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
+        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+    }
+
+    public class TitanCallInModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
     {
         [Serializable]
         public struct Config
@@ -45,7 +57,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         
         [ReadOnly] Vector3 spawnPointInAir;
         
-        public TitanCallInModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+        public TitanCallInModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
         protected override void Awake()
         {
@@ -80,11 +92,11 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         
     }
 
-    public class DoubleJumpModule : BasicFunctionalityModuleFacade<TwoD_Controller>
+    public class DoubleJumpModule : BasicFunctionalityModuleFacade<TwoD_PilotController>
     {
-        public DoubleJumpModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+        public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
-        protected override void Awake() => facade.Input.DoubleJump.Add(Execute);
+        protected override void Awake() => facade.Actions.DoubleJump.Add(Execute);
 
         public override void Execute()
         {
@@ -95,18 +107,18 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         }
     }
 
-    public class RunModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    public class RunModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_PilotController>
     {
-        public RunModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, true) { }
+        public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
         protected override void OnSet() => facade.Blackboard.isRunning.Value = isActive;
         protected override void Implementation(float dt) { }
     }
 
-    public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_Controller>, IAPI_Climb
+    public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_Climb
     {
-        public ClimbModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+        public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
-        protected override void Awake() => facade.Input.ClimbLedge.Add(Execute);
+        protected override void Awake() => facade.Actions.ClimbLedge.Add(Execute);
 
         public override void Execute() => facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.climb, 0.1f);
 
@@ -122,11 +134,11 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         }
     }
 
-    public class MantleModule : BasicFunctionalityModuleFacade<TwoD_Controller>, IAPI_Mantler
+    public class MantleModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_Mantler
     {
-        public MantleModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+        public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
-        protected override void Awake() => facade.Input.MantleLedge.Add(Execute);
+        protected override void Awake() => facade.Actions.MantleLedge.Add(Execute);
 
         public override void Execute()
         {
@@ -145,7 +157,6 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
         public void CanMantleLedge(LedgeData data)
         {
-            Debug.Log("Can Mantle");
             facade.Blackboard.canMantle.Value = true;
             facade.Blackboard.ledgeData = data;
         }
@@ -153,11 +164,11 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         public void CantMantleLedge() => facade.Blackboard.canMantle.Value = false;
     }
 
-    public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_Controller>
+    public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_PilotController, ActionGuarderMutable>
     {
-        public LandModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade) { }
+        public LandModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, false) { }
 
-        protected override void Awake() => facade.Blackboard.phys.isGrounded.Reactions.Add(facade.Input.Land.Invoke);
+        protected override void Awake() => facade.Blackboard.phys.isGrounded.Reactions.Add(facade.Actions.Land.Invoke);
 
         public override void Execute(bool landed)
         {
@@ -173,7 +184,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         }
     }
 
-    public class JumpModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_Controller>
+    public class JumpModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
     {
         [Serializable]
         public struct Config
@@ -181,7 +192,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
             [field:SerializeField] public Ref<float> delay { get; private set; }
         }
         
-        public JumpModule(PersistentAction action, TwoD_Controller facade) : base(action, facade) { }
+        public JumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
         protected override void Awake()
         {
@@ -190,13 +201,13 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
             onPressGuarder = new ActionGuarderMutable(
                 new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.isMantled.SimpleReactions, 
-                                () => facade.Blackboard.isMantled, () => facade.Input.ClimbLedge.Invoke(), "Is Mantled", "Climb"),
+                                () => facade.Blackboard.isMantled, () => facade.Actions.ClimbLedge.Invoke(), "Is Mantled", "Climb"),
                 
                         new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.canMantle.SimpleReactions,
-                                () => facade.Blackboard.canMantle, () => facade.Input.MantleLedge.Invoke(), "Can Mantle", "Mantle"),
+                                () => facade.Blackboard.canMantle, () => facade.Actions.MantleLedge.Invoke(), "Can Mantle", "Mantle"),
                 
                         new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.hasJumped.SimpleReactions,
-                                () => facade.Blackboard.hasJumped, () => facade.Input.DoubleJump.Invoke(), "Has Jumped", "Double Jump"),
+                                () => facade.Blackboard.hasJumped, () => facade.Actions.DoubleJump.Invoke(), "Has Jumped", "Double Jump"),
                 
                         new ActionGuard(() => facade.Blackboard.jumpOnCooldown, "Jump On Cooldown"),
                         new ActionGuard(() => !facade.Blackboard.phys.isGrounded, "In the Air"));
@@ -210,10 +221,10 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         }
     }
 
-    public class FaceDirectionModule : InputHeldModuleFacade<LookDir, ActionGuarderMutable, TwoD_Controller>, UPDATE
+    public class FaceDirectionModule : InputHeldModuleFacade<LookDir, ActionGuarderMutable, TwoD_PilotController>, UPDATE
     {
         
-        public FaceDirectionModule(PersistentAction<LookDir, bool> action, TwoD_Controller facade) : base(action, facade, false) { }
+        public FaceDirectionModule(PersistentAction<LookDir, bool> action, TwoD_PilotController facade) : base(action, facade, false) { }
         
         [ShowInInspector] LookDir dir;
         
@@ -229,13 +240,16 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
 
-    public class LookModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_Controller>, LATEUPDATE
+    public class LookModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_PilotController>, LATEUPDATE
     {
-        public LookModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, false) { }
+        public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, false) { }
 
-        protected override void Awake() => 
+        protected override void Awake()
+        {
             executeGuarder.Add(new LazyActionGuard<LazyFuncLite<bool>>(facade.Blackboard.isMantled.SimpleReactions,
-                                                                    () => facade.Blackboard.isMantled, "Is Mantled"));
+                () => facade.Blackboard.isMantled, "Is Mantled"));
+        }
+
 
         protected override void Implementation(float dt) => facade.Blackboard.mouseLook.Execute();
 
@@ -243,9 +257,9 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
     }
     
 
-    public class ShootModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_Controller>, FIXEDUPDATE
+    public class ShootModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_PilotController>, FIXEDUPDATE
     {
-        public ShootModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, true) { }
+        public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake()
         {
@@ -277,7 +291,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
     }
     
     
-    public class MoveModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_Controller>, FIXEDUPDATE
+    public class MoveModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_PilotController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -300,7 +314,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
 
         Config cfg => facade.Config.move;
         
-        public MoveModule(PersistentAction<bool> action, TwoD_Controller facade) : base(action, facade, true) { }
+        public MoveModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake()
         {
@@ -345,7 +359,7 @@ public class TwoD_Functionality : Functionalities<TwoD_Controller>
                 if (prevMoveDir != facade.Blackboard.moveDir)
                 {
                     facade.Blackboard.turnSlowdown.Restart();
-                    if(facade.Blackboard.isMantled) facade.Input.UnMantleLedge?.Invoke();
+                    // if(facade.Blackboard.isMantled) facade.Input.UnMantleLedge?.Invoke();
                 }
                 
                 

@@ -3,9 +3,9 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "TwoD_Config", menuName = "ScriptableObjects/TwoD_Config", order = 2)]
-public class TwoD_Config : Config, IFacadeCompositionElement<TwoD_Controller>
+public class TwoD_Config : Config, IFacadeCompositionElement<TwoD_PilotController>
 {
-    public TwoD_Controller facade { get; set; }
+    public TwoD_PilotController facade { get; set; }
     
     public enum LookDir { None, Left, Right }
     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb }

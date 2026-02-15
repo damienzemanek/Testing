@@ -1089,16 +1089,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b341d1a83499db48b0e569c79780f34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  input: {fileID: 11400000, guid: 42f4b88678b1cbb439acc09a15c285f0, type: 2}
   mouselook:
+    look: {x: 0, y: 0}
+    rot: {x: 0, y: 0}
     body: {fileID: 986632107}
     head: {fileID: 1736419443}
     input:
-      underlyingValue: {fileID: 11400000, guid: 42f4b88678b1cbb439acc09a15c285f0, type: 2}
-    sensitivity: {x: 1, y: 1}
-    look: {x: 0, y: 0}
-    rot: {x: 0, y: 0}
+      underlyingValue: {fileID: 0}
+    useBody: 1
+    clampXRotation: 0
+    clampYRotation: 1
     updateMouseLook: 1
+    sensitivity: {x: 1, y: 1}
+    clampX: {x: -90, y: 90}
+    clampY: {x: -90, y: 90}
 --- !u!4 &1976899362
 Transform:
   m_ObjectHideFlags: 0

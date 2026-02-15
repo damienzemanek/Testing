@@ -15,10 +15,10 @@ public class ShipFunctionality : Functionalities<ShipController>
 {
     protected override void AddModulesHere()
     {
-        AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
-        AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
-        AddModule(new FireModule(facade.Input.Fire, facade));
-        AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
+        // AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
+        // AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
+        // AddModule(new FireModule(facade.Input.Fire, facade));
+        // AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
     }
 
 

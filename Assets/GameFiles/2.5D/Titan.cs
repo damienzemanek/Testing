@@ -65,16 +65,16 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
 
     void OnEnable()
     {
-        input.Move.Add(Move);
-        input.Look.Add(Look);
+       // input.Move.Add(Move);
+       // input.Look.Add(Look);
     }
 
     void OnDisable()
     {
-        input.Move.Remove(Move);
-        input.Look.Remove(Look);
+       // input.Move.Remove(Move);
+       // input.Look.Remove(Look);
 
-        input.FaceDirection.Remove(FaceDirection);
+       // input.FaceDirection.Remove(FaceDirection);
     }
 
     void Start()
@@ -90,7 +90,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         if(!hasMounted && mountZone.inZone && mountZone.playerRequestedMount)
             StartCoroutine(HandleMount());
         HandleMovement();
-        if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
+        //if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
         animator.SetFloat(Speed, speedAlpha);
 
     }
@@ -101,7 +101,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
     
     public void HandleLooking()
     {
-        if (input._lookGuarder || !hasMounted) return;
+       // if (input._lookGuarder || !hasMounted) return;
         mouseLook.Execute();
     }
     
@@ -124,9 +124,9 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         ApplyCamSettings();
         hasMounted = true;
         //input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking));
-        input._lookGuarder = new SimpleGuarderMutable();
-        input.FaceDirection = new PersistentAction<LookDir, bool>();
-        input.FaceDirection.Add(FaceDirection);
+       // input._lookGuarder = new SimpleGuarderMutable();
+       // input.FaceDirection = new PersistentAction<LookDir, bool>();
+       // input.FaceDirection.Add(FaceDirection);
         this.InitTimers((moveDecay, true));
         moveDecay.Start();
         animator.Play(mountFrontAnim);
@@ -153,7 +153,7 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
         if (!isMoving) return;
         
         Walk();
-        Move(input.movement);
+      //  Move(input.movement);
         
         void Walk()
         {

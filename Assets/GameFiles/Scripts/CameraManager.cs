@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraManager : ValidatedMonoBehaviour
 {
     [Header(header: "Refs")]
-    [SerializeField, Anywhere] InputReader input;
+    //[SerializeField, Anywhere] InputReader input;
     [SerializeField, Anywhere] CinemachineOrbitalFollow orbital;
     [SerializeField, Anywhere] CinemachineInputAxisController camInput;
 
@@ -18,14 +18,14 @@ public class CameraManager : ValidatedMonoBehaviour
 
     private void OnEnable()
     {
-        input.EnableMouseControlCamera += OnEnableMouseControlCamera;
-        input.DisableMouseControlCamera += OnDisableMouseControlCamera;
+       // input.EnableMouseControlCamera += OnEnableMouseControlCamera;
+       // input.DisableMouseControlCamera += OnDisableMouseControlCamera;
     }
 
     private void OnDisable()
     {
-        input.EnableMouseControlCamera -= OnEnableMouseControlCamera;
-        input.DisableMouseControlCamera -= OnDisableMouseControlCamera;
+       // input.EnableMouseControlCamera -= OnEnableMouseControlCamera;
+       // input.DisableMouseControlCamera -= OnDisableMouseControlCamera;
     }
 
     private void OnDisableMouseControlCamera()
