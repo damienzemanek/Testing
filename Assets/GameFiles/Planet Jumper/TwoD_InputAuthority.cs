@@ -33,7 +33,6 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         InitializeMappingsList(mappingCount);
     }
 
-    [Serializable]
     public class TwoD_InputMap : IInputMap
     {
         public PersistentAction<bool> Move = new();
@@ -53,7 +52,6 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         public TwoD_InputMap(MouseCallbackZones mouseInputZones) => this.MouseInputZones = mouseInputZones;
     }
 
-    [Serializable]
     public class PilotActionMap : IActionMap
     {
         public PersistentAction UnMantleLedge = new();
