@@ -367,6 +367,16 @@ MonoBehaviour:
     ledgeData:
       dir: 0
       point: {fileID: 0}
+  <Input>k__BackingField:
+    MouseInputZones: {fileID: 0}
+    movement: {x: 0, y: 0}
+    mouse: {x: 0, y: 0}
+  <subordinateContext>k__BackingField:
+    Subordinate:
+      underlyingValue: {fileID: 14127280}
+    Authority:
+      underlyingValue: {fileID: 441288467}
+    key: 0
 --- !u!114 &14127282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2122,12 +2132,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43adea18ad8bf5e4c89ce7fa7a80a53e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Controlled:
-    _implementer: {fileID: 14127280}
   Reader: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
-  currentMapping: 0
+  mappingCount: 2
   <cfg>k__BackingField:
     <MouseInputZones>k__BackingField: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
+  currentSubordinate: 0
 --- !u!4 &441288468
 Transform:
   m_ObjectHideFlags: 0

@@ -26,14 +26,21 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader<T
         ia.Player.Enable();
         
         // Looking at the player from the front, reverses the directions (like a mirror)
-        float halfScreenWidth = InputMap.MouseInputZones.w * 0.5f;
-        float screenHeight = InputMap.MouseInputZones.h;
-        InputMap.MouseInputZones.callbackZones = null;
-        InputMap.MouseInputZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { InputMap.FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + InputMap.FaceDirection.Count);
-            }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { InputMap.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + InputMap.FaceDirection.Count);
-            }));
+        if (InputMap.MouseInputZones == null)
+        {
+            InputMap.MouseInputZones = ScriptableObject.CreateInstance<MouseCallbackZones>();
+            InputMap.MouseInputZones.w = Screen.width;
+            InputMap.MouseInputZones.h = Screen.height;
+            float halfScreenWidth = InputMap.MouseInputZones.w * 0.5f;
+            float screenHeight = InputMap.MouseInputZones.h;
+            InputMap.MouseInputZones.callbackZones = null;
+            InputMap.MouseInputZones.AddInitalZones(
+                (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { InputMap.FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + InputMap.FaceDirection.Count);
+                }),
+                (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { InputMap.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + InputMap.FaceDirection.Count);
+                }));
+        }
+
     }
 
     private void OnDisable()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -11,9 +12,21 @@ using static ShipInputReader.ShipInputAuthority;
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
 public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader<ShipInputReader.ShipInputAuthority.ShipInputMap>
 {
-    public class ShipInputAuthority : IInputAuthority
+    public class ShipInputAuthority : IInputAuthority<ShipInputAuthority.ShipInputMap, ShipInputAuthority.Subordinates>
     {
+        public enum Subordinates
+        {
+            Ship = 0
+        }
+        
         public class ShipInputMap : IInputMap { }
+
+        public Dictionary<int, IInputAuthority<ShipInputMap, Subordinates>.Mapping> InputMappings { get; set; }
+        void IInputAuthority<ShipInputMap, Subordinates>.DelegateAuthorityTo(int mapIndex, IInputAuthority<ShipInputMap, Subordinates>.Mapping mapping)
+        {
+            throw new NotImplementedException();
+        }
+        
     }
     
     public Ship_IA ia;
@@ -84,5 +97,5 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
         if(context.phase == InputActionPhase.Performed) SwitchCam?.Invoke();
     }
 
-    public ShipInputMap InputMap { get; set; }
+    public ShipInputAuthority.ShipInputMap InputMap { get; set; }
 }

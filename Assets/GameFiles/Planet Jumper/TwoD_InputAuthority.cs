@@ -8,40 +8,29 @@ using static TwoD_Config;
 using static TwoD_InputAuthority;
 
 [Serializable]
-public class TwoD_InputAuthority : InputAuthority<TwoD_InputReader, TwoD_InputMap>, IInputAuthority
+public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputMap, Subordinates>
 {
+    public static TwoD_InputAuthority Instance { get; private set; }
+    
+    public enum Subordinates
+    {
+        Pilot = 0,
+        Titan = 1
+    }
+    
     [Serializable]
-    public struct Config
+    public struct Config : IConfig
     {
         [field:SerializeField] public MouseCallbackZones MouseInputZones { get; private set; }
     }
     
-    public struct Mapping
-    {
-        public TwoD_InputMap map;
-        public InterfaceRef<IControllable<TwoD_InputMap>> controlled;
-        
-        public IInitializable Initializable => controlled.Value as IInitializable;
-    }
-
-    public int currentMapping = 0;
     [field: SerializeField] public Config cfg { get; set; }
-    [NonSerialized, ShowInInspector, ReadOnly] public Mapping[] InputMappings = new Mapping[2];
+    public Subordinates currentSubordinate = 0;
 
     void Awake()
     {
-        for (int i = 0; i < InputMappings.Length; i++) 
-            InputMappings[i] = new Mapping();
-
-        // 0 Index controlled (first one) is the default
-        currentMapping = 0;
-        var input = InputMappings[currentMapping];
-        input.map = new TwoD_InputMap(cfg.MouseInputZones);
-        input.controlled = Controlled;
-        input.controlled.Value.Input = input.map;
-        input.Initializable.Init();
-        Reader.InputMap = input.map;
-        Reader.Init();
+        Instance = this;
+        InitializeMappingsList(mappingCount);
     }
 
     [Serializable]
@@ -55,11 +44,12 @@ public class TwoD_InputAuthority : InputAuthority<TwoD_InputReader, TwoD_InputMa
         public PersistentAction Jump = new();
         public PersistentAction Interact = new();
         public PersistentAction CallInTitan = new();
-        public MouseCallbackZones MouseInputZones = new();
+        public MouseCallbackZones MouseInputZones;
         
         public Vector2 movement;
         public Vector2 mouse;
 
+        public TwoD_InputMap() { }
         public TwoD_InputMap(MouseCallbackZones mouseInputZones) => this.MouseInputZones = mouseInputZones;
     }
 
@@ -71,5 +61,11 @@ public class TwoD_InputAuthority : InputAuthority<TwoD_InputReader, TwoD_InputMa
         public PersistentAction DoubleJump = new();
         public PersistentAction ClimbLedge = new();
         public PersistentAction<bool> Land = new();
+    }
+    
+    [Serializable]
+    public class TitanActionMap : IActionMap
+    {
+
     }
 }
