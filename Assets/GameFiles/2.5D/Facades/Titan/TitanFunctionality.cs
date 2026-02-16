@@ -19,33 +19,33 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         
         // Unbound        
         AddModule(new MountModule(facade));
-        
-        Debug.Log("Titan Functionality Modules Added");
     }
 
 
     public class DismountModule : InputPressedModuleFacade<TwoD_TitanController>
     {
         public DismountModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }
+        
+        IInputSubordinate<TwoD_InputMap, Subordinates> thisTitan;
+        IInputSubordinate<TwoD_InputMap, Subordinates> pilot;
 
-        protected override void OnPress()
-        {
-            Debug.Log("Titan Dismount Pressed");
-            facade.StartCoroutine(DismountSequence());
-        }
+        protected override void OnPress() => facade.StartCoroutine(DismountSequence());
 
         IEnumerator DismountSequence()
         {
-            Debug.Log("DISMOUNTING");
-            
-           // facade.Blackboard.anims.animator.Play(facade.Blackboard.anims.dismountAnim);
+            facade.Blackboard.anims.animator.Play(facade.Blackboard.anims.dismountAnim);
             
             yield return new WaitForSeconds(facade.Config.mount.duration);
+
+            thisTitan = facade;
+            pilot = facade.Blackboard.myPilot;
+            
+            bool successful = pilot.RequestAuthorityFrom(thisTitan);
+            if(!successful) yield break;
             
             facade.Blackboard.hasMounted = false;
             facade.Blackboard.myPilot.gameObject.SetActive(true);
-            facade.Blackboard.myPilot.context.RequestAuthority();
-            
+            facade.Blackboard.myPilot = null;
             Debug.Log("Titan Dismount Sequence Complete");
         }
     }
@@ -88,8 +88,6 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         public override void Execute() => facade.StartCoroutine(MountSequence());
         IEnumerator MountSequence()
         {
-            Debug.Log("MOUNTING");
-            
             Transform playerTransform = facade.Blackboard.myMountZone.playerTransform;
             Transform mountLoc = facade.Blackboard.mountLocation;
             
@@ -110,9 +108,10 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
             
             yield return new WaitForSeconds(facade.Config.mount.duration);
             
+            
             facade.Blackboard.moveDecay.Start();
             facade.Blackboard.hasMounted = true;
-            facade.Blackboard.myPilot.gameObject.SetActive(false);
+            if(facade.Blackboard.myPilot != null) facade.Blackboard.myPilot.gameObject.SetActive(false);
             facade.Actions.Mount.Invoke();
         }
 

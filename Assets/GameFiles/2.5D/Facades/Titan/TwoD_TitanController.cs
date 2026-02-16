@@ -29,7 +29,7 @@ public class TwoD_TitanController : MonoFacade<
     public void OnAuthorityLost()
     {
         Functionality.Unbind();
-
+        Blackboard.myMountZone.mounted = false;
     }
 
     protected override void Update()

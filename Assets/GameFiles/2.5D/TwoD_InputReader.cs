@@ -15,7 +15,8 @@ using static TwoDimensionalController;
 public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSubordinate<TwoD_InputMap, Subordinates>, IInitializable
 {
     TwoD_IA ia;
-
+    
+    public TwoD_InputMap Input { get => subordinate.Input; }
     [ShowInInspector] public IInputSubordinate<TwoD_InputMap, Subordinates> subordinate { get; set; }
     
     
@@ -28,21 +29,21 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
         ia.Player.Enable();
         
         // Looking at the player from the front, reverses the directions (like a mirror)
-        if (subordinate.Input.MouseInputZones == null)
+        if (Input.MouseInputZones == null)
         {
             Debug.LogWarning("MouseInputZones not initialized already... Initializing MouseCallbackZones for TwoD_InputReader");
-            subordinate.Input.MouseInputZones = ScriptableObject.CreateInstance<MouseCallbackZones>();
-            subordinate.Input.MouseInputZones.w = Screen.width;
-            subordinate.Input.MouseInputZones.h = Screen.height;
+            Input.MouseInputZones = ScriptableObject.CreateInstance<MouseCallbackZones>();
+            Input.MouseInputZones.w = Screen.width;
+            Input.MouseInputZones.h = Screen.height;
         }
         
-        float halfScreenWidth = subordinate.Input.MouseInputZones.w * 0.5f;
-        float screenHeight = subordinate.Input.MouseInputZones.h;
-        subordinate.Input.MouseInputZones.callbackZones = null;
-        subordinate.Input.MouseInputZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { subordinate.Input.FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + subordinate.Input.FaceDirection.Count);
+        float halfScreenWidth = Input.MouseInputZones.w * 0.5f;
+        float screenHeight = Input.MouseInputZones.h;
+        Input.MouseInputZones.callbackZones = null;
+        Input.MouseInputZones.AddInitalZones(
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + Input.FaceDirection.Count);
             }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { subordinate.Input.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + subordinate.Input.FaceDirection.Count);
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + Input.FaceDirection.Count);
             }));
     }
 
@@ -56,10 +57,10 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (ia.Player.Move.IsPressed()) subordinate.Input.Move?.Invoke(context.ReadValue<Vector2>(), true); 
+        if (ia.Player.Move.IsPressed()) Input.Move?.Invoke(context.ReadValue<Vector2>(), true); 
         switch (context.phase)
         {
-            case InputActionPhase.Canceled: subordinate.Input.Move?.Invoke(Vector2.zero, false); break;
+            case InputActionPhase.Canceled: Input.Move?.Invoke(Vector2.zero, false); break;
         }
     }
 
@@ -68,10 +69,10 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
         switch (context.phase)
         {
             case InputActionPhase.Started: 
-                subordinate.Input.mouse = Mouse.current.position.ReadValue();
-                subordinate.Input.Look?.Invoke(true); break;
+                Input.mouse = Mouse.current.position.ReadValue();
+                Input.Look?.Invoke(true); break;
             case InputActionPhase.Canceled: 
-                subordinate.Input.Look?.Invoke(false); break;
+                Input.Look?.Invoke(false); break;
         }
     }
 
@@ -79,8 +80,8 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
     {
         switch (context.phase)
         {
-            case InputActionPhase.Started: subordinate.Input.Shoot?.Invoke(true); break;
-            case InputActionPhase.Canceled: subordinate.Input.Shoot?.Invoke(false); break;
+            case InputActionPhase.Started: Input.Shoot?.Invoke(true); break;
+            case InputActionPhase.Canceled: Input.Shoot?.Invoke(false); break;
         }
     }
 
@@ -88,14 +89,14 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
     {
         switch (context.phase)
         {
-            case InputActionPhase.Started: subordinate.Input.Run?.Invoke(true); break;
-            case InputActionPhase.Canceled: subordinate.Input.Run?.Invoke(false); break;
+            case InputActionPhase.Started: Input.Run?.Invoke(true); break;
+            case InputActionPhase.Canceled: Input.Run?.Invoke(false); break;
         }
     }
 
     public void OnJump(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Performed) subordinate.Input.Jump?.Invoke();
+        if(context.phase == InputActionPhase.Performed) Input.Jump?.Invoke();
     }
 
     public void OnInteractHeld(InputAction.CallbackContext context)
@@ -103,19 +104,19 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSu
         if (context.phase == InputActionPhase.Performed)
         {
             Debug.Log("HELD INTERACT");
-            subordinate.Input.HoldInteract.PrintInvokeListNames();
-            subordinate.Input.HoldInteract?.Invoke();
+            Input.HoldInteract.PrintInvokeListNames();
+            Input.HoldInteract?.Invoke();
         }
     }
 
     public void OnInteract(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Performed) subordinate.Input.Interact?.Invoke();
+        if(context.phase == InputActionPhase.Performed) Input.Interact?.Invoke();
     }
 
     public void OnCallInTitan(InputAction.CallbackContext context)
     {
-        if(context.phase == InputActionPhase.Performed) subordinate.Input.CallInTitan?.Invoke();
+        if(context.phase == InputActionPhase.Performed) Input.CallInTitan?.Invoke();
     }
     
 }

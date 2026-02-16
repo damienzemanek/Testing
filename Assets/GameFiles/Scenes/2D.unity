@@ -290,6 +290,7 @@ MonoBehaviour:
       CM: {fileID: 1359566438}
       follow: {fileID: 1359566437}
       rotComposer: {fileID: 1359566436}
+    <camFollowTransform>k__BackingField: {fileID: 1319226151}
     <mouseLook>k__BackingField:
       cam: {fileID: 1122801504}
       core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
@@ -2910,17 +2911,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!114 &1062085922 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
-  m_PrefabInstance: {fileID: 2013781408}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a895f2ca8f240c4eac5100f626ba518, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1076510151
 GameObject:
   m_ObjectHideFlags: 0
@@ -8835,7 +8825,7 @@ PrefabInstance:
       objectReference: {fileID: 352738165}
     - target: {fileID: 843267439844268287, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 290
+      value: 299
       objectReference: {fileID: 0}
     - target: {fileID: 1755171931928348482, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8843,7 +8833,7 @@ PrefabInstance:
       objectReference: {fileID: 171111903}
     - target: {fileID: 1755171931928348482, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1134
+      value: 1143
       objectReference: {fileID: 0}
     - target: {fileID: 2935996584549869998, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8851,7 +8841,7 @@ PrefabInstance:
       objectReference: {fileID: 839155684}
     - target: {fileID: 2935996584549869998, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1238
+      value: 1247
       objectReference: {fileID: 0}
     - target: {fileID: 4136770288292139422, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8859,7 +8849,7 @@ PrefabInstance:
       objectReference: {fileID: 745165250}
     - target: {fileID: 4136770288292139422, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1134
+      value: 1143
       objectReference: {fileID: 0}
     - target: {fileID: 4282856664855661720, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8867,7 +8857,7 @@ PrefabInstance:
       objectReference: {fileID: 1277088740}
     - target: {fileID: 4282856664855661720, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1385
+      value: 1394
       objectReference: {fileID: 0}
     - target: {fileID: 4356241764936541865, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8879,12 +8869,8 @@ PrefabInstance:
       objectReference: {fileID: 601229804}
     - target: {fileID: 4401365549412828406, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 4294
+      value: 4303
       objectReference: {fileID: 0}
-    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
-      propertyPath: <context>k__BackingField.Subordinate.underlyingValue
-      value: 
-      objectReference: {fileID: 1062085922}
     - target: {fileID: 4815760036686125764, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -8907,7 +8893,7 @@ PrefabInstance:
       objectReference: {fileID: 851229440}
     - target: {fileID: 6213609582122346544, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 743
+      value: 752
       objectReference: {fileID: 0}
     - target: {fileID: 6282474491680080727, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8923,7 +8909,7 @@ PrefabInstance:
       objectReference: {fileID: 143116295}
     - target: {fileID: 6545592508280533790, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 743
+      value: 752
       objectReference: {fileID: 0}
     - target: {fileID: 6976002013261386727, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8983,7 +8969,7 @@ PrefabInstance:
       objectReference: {fileID: 1520412486}
     - target: {fileID: 8684086866928651530, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1385
+      value: 1394
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

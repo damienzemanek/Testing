@@ -48,6 +48,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             facade.transform.parent = null;
             facade.Blackboard.capsuleCollider.enabled = true;
             facade.Blackboard.rb.isKinematic = false;
+            facade.Blackboard.hasRequestedMount = false;
         }
     }
 
@@ -58,7 +59,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         
         public override void Execute()
         {
-            facade.Blackboard.camContext.CM.Target.TrackingTarget = facade.transform;
+            facade.Blackboard.camContext.CM.Target.TrackingTarget = facade.Blackboard.camFollowTransform;
             facade.Blackboard.camContext.follow.FollowOffset = facade.Config.camSettings.followOffset;
             facade.Blackboard.camContext.rotComposer.TargetOffset = facade.Config.camSettings.targetOffset;
         }

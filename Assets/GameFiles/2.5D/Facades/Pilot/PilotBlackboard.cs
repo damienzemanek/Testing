@@ -22,6 +22,8 @@ public class PilotBlackboard : Blackboard
     [field: BoxGroup("References")] [field: SerializeField]  public TurnSlowDown turnSlowDown { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public CameraContext camContext { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public Transform camFollowTransform { get; private set; }
+
     [BoxGroup("Orientation")] [field: SerializeField] public RotateToMouseWorldSpace mouseLook { get; private set; }
     [field: SerializeField] public PositionToMouseWorldSpace posToMouse { get; private set; }
 

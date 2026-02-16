@@ -24,8 +24,7 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
 
       protected virtual void Awake()
       {
-          if (presetWithInitialSubordinate)
-              InitialSubordinate.Value.context.SetupFirstAuthority(inputMapSettings);
+          if (presetWithInitialSubordinate) InitialSubordinate.Value.context.SetupFirstAuthority(inputMapSettings);
       }
       
       void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)

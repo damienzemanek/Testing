@@ -26,16 +26,7 @@ namespace EMILtools_Private.Testing
             Debug.Log("API count: " + API_Modules.Count);
         }
         
-        public void Bind() 
-        { 
-            foreach (var t in modules)
-            {
-                t.Bind();
-            } 
-            Debug.Log("Functionality modules succesfully Bound");
-        }
-        
-        
+        public void Bind() { foreach (var t in modules) { t.Bind(); } }
         public void Unbind() { foreach (var t in modules) t.Unbind(); }
         public void UpdateTick(float dt) { foreach (var t in _update) t.OnUpdateTick(dt); }
         public void FixedTick(float fdt) { foreach (var t in _fixed) { t.OnFixedTick(fdt); } }
@@ -47,11 +38,7 @@ namespace EMILtools_Private.Testing
             modules.Add(module);
             Debug.Log("ADDING module " + module.GetType().Name + " new count is " + modules.Count);
 
-            if (module is UPDATE u)
-            {
-                _update.Add(u);
-                Debug.Log("added UPDATE module " + module.GetType().Name + " new UPDATE count is " + _update.Count);
-            }
+            if (module is UPDATE u) { _update.Add(u); }
             if (module is FIXEDUPDATE f) _fixed.Add(f);
             if (module is LATEUPDATE l) _late.Add(l);
             if (module is IAPI_Module)

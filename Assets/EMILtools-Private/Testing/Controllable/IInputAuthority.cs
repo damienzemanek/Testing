@@ -12,7 +12,13 @@ public interface IInputAuthority<TInputMap, TSubordinateEnum>
     public TSubordinateEnum currentSubordinate => subordinate != null ? subordinate.context.key : default;
     IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
     
-    public bool AcceptRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
+    /// <summary>
+    /// For now Requests are defaulted to TRUE until I need to develop it further
+    /// (I don't want to sink endless time into a system I donte need yet)
+    /// </summary>
+    /// <param name="subordinate"></param>
+    /// <returns></returns>
+    public bool ConsiderRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
     {
         this.subordinate = subordinate;
         ReceiveRequest(subordinate);

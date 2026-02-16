@@ -8,7 +8,7 @@ public class MountZone : MonoBehaviour
 {
     [Required] [SerializeField] InterfaceReference<IInputSubordinate<TwoD_InputMap, Subordinates>, MonoBehaviour> mountable;
     [ShowInInspector, ReadOnly] bool inZone;
-    [ShowInInspector, ReadOnly] bool mounted = false;
+    [ShowInInspector, ReadOnly] public bool mounted = false;
 
     [ReadOnly] public bool playerRequestedMount => playerTransform != null && 
                                                    playerTransform.Get<TwoD_PilotController>().Blackboard.hasRequestedMount;
@@ -24,12 +24,14 @@ public class MountZone : MonoBehaviour
         playerTransform = player.transform;
         inZone = true;
 
-        if (playerRequestedMount)
-        {
-            IInputSubordinate<TwoD_InputMap, Subordinates> playerSubordinate = player;
-            mountable.Value.ReceiveAuthority(playerSubordinate.Authority);
-            mounted = true;
-        }
+        if (!playerRequestedMount) return;
+        
+        IInputSubordinate<TwoD_InputMap, Subordinates> playerSubordinate = player;
+        bool success = mountable.Value.RequestAuthorityFrom(playerSubordinate);
+        
+        if(!success) return;
+        
+        mounted = true;
     }
 
     void OnTriggerExit(Collider other)

@@ -104,5 +104,6 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
     }
 
     public ShipInputAuthority.ShipInputMap InputMap { get; set; }
+    public ShipInputMap Input { get; }
     public IInputSubordinate<ShipInputAuthority.ShipInputMap, TwoD_InputAuthority.Subordinates> subordinate { get; set; }
 }

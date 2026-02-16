@@ -28,7 +28,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
         ///  Delegation of Authority
         /// </summary>
         /// <param name="inputMap"></param>
-        public void RequestAuthority()
+        public bool SendRequest()
         {
             //Retrive the Input map stored in the Subordinate
             if (Subordinate.Value.Input == null)
@@ -38,15 +38,16 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
             }
             
             // Register that InputMap with the Authority
-            Authority.Value.AcceptRequest(Subordinate.Value);
-            Subordinate.Value.OnAuthorityReceived();
+            bool accepted = Authority.Value.ConsiderRequest(Subordinate.Value);
+            if (accepted) Subordinate.Value.OnAuthorityReceived();
+            return accepted;
         }
 
         public void SetupFirstAuthority(TInputMap inputMap)
         {
             Subordinate.Value.Input = inputMap;
             Subordinate.Value.InitSubordinate();
-            Authority.Value.AcceptRequest(Subordinate.Value);
+            Authority.Value.ConsiderRequest(Subordinate.Value);
             Subordinate.Value.OnAuthorityReceived();
         }
     }
@@ -55,25 +56,18 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     
     public TInputMap Input { get; set; }
     public SubordinateContext context { get; set; }
-    
-
     public abstract TInputMap InjectInputMap();
-    /// <summary>
-    /// Initialize Subordinate here, don't use Awake (Is this a design smell?)
-    /// </summary>
     public abstract void InitSubordinate();
     public abstract void OnAuthorityReceived();
     public abstract void OnAuthorityLost();
     
     
-    /// <summary>
-    /// Used when you want to handoff Authority to another subordinate and keep your registration
-    /// </summary>
-    /// <param name="authority"></param>
-    public void ReceiveAuthority(IInputAuthority<TInputMap, TSubordnateEnumType> authority)
+    public bool RequestAuthorityFrom(IInputSubordinate<TInputMap, TSubordnateEnumType> former)
     {
-        context.Authority.Value = authority;
-        context.RequestAuthority();
+        context.Authority.Value = former.Authority;
+        bool successful = context.SendRequest();
+        if(successful) former.OnAuthorityLost();
+        return successful;
     }
 
 }
