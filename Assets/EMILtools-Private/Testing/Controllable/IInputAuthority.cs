@@ -22,6 +22,11 @@ public interface IInputAuthority<TInputMap, TSubordinateEnum>
         Debug.Log("Registered with key " + key + " with new Mapping w/ subordinate : " + context.Subordinate.Value);
     }
 
+    public void UnregisterSubordinateInstance(int key)
+    {
+        InputMappings.Remove(key);
+    }
+
     public void RequestDelegationOfAuthority(int key) => DelegateAuthorityToTemplateCall(key);
     
     protected void DelegateAuthorityToTemplateCall(int mapIndex)

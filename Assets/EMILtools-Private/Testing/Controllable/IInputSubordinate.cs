@@ -56,6 +56,8 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
         /// <param name="key"></param>
         /// <returns></returns>
         public IInputAuthority<TInputMap,TSubordnateEnumType>.Mapping GetMapping(int key) => Authority.Value.InputMappings[key];
+        
+        public bool hasAuthority => Authority != null && Authority.Value != null;
     }
     
     public TInputMap Input { get; set; }
@@ -65,4 +67,30 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     /// Initialize Subordinate here, don't use Awake (Is this a design smell?)
     /// </summary>
     public abstract void InitSubordinate();
+
+    /// <summary>
+    /// Used when you want to handoff Authority to another subordinate. and Unregister yourself
+    /// </summary>
+    /// <param name="authority"></param>
+    /// <param name="giverKey"></param>
+    public void HandoffReceiveAndGiverUnregister(IInputAuthority<TInputMap, TSubordnateEnumType> authority, int giverKey)
+    {
+        HandoffReceiveAuthority(authority);
+        authority.UnregisterSubordinateInstance(giverKey);
+    }
+    
+    /// <summary>
+    /// Used when you want to handoff Authority to another subordinate and keep your registration
+    /// </summary>
+    /// <param name="authority"></param>
+    public void HandoffReceiveAuthority(IInputAuthority<TInputMap, TSubordnateEnumType> authority)
+    {
+        SetAuthority(authority);
+        subordinateContext.FirstDelegationOfAuthority();
+    }
+    
+    
+    
+    
+    void SetAuthority(IInputAuthority<TInputMap,TSubordnateEnumType> authority) => subordinateContext.Authority.Value = authority;
 }
