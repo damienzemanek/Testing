@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public interface IInputSubordinate<TInputMap, TSubordnateEnumType> : IInitializable
+public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     where TInputMap : class, IInputMap, new()
     where TSubordnateEnumType : Enum
 {
@@ -25,7 +25,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType> : IInitializa
         {
             RegisterWithAuthority();
             RequestAuthority();
-            Subordinate.Value.Init();
+            Subordinate.Value.InitSubordinate();
             Debug.Log("Trying initialize Subordinate");
         }
 
@@ -34,4 +34,5 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType> : IInitializa
     
     public TInputMap Input { get; set; }
     public SubordinateContext subordinateContext { get; set; }
+    public abstract void InitSubordinate();
 }

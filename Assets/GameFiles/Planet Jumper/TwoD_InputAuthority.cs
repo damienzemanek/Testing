@@ -11,12 +11,9 @@ using static TwoD_InputAuthority;
 public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputMap, Subordinates>
 {
     public static TwoD_InputAuthority Instance { get; private set; }
+    public enum Subordinates { Pilot = 0, Titan = 1 }
     
-    public enum Subordinates
-    {
-        Pilot = 0,
-        Titan = 1
-    }
+    
     
     [Serializable]
     public struct Config : IConfig

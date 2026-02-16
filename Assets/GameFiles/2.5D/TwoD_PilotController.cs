@@ -22,15 +22,14 @@ public class TwoD_PilotController : MonoFacade<
         TwoD_Blackboard,
         PilotActionMap>,
     ITimerUser,
-    IInputSubordinate<TwoD_InputMap, Subordinates>,
-    IInitializable
+    IInputSubordinate<TwoD_InputMap, Subordinates>
 {
     
     [field: ShowInInspector] [field: SerializeField] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
     [field: ShowInInspector] [field: SerializeField] public SubordinateContext subordinateContext { get; set; }
-    
 
-    public void Init()
+
+    public void InitSubordinate()
     {
         Debug.Log("init controller");
         InitializeFacade();
