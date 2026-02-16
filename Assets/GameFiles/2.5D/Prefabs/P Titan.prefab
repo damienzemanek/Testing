@@ -999,7 +999,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1268
+  m_VersionIndex: 1364
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1460,7 +1460,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 626
+  m_VersionIndex: 722
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -2544,7 +2544,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1268
+  m_VersionIndex: 1364
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3233,7 +3233,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1017
+  m_VersionIndex: 1113
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3437,7 +3437,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ce8f9d107f0e47469263e8792910475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inZone: 0
+  mountable:
+    underlyingValue: {fileID: 4730134310842295261}
   playerTransform: {fileID: 0}
 --- !u!1 &3728297200071479310
 GameObject:
@@ -5171,7 +5172,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 4177
+  m_VersionIndex: 4273
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -5532,7 +5533,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 626
+  m_VersionIndex: 722
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6286,7 +6287,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1017
+  m_VersionIndex: 1113
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -6409,9 +6410,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6976002013261386727}
   - component: {fileID: 6340075715979246663}
-  - component: {fileID: 8819076426077865959}
-  - component: {fileID: 6730991453906703425}
   - component: {fileID: 7879118814638475326}
+  - component: {fileID: 4730134310842295261}
+  - component: {fileID: 6730991453906703425}
+  - component: {fileID: 7404694222613063875}
   m_Layer: 7
   m_Name: P Titan
   m_TagString: Untagged
@@ -6463,7 +6465,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 2
---- !u!114 &8819076426077865959
+--- !u!136 &7879118814638475326
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7852413773931268109}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.52731377
+  m_Height: 1.8303404
+  m_Direction: 1
+  m_Center: {x: 0.121670306, y: 0.9343631, z: 0}
+--- !u!114 &4730134310842295261
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6472,44 +6497,57 @@ MonoBehaviour:
   m_GameObject: {fileID: 7852413773931268109}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e7e3b4986879ed4ab370b20907a8438, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a895f2ca8f240c4eac5100f626ba518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveDecay: {}
-  moveDecayScalar:
-    val: 3
-  input: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
-  facing: {fileID: 2679990526794055348}
-  mountZone: {fileID: 5035040401915420724}
-  hasMounted: 0
-  followCamOffset: {x: 0, y: 14, z: -18}
-  targetCamOffset: {x: 0, y: 7, z: 0}
-  speed: 2600
-  moveForceMode: 0
-  mountLocation: {fileID: 1587827224923140999}
-  cinemachineCamera: {fileID: 0}
-  follow: {fileID: 0}
-  rotation: {fileID: 0}
-  mouseLook:
-    cam: {fileID: 0}
-    core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
-    rotatingObjects:
-    - transform: {fileID: 491018500400846660}
-      flipX: 0
-      flipY: 1
-      flipZ: 0
-      clampX: 1
-      clampY: 1
-      clampZ: 1
-      clampXrot: {x: -60, y: 60}
-      clampYrot: {x: -15, y: 15}
-      clampZrot: {x: -30, y: 30}
-    rotation: {x: 0, y: 0, z: 0, w: 0}
-  rb: {fileID: 6340075715979246663}
-  animator: {fileID: 5501971800230726982}
-  isMoving: 0
-  isShooting: 0
-  isLooking: 0
+  <Config>k__BackingField: {fileID: 11400000, guid: 7ad7c5aa0ce7b6a4fa867aa88648fe7b, type: 2}
+  <Blackboard>k__BackingField:
+    <rb>k__BackingField: {fileID: 6340075715979246663}
+    <facing>k__BackingField: {fileID: 2679990526794055348}
+    <capsuleCollider>k__BackingField: {fileID: 7879118814638475326}
+    <anims>k__BackingField: {fileID: 7404694222613063875}
+    <phys>k__BackingField: {fileID: 6730991453906703425}
+    <mountLocation>k__BackingField: {fileID: 5034543955943256831}
+    <myMountZone>k__BackingField: {fileID: 5035040401915420724}
+    <mouseLook>k__BackingField:
+      cam: {fileID: 0}
+      core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
+      rotatingObjects: []
+      rotation: {x: 0, y: 0, z: 0, w: 0}
+    <posToMouse>k__BackingField:
+      cam: {fileID: 0}
+      core: {fileID: 0}
+      objectToMove: {fileID: 0}
+      offset: {x: 0, y: 0, z: 0}
+      lockX: 0
+      lockY: 0
+      lockZ: 0
+      lockPosX: 0
+      lockPosY: 0
+      lockPosZ: 0
+      lerpSpeed: 5
+      moveOptions: 0
+    <moveDecay>k__BackingField: {}
+    <turnSlowdown>k__BackingField: {}
+    facingDir: 0
+    moveDir: 0
+    hasMounted: 0
+    <camContext>k__BackingField:
+      camera: {fileID: 0}
+      CM: {fileID: 0}
+      follow: {fileID: 0}
+      rotComposer: {fileID: 0}
+  <Input>k__BackingField:
+    MouseInputZones: {fileID: 0}
+    movement: {x: 0, y: 0}
+    mouse: {x: 0, y: 0}
+  <subordinateContext>k__BackingField:
+    Subordinate:
+      underlyingValue: {fileID: 4730134310842295261}
+    Authority:
+      underlyingValue: {fileID: 0}
+    subordinate: 1
+    isInitialized: 0
 --- !u!114 &6730991453906703425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6553,29 +6591,22 @@ MonoBehaviour:
   rb: {fileID: 6340075715979246663}
   isGrounded:
     _value: 0
---- !u!136 &7879118814638475326
-CapsuleCollider:
+--- !u!114 &7404694222613063875
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7852413773931268109}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.52731377
-  m_Height: 1.8303404
-  m_Direction: 1
-  m_Center: {x: 0.121670306, y: 0.9343631, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b164c6483cfcedb469cd82ef3b14e2eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speedStep: 0.15
+  moveJitterTolerance: 0.15
+  animator: {fileID: 5501971800230726982}
+  state: 0
 --- !u!1 &8109653578348929751
 GameObject:
   m_ObjectHideFlags: 0
@@ -7307,7 +7338,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 173
+  m_VersionIndex: 269
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -8479,7 +8510,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 1121
+  m_VersionIndex: 1217
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []

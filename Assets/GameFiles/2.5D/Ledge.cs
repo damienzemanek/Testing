@@ -1,7 +1,7 @@
 using System;
 using EMILtools.Extensions;
 using UnityEngine;
-using static TwoD_Config;
+using static PilotConfig;
 
 public class Ledge : MonoBehaviour
 {

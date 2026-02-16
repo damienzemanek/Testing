@@ -9,36 +9,36 @@ using UnityEngine;
 public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> : ValidatedMonoBehaviour, 
      IInputAuthority<TInputMap, TSubordinateEnum>
      where TInputMap : class, IInputMap, new()
-     where TInputReader : ScriptableObject, IInputReader<TInputMap>, IInitializable
+     where TInputReader : ScriptableObject, IInputReader<TInputMap, TSubordinateEnum>, IInitializable
      where TSubordinateEnum : Enum
 {
-     [SerializeField] protected TInputReader Reader;
-     [SerializeField] protected int mappingCount;
-     [ShowInInspector, ReadOnly] protected int currentMapping;
+     [SerializeField, Required] protected TInputReader Reader;
+     [ShowInInspector] public IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
+     [ShowInInspector] bool initializedReader = false;
      
-     [FoldoutGroup("Presetting & First Delegation Settings")] [SerializeField] protected bool presetWithInitialSubordinate;
-     [FoldoutGroup("Presetting & First Delegation Settings")] [SerializeField] protected bool presetWithCustomInputMap;
-     [FoldoutGroup("Presetting & First Delegation Settings")] [ShowIf("presetWithCustomInputMap")] public TInputMap inputMapSettings;
-     [FoldoutGroup("Presetting & First Delegation Settings")] [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
-     
-      [ShowInInspector] public Dictionary<int, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping> InputMappings { get; set; }
+     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithInitialSubordinate;
+     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithCustomInputMap;
+     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [ShowIf("presetWithCustomInputMap")] public TInputMap inputMapSettings;
+     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
+
 
       protected virtual void Awake()
       {
-          InitializeMappingsList(mappingCount);
-          if(presetWithInitialSubordinate) InitialSubordinate.Value.subordinateContext.
-              FirstDelegationOfAuthority(presetWithCustomInputMap ? inputMapSettings : null);
+          if (presetWithInitialSubordinate)
+              InitialSubordinate.Value.Input = inputMapSettings;
+          
+          InitialSubordinate.Value.context.RequestAuthority(setup: true);
+      }
+      
+      void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
+      {
+          Reader.subordinate = subordinate;
+          if(initializedReader) return;
+          Reader.Init();
+          initializedReader = true;
       }
 
-      void IInputAuthority<TInputMap, TSubordinateEnum>.DelegateAuthorityTo(int mapIndex, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping mapping)
-      {
-          currentMapping = mapIndex;
-          Reader.InputMap = mapping.inputMap;
-          Reader.Init();
-      }
-     
-     
-     protected void InitializeMappingsList(int amountOfMappings)
-          => InputMappings = new Dictionary<int, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping>(amountOfMappings);
+      
+      
     
 }

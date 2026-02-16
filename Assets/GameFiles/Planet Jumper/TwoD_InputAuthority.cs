@@ -3,16 +3,15 @@ using EMILtools.Core;
 using EMILtools.Extensions;
 using KBCore.Refs;
 using Sirenix.OdinInspector;
+using Unity.Cinemachine;
 using UnityEngine;
-using static TwoD_Config;
+using static PilotConfig;
 using static TwoD_InputAuthority;
 
 [Serializable]
 public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputMap, Subordinates>
 {
     public enum Subordinates { Pilot = 0, Titan = 1 }
-    public Subordinates currentSubordinate = 0;
-    
 
     /// <summary>
     /// Input Mappings
@@ -21,20 +20,22 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
     [Serializable]
     public class TwoD_InputMap : IInputMap
     {
-        public PersistentAction<bool> Move = new();
-        public PersistentAction<bool> Run = new();
-        public PersistentAction<bool> Look = new();
-        public PersistentAction<bool> Shoot = new();
-        public PersistentAction<LookDir, bool> FaceDirection = new();
-        public PersistentAction Jump = new();
-        public PersistentAction Interact = new();
-        public PersistentAction CallInTitan = new();
+        [SerializeField] public string ownerName;
+        [NonSerialized] public PersistentAction<Vector2, bool> Move = new();
+        [NonSerialized] public PersistentAction<bool> Run = new();
+        [NonSerialized] public PersistentAction<bool> Look = new();
+        [NonSerialized] public PersistentAction<bool> Shoot = new();
+        [NonSerialized] public PersistentAction<LookDir, bool> FaceDirection = new();
+        [NonSerialized] public PersistentAction Jump = new();
+        [NonSerialized] public PersistentAction Interact = new();
+        [NonSerialized] public PersistentAction HoldInteract = new();
+        [NonSerialized] public PersistentAction CallInTitan = new();
         public MouseCallbackZones MouseInputZones;
         
-        public Vector2 movement;
-        public Vector2 mouse;
+        [NonSerialized] public Vector2 mouse;
 
         public TwoD_InputMap() { }
+        public TwoD_InputMap(string ownerName) => this.ownerName = ownerName;
         public TwoD_InputMap(MouseCallbackZones mouseInputZones) => this.MouseInputZones = mouseInputZones;
     }
 
@@ -45,11 +46,29 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         public PersistentAction DoubleJump = new();
         public PersistentAction ClimbLedge = new();
         public PersistentAction<bool> Land = new();
+        public PersistentAction Dismount = new();
+
     }
     
-    [Serializable]
     public class TitanActionMap : IActionMap
     {
+        public PersistentAction Mount = new();
 
+    }
+
+    [Serializable]
+    public struct CameraSettings
+    {
+        public Vector3 followOffset;
+        public Vector3 targetOffset;
+    }
+
+    [Serializable]
+    public class CameraContext : ICamContext
+    {
+        public Camera camera;
+        public CinemachineCamera CM;
+        public CinemachineFollow follow;
+        public CinemachineRotationComposer rotComposer;
     }
 }

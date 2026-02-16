@@ -7,10 +7,11 @@ using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static Ledge;
-using static TwoD_Config;
+using static PilotConfig;
+using static TwoD_InputAuthority;
 
 [Serializable]
-public class TwoD_Blackboard : Blackboard
+public class PilotBlackboard : Blackboard
 {
     [field: BoxGroup("References")] [field: SerializeField]  public Rigidbody rb { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; private set; }
@@ -20,14 +21,13 @@ public class TwoD_Blackboard : Blackboard
     [field: BoxGroup("References")] [field: SerializeField]  public AnimatorController_TwoD animController { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public TurnSlowDown turnSlowDown { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
-    
+    [field: BoxGroup("References")] [field: SerializeField] public CameraContext camContext { get; private set; }
     [BoxGroup("Orientation")] [field: SerializeField] public RotateToMouseWorldSpace mouseLook { get; private set; }
     [field: SerializeField] public PositionToMouseWorldSpace posToMouse { get; private set; }
 
     [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer jumpDelay { get; set; } 
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; set; }
-    
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer titanProgressTimer { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer spawnTitanTimer { get; set; }
     

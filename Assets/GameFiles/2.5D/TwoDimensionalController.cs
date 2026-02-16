@@ -13,7 +13,7 @@ using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.ModifierExtensions;
 using static EMILtools.Timers.TimerUtility;
 using static Ledge;
-using static TwoD_Config;
+using static PilotConfig;
 
 public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
 {
@@ -62,7 +62,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => this.Get<CapsuleCollider>().height;
 
     
-    [InlineEditor] public TwoD_Functionality.MoveModule.Config movement;
+    [InlineEditor] public PilotFunctionality.MoveModule.Config movement;
     [BoxGroup("Weapons")] [InlineEditor] public WeaponManager weapons;
     [BoxGroup("Weapons")] public ProjectileSpawnManager bulletSpawner;
     [SerializeField, Self] AnimatorController_TwoD animController;

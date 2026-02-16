@@ -21,11 +21,12 @@ public abstract class InputHeldModule<TPublisherArgs, TSetActionGuarder> : MonoF
     [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
 
-    public override void Bind() => action.Add(OnSet);
-    public override void Unbind() => action.Remove(OnSet);
+    public override void Bind() => action.Add(OnSetTemplateCall);
+    public override void Unbind() => action.Remove(OnSetTemplateCall);
     
     public override void SetupModule()
     {
+        
         if (initialized) return; initialized = true;
         if (useIsActiveGuard) executeGuarder = new(new ActionGuard(() => !isActive, "Not Active"));
         else executeGuarder = new ActionGuarderMutable();
@@ -34,17 +35,22 @@ public abstract class InputHeldModule<TPublisherArgs, TSetActionGuarder> : MonoF
 
     protected virtual void Awake() { }
     
-    public void OnSet(TPublisherArgs args, bool v)
+    public void OnSetTemplateCall(TPublisherArgs args, bool v)
     {
-        if (setGuarder != null && setGuarder.TryEarlyExit()) return;
+        Debug.Log("Attemping on set");
         isActive = v;
-        OnSetImplementation(args);
+        OnSet(args);
     }
-    protected abstract void OnSetImplementation(TPublisherArgs args);
+    protected abstract void OnSet(TPublisherArgs args);
 
     protected override void ExecuteTemplateCall(float dt) 
     {
+        Debug.Log("Attemping exe");
+
         if (executeGuarder.TryEarlyExit()) return;
+        
+        Debug.Log("exe success");
+
         Implementation(dt);
     }
     protected abstract void Implementation(float dt);
@@ -83,16 +89,24 @@ public abstract class InputHeldModule<TSetActionGuarder> : MonoFunctionalityModu
     
     protected void OnSetTemplateCall(bool v)
     {
-        if (setGuarder != null && setGuarder.TryEarlyExit()) return;
+        Debug.Log("Attemping on set");
         isActive = v;
         OnSet();
+        Debug.Log("set successfull");
+
     }
     protected virtual void OnSet() { }
 
     protected override void ExecuteTemplateCall(float dt) 
     {
+        Debug.Log("Attemping exe");
+
         if (executeGuarder.TryEarlyExit()) return;
         Implementation(dt);
+        
+        Debug.Log("exe success");
+
     }
     protected abstract void Implementation(float dt);
+    
 }

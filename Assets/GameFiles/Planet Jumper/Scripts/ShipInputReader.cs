@@ -10,7 +10,7 @@ using static ShipInputReader.ShipInputAuthority;
 
 [Serializable]
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader<ShipInputReader.ShipInputAuthority.ShipInputMap>
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader<ShipInputReader.ShipInputAuthority.ShipInputMap, TwoD_InputAuthority.Subordinates>
 {
     public class ShipInputAuthority : IInputAuthority<ShipInputAuthority.ShipInputMap, ShipInputAuthority.Subordinates>
     {
@@ -21,11 +21,17 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
         
         public class ShipInputMap : IInputMap { }
 
-        public Dictionary<int, IInputAuthority<ShipInputMap, Subordinates>.Mapping> InputMappings { get; set; }
-        void IInputAuthority<ShipInputMap, Subordinates>.DelegateAuthorityTo(int mapIndex, IInputAuthority<ShipInputMap, Subordinates>.Mapping mapping)
+        public IInputAuthority<ShipInputMap, Subordinates> This { get; }
+        public Subordinates currentSubordinate { get; set; }
+        public IInputSubordinate<ShipInputMap, Subordinates> subordinate { get; set; }
+        void IInputAuthority<ShipInputMap, Subordinates>.ReceiveRequest(IInputSubordinate<ShipInputMap, Subordinates> subordinate)
         {
             throw new NotImplementedException();
         }
+
+
+
+
         
     }
     
@@ -98,4 +104,5 @@ public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook
     }
 
     public ShipInputAuthority.ShipInputMap InputMap { get; set; }
+    public IInputSubordinate<ShipInputAuthority.ShipInputMap, TwoD_InputAuthority.Subordinates> subordinate { get; set; }
 }

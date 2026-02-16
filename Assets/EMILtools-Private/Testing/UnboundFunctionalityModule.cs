@@ -25,6 +25,11 @@ public abstract class UnboundFunctionalityModule<TExecuteGuarder> : MonoFunction
         if (executeGuarder.TryEarlyExit()) return;
         Execute();
     }
+    public void ExecuteTemplateCall()
+    {
+        if (executeGuarder.TryEarlyExit()) return;
+        Execute();
+    }
     public abstract void Execute();
 }
 

@@ -16,10 +16,8 @@ namespace EMILtools_Private.Testing
         List<UPDATE> _update = new();
         List<FIXEDUPDATE> _fixed = new();
         List<LATEUPDATE> _late = new();
-    
         public Functionalities() => modules = new List<MonoFunctionalityModule>();
-
-
+        
         public void OnAwakeCompositionalElement()
         {
             AddModulesHere();
@@ -27,6 +25,7 @@ namespace EMILtools_Private.Testing
             Debug.Log("Functionality modules succesfully setup");
             Debug.Log("API count: " + API_Modules.Count);
         }
+        
         public void Bind() 
         { 
             foreach (var t in modules)
@@ -35,15 +34,14 @@ namespace EMILtools_Private.Testing
             } 
             Debug.Log("Functionality modules succesfully Bound");
         }
+        
+        
         public void Unbind() { foreach (var t in modules) t.Unbind(); }
-    
-    
         public void UpdateTick(float dt) { foreach (var t in _update) t.OnUpdateTick(dt); }
-
         public void FixedTick(float fdt) { foreach (var t in _fixed) { t.OnFixedTick(fdt); } }
         public void LateTick(float dt) { foreach (var t in _late) t.LateTick(dt); }
-    
-    
+        
+        
         public void AddModule(MonoFunctionalityModule module)
         {
             modules.Add(module);
@@ -72,6 +70,3 @@ namespace EMILtools_Private.Testing
         protected abstract void AddModulesHere();
     }
 }
-
-public interface IAPI_Module { }
-

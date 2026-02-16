@@ -73,6 +73,15 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""InteractHeld"",
+                    ""type"": ""Button"",
+                    ""id"": ""547e3d27-80f0-4881-a769-be074a6654ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""eb5442a0-4aba-49dc-aab8-d9a3db9e59dd"",
@@ -397,6 +406,17 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""CallInTitan"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""914f4b1e-d19c-4e28-8b85-55f9e1304317"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InteractHeld"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -989,6 +1009,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         m_Player_Shoot = m_Player.FindAction("Shoot", throwIfNotFound: true);
         m_Player_Run = m_Player.FindAction("Run", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
+        m_Player_InteractHeld = m_Player.FindAction("InteractHeld", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_CallInTitan = m_Player.FindAction("CallInTitan", throwIfNotFound: true);
         // UI
@@ -1075,6 +1096,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Shoot;
     private readonly InputAction m_Player_Run;
     private readonly InputAction m_Player_Jump;
+    private readonly InputAction m_Player_InteractHeld;
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_CallInTitan;
     public struct PlayerActions
@@ -1086,6 +1108,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         public InputAction @Shoot => m_Wrapper.m_Player_Shoot;
         public InputAction @Run => m_Wrapper.m_Player_Run;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
+        public InputAction @InteractHeld => m_Wrapper.m_Player_InteractHeld;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @CallInTitan => m_Wrapper.m_Player_CallInTitan;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1112,6 +1135,9 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @InteractHeld.started += instance.OnInteractHeld;
+            @InteractHeld.performed += instance.OnInteractHeld;
+            @InteractHeld.canceled += instance.OnInteractHeld;
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
@@ -1137,6 +1163,9 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @InteractHeld.started -= instance.OnInteractHeld;
+            @InteractHeld.performed -= instance.OnInteractHeld;
+            @InteractHeld.canceled -= instance.OnInteractHeld;
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
@@ -1330,6 +1359,7 @@ public partial class @TwoD_IA: IInputActionCollection2, IDisposable
         void OnShoot(InputAction.CallbackContext context);
         void OnRun(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnInteractHeld(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
         void OnCallInTitan(InputAction.CallbackContext context);
     }

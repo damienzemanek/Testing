@@ -1,4 +1,6 @@
 using System;
+using EMILtools.Core;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
@@ -11,7 +13,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     [Serializable]
     public class SubordinateContext
     {
-        [SerializeField]
+        [SerializeField, Required]
         public InterfaceReference<IInputSubordinate<TInputMap, TSubordnateEnumType>, MonoBehaviour> Subordinate;
         
         
@@ -20,77 +22,54 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
        
         
         [SerializeField] public TSubordnateEnumType key;
-
-        /// <summary>
-        /// Register with either a Param'd InputMap or a Completedly new InputMap
+        
+        
+        /// <summary>a
+        ///  Delegation of Authority
         /// </summary>
         /// <param name="inputMap"></param>
-        public void RegisterWithAuthority(TInputMap inputMap = null)
+        public void RequestAuthority(bool setup = false)
         {
-            if(inputMap == null) Authority.Value.RegisterSubordinateInstance(this, null);
-            else Authority.Value.RegisterSubordinateInstance(this, () => inputMap);
+            //Retrive the Input map stored in the Subordinate
+            TInputMap inputMap;
+            if(setup) inputMap = Subordinate.Value.InitSubordinate();
+            else inputMap = Subordinate.Value.InitSubordinateTemplateCall();
+            
+            // Register that InputMap with the Authority
+            Authority.Value.AcceptRequest(Subordinate.Value);
+            Subordinate.Value.OnAuthorityReceived();
+            Debug.Log("Delegated Authority Complete");
         }
-        
-        /// <summary>
-        /// Request delegation of authority from the Authority
-        /// Available Later Implementation: Intercept and check if authority is valid
-        /// </summary>
-        public void RequestAuthority() => Authority.Value.RequestDelegationOfAuthority(Convert.ToInt32(key));
-
-        /// <summary>
-        /// First Delegation of Authority, Optional custom InputMap
-        /// </summary>
-        /// <param name="inputMap"></param>
-        public void FirstDelegationOfAuthority(TInputMap inputMap = null)
-        {
-            RegisterWithAuthority(inputMap);
-            RequestAuthority();
-            Subordinate.Value.InitSubordinate();
-            Debug.Log("Trying initialize Subordinate");
-        }
-
-        /// <summary>
-        /// Gets the mapping
-        /// (Loud Failure)
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public IInputAuthority<TInputMap,TSubordnateEnumType>.Mapping GetMapping(int key) => Authority.Value.InputMappings[key];
-        
-        public bool hasAuthority => Authority != null && Authority.Value != null;
     }
     
+    public IInputAuthority<TInputMap, TSubordnateEnumType> Authority => context.Authority.Value;
+    
     public TInputMap Input { get; set; }
-    public SubordinateContext subordinateContext { get; set; }
+    public SubordinateContext context { get; set; }
+
+    public TInputMap InitSubordinateTemplateCall()
+    {
+        if (context.Subordinate.Value.Input == null)
+            InitSubordinate();
+        return context.Subordinate.Value.Input;
+    }
     
     /// <summary>
     /// Initialize Subordinate here, don't use Awake (Is this a design smell?)
     /// </summary>
-    public abstract void InitSubordinate();
-
-    /// <summary>
-    /// Used when you want to handoff Authority to another subordinate. and Unregister yourself
-    /// </summary>
-    /// <param name="authority"></param>
-    /// <param name="giverKey"></param>
-    public void HandoffReceiveAndGiverUnregister(IInputAuthority<TInputMap, TSubordnateEnumType> authority, int giverKey)
-    {
-        HandoffReceiveAuthority(authority);
-        authority.UnregisterSubordinateInstance(giverKey);
-    }
+    public abstract TInputMap InitSubordinate();
+    public abstract void OnAuthorityReceived();
+    public abstract void OnAuthorityLost();
+    
     
     /// <summary>
     /// Used when you want to handoff Authority to another subordinate and keep your registration
     /// </summary>
     /// <param name="authority"></param>
-    public void HandoffReceiveAuthority(IInputAuthority<TInputMap, TSubordnateEnumType> authority)
+    public void ReceiveAuthority(IInputAuthority<TInputMap, TSubordnateEnumType> authority)
     {
-        SetAuthority(authority);
-        subordinateContext.FirstDelegationOfAuthority();
+        context.Authority.Value = authority;
+        context.RequestAuthority();
     }
-    
-    
-    
-    
-    void SetAuthority(IInputAuthority<TInputMap,TSubordnateEnumType> authority) => subordinateContext.Authority.Value = authority;
+
 }

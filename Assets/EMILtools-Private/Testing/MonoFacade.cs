@@ -34,6 +34,8 @@ public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboa
 
     protected void InitializeFacade()
     {
+        if (initialized) return;
+        
         Actions = new();
         Functionality = new ();
         

@@ -12,32 +12,43 @@ using UnityEngine;
 using static EMILtools.Signals.ModiferRouting;
 using static EMILtools.Timers.TimerUtility;
 using static IInputSubordinate<TwoD_InputAuthority.TwoD_InputMap,TwoD_InputAuthority.Subordinates>;
-using static TwoD_Config;
+using static PilotConfig;
 using static TwoD_InputAuthority;
 
 public class TwoD_PilotController : MonoFacade<
         TwoD_PilotController,
-        TwoD_Functionality, 
-        TwoD_Config, 
-        TwoD_Blackboard,
+        PilotFunctionality, 
+        PilotConfig, 
+        PilotBlackboard,
         PilotActionMap>,
     ITimerUser,
     IInputSubordinate<TwoD_InputMap, Subordinates>
 {
     
-    [field: ShowInInspector] [field: SerializeField] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
-    [field: ShowInInspector] [field: SerializeField] public SubordinateContext subordinateContext { get; set; }
+    [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
+    [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext context { get; set; }
 
 
-    public void InitSubordinate()
+    public TwoD_InputMap InitSubordinate()
     {
+        Debug.Log("INITIALIZING SUBORDINATE");
+        if(Input == null) Input = new TwoD_InputMap("Pilot");
         InitializeFacade();
-
-        Functionality.Bind();
         Blackboard.moveDecay.Start();
         Blackboard.titanProgressTimer.Start();
+        return Input;
     }
-    
+
+    public void OnAuthorityReceived()
+    {
+        Functionality.Bind();
+        Actions.Dismount.Invoke();
+    }
+
+    public void OnAuthorityLost()
+    {
+        Functionality.Unbind();
+    }
 
     protected override void Update()
     {
@@ -52,5 +63,5 @@ public class TwoD_PilotController : MonoFacade<
         Functionality.Unbind();
     }
 
-
+    
 }

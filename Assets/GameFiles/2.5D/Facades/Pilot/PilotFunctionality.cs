@@ -8,9 +8,10 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
 using static Ledge;
-using static TwoD_Config;
+using static PilotConfig;
+using static TwoD_InputAuthority;
 
-public class TwoD_Functionality : Functionalities<TwoD_PilotController>
+public class PilotFunctionality : Functionalities<TwoD_PilotController>
 {
     protected override void AddModulesHere()
     {
@@ -22,17 +23,58 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
         AddModule(new JumpModule(facade.Input.Jump, facade));
         AddModule(new TitanCallInModule(facade.Input.CallInTitan, facade));
         AddModule(new RunModule(facade.Input.Run, facade));
+        AddModule(new MountTitan(facade.Input.Interact, facade));
 
         // Layer 2
         AddModule(new LandModule(facade.Actions.Land, facade));
         AddModule(new ClimbModule(facade.Actions.ClimbLedge, facade));
         AddModule(new MantleModule(facade.Actions.MantleLedge, facade));
         AddModule(new DoubleJumpModule(facade.Actions.DoubleJump, facade));
+        AddModule(new CameraSystemModule(facade.Actions.Dismount, facade));
+        AddModule(new DismountTitanModule(facade.Actions.Dismount, facade));
+
+        // Unbound
         AddModule(new MouseModule(facade));
 
     }
 
 
+    public class DismountTitanModule : BasicFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>
+    {
+        public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
+
+        public override void Execute()
+        {
+            facade.transform.parent = null;
+            facade.Blackboard.capsuleCollider.enabled = true;
+            facade.Blackboard.rb.isKinematic = false;
+        }
+    }
+
+
+    public class CameraSystemModule : BasicFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>, IAPI_CameraSystem
+    {
+        public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
+        
+        public override void Execute()
+        {
+            facade.Blackboard.camContext.CM.Target.TrackingTarget = facade.transform;
+            facade.Blackboard.camContext.follow.FollowOffset = facade.Config.camSettings.followOffset;
+            facade.Blackboard.camContext.rotComposer.TargetOffset = facade.Config.camSettings.targetOffset;
+            
+            Debug.Log("Cam set to pilot settings");
+        }
+
+        void IAPI_Dependant<CameraContext>.GrabDependancies(CameraContext context)
+        {
+            CameraContext myContext = facade.Blackboard.camContext;
+            myContext.CM = context.CM;
+            myContext.follow = context.follow;
+            myContext.rotComposer = context.rotComposer;
+            myContext.camera = context.camera;
+        }
+    }
+    
     public class MouseModule : UnboundFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>, UPDATE
     {
         public MouseModule(TwoD_PilotController facade) : base(facade, true) { }
@@ -41,6 +83,16 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
                                            (facade.Blackboard.isMantled.SimpleReactions, () => facade.Blackboard.isMantled, "Is Mantled"));
         public override void Execute() => facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+    }
+
+    public class MountTitan : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
+    {
+        public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
+
+        protected override void Awake() =>
+            onPressGuarder.Add(new ActionGuard(() => !facade.Blackboard.canMount, "Can't Mount"));
+
+        protected override void OnPress() => facade.Blackboard.hasRequestedMount = true;
     }
 
     public class TitanCallInModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
@@ -228,7 +280,7 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
         
         [ShowInInspector] LookDir dir;
         
-        protected override void OnSetImplementation(LookDir args) => dir = args;
+        protected override void OnSet(LookDir args) => dir = args;
 
         protected override void Implementation(float dt)
         {
@@ -288,10 +340,11 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
 
 
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        
     }
     
     
-    public class MoveModule : InputHeldModuleFacade<ActionGuarderMutable, TwoD_PilotController>, FIXEDUPDATE
+    public class MoveModule : InputHeldModuleFacade<Vector2, ActionGuarderMutable, TwoD_PilotController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -312,9 +365,12 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
 
         }
 
+        public MoveModule(PersistentAction<Vector2, bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
+
         Config cfg => facade.Config.move;
+
+        [ShowInInspector] Vector2 movement;
         
-        public MoveModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake()
         {
@@ -328,14 +384,14 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
             facade.InitTimer(facade.Blackboard.turnSlowdown, true);
         }
 
-        protected override void OnSet() { }
+        protected override void OnSet(Vector2 args) { movement = args; }
+
 
         protected override void Implementation(float dt)
         {
-            //Debug.Log("Attempting move, input is : " + facade.Input.movement);
             if (!facade.Blackboard.isRunning) Walk();
             else Run();
-            Move(facade.Input.movement);
+            Move(movement);
             
             void Walk()
             {
@@ -353,12 +409,13 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
             void Move(Vector2 move)
             {
                 if (move.x == 0) return;
+                Debug.Log("Moving in direction " + move + "");
                 LookDir prevMoveDir = facade.Blackboard.moveDir;
 
                 Vector3 dir = new Vector3(move.x, 0, 0);
                 facade.Blackboard.moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
                 ApplyMoveForce(dir);
-                
+
                 if (prevMoveDir != facade.Blackboard.moveDir)
                 {
                     facade.Blackboard.turnSlowdown.Restart();
@@ -373,12 +430,14 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
                     float actualSpeed = facade.Blackboard.isRunning ? runSpeedIncludingDecay : cfg.moveForce;
                     if (facade.Blackboard.turnSlowdown.isRunning) actualSpeed *= facade.Blackboard.turnSlowDown.Eval(facade.Blackboard.phys.isGrounded, facade.Blackboard.turnSlowdown.Progress);
                     if (!facade.Blackboard.phys.isGrounded) actualSpeed *= facade.Blackboard.phys.fallSettings.inAirMoveScalar;
-                    Debug.Log("Appling force in direction " + dir + " with  speed " + actualSpeed);
+                    //Debug.Log("Appling force in direction " + dir + " with  speed " + actualSpeed);
                     facade.Blackboard.rb.AddForce(dir * actualSpeed, cfg.forceMode);
+                    Debug.Log("Appplied force w/ speed :" + actualSpeed);
+
                 }
             }
         }
-
+        
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
     }
 }

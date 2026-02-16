@@ -51,6 +51,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "InteractHeld",
+                    "type": "Button",
+                    "id": "547e3d27-80f0-4881-a769-be074a6654ae",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "eb5442a0-4aba-49dc-aab8-d9a3db9e59dd",
@@ -375,6 +384,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "CallInTitan",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "914f4b1e-d19c-4e28-8b85-55f9e1304317",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InteractHeld",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

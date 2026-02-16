@@ -148,7 +148,7 @@ public class ShipFunctionality : Functionalities<ShipController>
             executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
             Debug.Log("inited rotate module");
         }
-        protected override void OnSetImplementation(Vector3 rotation)
+        protected override void OnSet(Vector3 rotation)
             => rotationVector = rotation;
 
         protected override void Implementation(float dt)

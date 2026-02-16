@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab7d6de56aaf4b968b59af39d94f4135, type: 3}
-  m_Name: TwoD_Config
+  m_Name: Pilot Config
   m_EditorClassIdentifier: 
   <move>k__BackingField:
     moveForce: 90
@@ -37,3 +37,6 @@ MonoBehaviour:
   <jump>k__BackingField:
     <delay>k__BackingField:
       val: 0.1
+  <camSettings>k__BackingField:
+    followOffset: {x: 0, y: 2, z: -17}
+    targetOffset: {x: 0, y: 2, z: 0}

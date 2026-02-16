@@ -9,7 +9,7 @@ using Unity.Cinemachine;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
-using static TwoD_Config;
+using static PilotConfig;
 using static TwoDimensionalController;
 
 public class Titan : ValidatedMonoBehaviour, ITimerUser
@@ -87,8 +87,8 @@ public class Titan : ValidatedMonoBehaviour, ITimerUser
 
     void Update()
     {
-        if(!hasMounted && mountZone.inZone && mountZone.playerRequestedMount)
-            StartCoroutine(HandleMount());
+      //  if(!hasMounted && mountZone.inZone && mountZone.playerRequestedMount)
+      //      StartCoroutine(HandleMount());
         HandleMovement();
         //if(!input.mouseZoneGuarder) input.mouseZones.CheckAllZones(input.mouse);
         animator.SetFloat(Speed, speedAlpha);

@@ -2,6 +2,31 @@
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 
+
+
+public abstract class InputPressedModule : MonoFunctionalityModule
+{
+    public InputPressedModule(PersistentAction action)
+     => this.action = action;
+    
+    bool initialized;
+    [NonSerialized] PersistentAction action;
+    
+    
+    public override void Bind() => action.Add(OnPress);
+    public override void Unbind() => action.Remove(OnPress);
+    
+    public override void SetupModule()
+    {
+        if (initialized) return; initialized = true;
+        Awake();
+    }
+    
+    protected virtual void Awake() { }
+    protected abstract void OnPress();
+    
+}
+
 public abstract class InputPressedModule<TSetActionGuarder> : MonoFunctionalityModule
     where TSetActionGuarder : IActionGuarder, new()
 {
