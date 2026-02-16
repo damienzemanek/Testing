@@ -15,10 +15,16 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
      [SerializeField] protected TInputReader Reader;
      [SerializeField] protected int mappingCount;
      [ShowInInspector, ReadOnly] protected int currentMapping;
-     
+     [SerializeField] protected bool presetWithInitialSubordinate;
+     [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
      
       [ShowInInspector] public Dictionary<int, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping> InputMappings { get; set; }
 
+      protected virtual void Awake()
+      {
+          InitializeMappingsList(mappingCount);
+          if(presetWithInitialSubordinate) InitialSubordinate.Value.subordinateContext.FirstDelegationOfAuthority();
+      }
 
       void IInputAuthority<TInputMap, TSubordinateEnum>.DelegateAuthorityTo(int mapIndex, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping mapping)
       {

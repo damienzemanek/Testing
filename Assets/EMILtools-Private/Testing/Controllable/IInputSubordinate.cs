@@ -12,28 +12,24 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType> : IInitializa
         public InterfaceReference<IInputSubordinate<TInputMap, TSubordnateEnumType>, MonoBehaviour> Subordinate;
         
         
-        [field: SerializeField] 
+        [SerializeField] 
         public InterfaceReference<IInputAuthority<TInputMap, TSubordnateEnumType>, MonoBehaviour> Authority;
        
         
         [SerializeField] public TSubordnateEnumType key;
 
-        public void RegisterWithAuthority()
-        {
-            Debug.Log("Registering with authority");
-            Authority.Value.Register(this);
-        }
+        public void RegisterWithAuthority() => Authority.Value.Register(this);
+        public void RequestAuthority() => Authority.Value.RequestDelegationOfAuthority(Convert.ToInt32(key));
 
-        public void RequestAuthority()
+        public void FirstDelegationOfAuthority()
         {
-            Debug.Log(Authority);
-            Debug.Log(Authority.Value);
-            Authority.Value.RequestDelegationOfAuthority(Convert.ToInt32(key));
+            RegisterWithAuthority();
+            RequestAuthority();
+            Subordinate.Value.Init();
+            Debug.Log("Trying initialize Subordinate");
         }
 
         public IInputAuthority<TInputMap,TSubordnateEnumType>.Mapping GetMapping(int key) => Authority.Value.InputMappings[key];
-
-
     }
     
     public TInputMap Input { get; set; }

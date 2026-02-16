@@ -27,10 +27,10 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
     [field: SerializeField] public Config cfg { get; set; }
     public Subordinates currentSubordinate = 0;
 
-    void Awake()
+    protected override void Awake()
     {
         Instance = this;
-        InitializeMappingsList(mappingCount);
+        base.Awake();
     }
 
     public class TwoD_InputMap : IInputMap

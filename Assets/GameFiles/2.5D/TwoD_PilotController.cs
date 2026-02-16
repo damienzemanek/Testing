@@ -28,14 +28,11 @@ public class TwoD_PilotController : MonoFacade<
     
     [field: ShowInInspector] [field: SerializeField] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
     [field: ShowInInspector] [field: SerializeField] public SubordinateContext subordinateContext { get; set; }
-
-    void Awake() => StartCoroutine(InitWait());
-    IEnumerator InitWait() { yield return null; Init(); }
+    
 
     public void Init()
     {
-        subordinateContext.RegisterWithAuthority();
-        subordinateContext.RequestAuthority();
+        Debug.Log("init controller");
         InitializeFacade();
         Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
         Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;
