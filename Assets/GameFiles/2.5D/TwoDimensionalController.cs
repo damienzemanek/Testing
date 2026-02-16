@@ -71,8 +71,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     [BoxGroup("PhysEX")] [SerializeField, Self] AugmentPhysEX phys;
 
     
-    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _moveGuarder;
-    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable _shootGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable moveGuarder;
+    [BoxGroup("Guards")] [SerializeField] SimpleGuarderImmutable shootGuarder;
     [ShowInInspector, ReadOnly] public ActionGuarderImmutable cantJumpGuarder;
     
     void OnEnable()
@@ -100,8 +100,8 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     {
         
         // Super easy to check what flags influence what methods
-        _moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
-        _shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
+        moveGuarder = new SimpleGuarderImmutable(("Not Moving", () => !moving)); // Cant move is !moving
+        shootGuarder = new SimpleGuarderImmutable(("Mantled", () => isMantled)); // Cant Shoot if mantled
         //input._lookGuarder = new SimpleGuarderMutable(("Mantled", () => isMantled)); // CAnt look if mantled
         
         // input.mouseZoneGuarder = new SimpleGuarderMutable(("Not Looking", () => !isLooking),
@@ -193,7 +193,9 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     /// <summary>
     /// Sequencing for movement
     /// </summary>
-    void HandleMovement() { if (_moveGuarder) return;
+    void HandleMovement() 
+    { 
+        if (moveGuarder.TryEarlyExit()) return;
         
         if (!isRunning) Walk();
         else Run();
@@ -248,7 +250,7 @@ public class TwoDimensionalController : ValidatedMonoBehaviour, ITimerUser
     }
     void HandleShooting() 
     {
-        if (_shootGuarder) return;
+        if (shootGuarder.TryEarlyExit()) return;
         
         if (isShooting) StartCoroutine(ShootImplementation());
         else animController.animator.CrossFade(animController.upperbodyidle, 0.1f, 1);

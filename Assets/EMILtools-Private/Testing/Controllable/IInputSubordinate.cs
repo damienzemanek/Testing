@@ -15,11 +15,8 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     {
         [SerializeField, Required]
         public InterfaceReference<IInputSubordinate<TInputMap, TSubordnateEnumType>, MonoBehaviour> Subordinate;
-        
-        
-        [SerializeField] 
+        [SerializeField, ReadOnly] 
         public InterfaceReference<IInputAuthority<TInputMap, TSubordnateEnumType>, MonoBehaviour> Authority;
-       
         
         [SerializeField] public TSubordnateEnumType key;
         
@@ -43,8 +40,9 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
             return accepted;
         }
 
-        public void SetupFirstAuthority(TInputMap inputMap)
+        public void SetupFirstAuthority(TInputMap inputMap, IInputAuthority<TInputMap, TSubordnateEnumType> authority)
         {
+            Authority.Value = authority;
             Subordinate.Value.Input = inputMap;
             Subordinate.Value.InitSubordinate();
             Authority.Value.ConsiderRequest(Subordinate.Value);
@@ -64,9 +62,11 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     
     public bool RequestAuthorityFrom(IInputSubordinate<TInputMap, TSubordnateEnumType> former)
     {
+        IInputAuthority<TInputMap, TSubordnateEnumType> formerAuthority = former.Authority;
         context.Authority.Value = former.Authority;
         bool successful = context.SendRequest();
         if(successful) former.OnAuthorityLost();
+        else context.Authority.Value = formerAuthority;
         return successful;
     }
 
