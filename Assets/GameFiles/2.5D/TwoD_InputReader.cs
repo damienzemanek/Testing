@@ -12,7 +12,7 @@ using static TwoD_InputAuthority;
 using static TwoDimensionalController;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
-public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader<TwoD_InputMap, Subordinates>, IInitializable
+public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSubordinate<TwoD_InputMap, Subordinates>, IInitializable
 {
     TwoD_IA ia;
 
@@ -56,15 +56,10 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader<T
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (ia.Player.Move.IsPressed())
-        {
-            subordinate.Input.Move?.Invoke(context.ReadValue<Vector2>(), true); 
-            Debug.Log("Move Inpuutedd : " + context.ReadValue<Vector2>());
-        }
+        if (ia.Player.Move.IsPressed()) subordinate.Input.Move?.Invoke(context.ReadValue<Vector2>(), true); 
         switch (context.phase)
         {
-            case InputActionPhase.Canceled: 
-                subordinate.Input.Move?.Invoke(Vector2.zero, false); break;
+            case InputActionPhase.Canceled: subordinate.Input.Move?.Invoke(Vector2.zero, false); break;
         }
     }
 
@@ -82,12 +77,6 @@ public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReader<T
 
     public void OnShoot(InputAction.CallbackContext context)
     {
-        Debug.Log("shooting");
-        
-        Debug.Log(subordinate);
-        Debug.Log(subordinate.Input);
-        Debug.Log(subordinate.Input.Shoot);
-        subordinate.Input.Shoot.PrintInvokeListNames();
         switch (context.phase)
         {
             case InputActionPhase.Started: subordinate.Input.Shoot?.Invoke(true); break;

@@ -9,12 +9,12 @@ using UnityEngine;
 public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> : ValidatedMonoBehaviour, 
      IInputAuthority<TInputMap, TSubordinateEnum>
      where TInputMap : class, IInputMap, new()
-     where TInputReader : ScriptableObject, IInputReader<TInputMap, TSubordinateEnum>, IInitializable
+     where TInputReader : ScriptableObject, IInputReaderSubordinate<TInputMap, TSubordinateEnum>, IInitializable
      where TSubordinateEnum : Enum
 {
      [SerializeField, Required] protected TInputReader Reader;
-     [ShowInInspector] public IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
-     [ShowInInspector] bool initializedReader = false;
+     [ShowInInspector, ReadOnly] public IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
+     [ShowInInspector, ReadOnly] bool initializedReader = false;
      
      [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithInitialSubordinate;
      [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithCustomInputMap;
@@ -25,9 +25,7 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
       protected virtual void Awake()
       {
           if (presetWithInitialSubordinate)
-              InitialSubordinate.Value.Input = inputMapSettings;
-          
-          InitialSubordinate.Value.context.RequestAuthority(setup: true);
+              InitialSubordinate.Value.context.SetupFirstAuthority(inputMapSettings);
       }
       
       void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)

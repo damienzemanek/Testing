@@ -10,7 +10,7 @@ using static ShipInputReader.ShipInputAuthority;
 
 [Serializable]
 [CreateAssetMenu(fileName = "ShipController", menuName = "ScriptableObjects/Ship Controller")]
-public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReader<ShipInputReader.ShipInputAuthority.ShipInputMap, TwoD_InputAuthority.Subordinates>
+public class ShipInputReader : ScriptableObject, IPlayerActions, IInputMouseLook, IInputReaderSubordinate<ShipInputReader.ShipInputAuthority.ShipInputMap, TwoD_InputAuthority.Subordinates>
 {
     public class ShipInputAuthority : IInputAuthority<ShipInputAuthority.ShipInputMap, ShipInputAuthority.Subordinates>
     {

@@ -22,7 +22,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
 
 
-    public class SwitchCamModule : InputPressedModuleFacade<ActionGuarderMutable, ShipController>
+    public class SwitchCamModule : InputPressedModuleFacade<ShipController>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
 
@@ -39,7 +39,7 @@ public class ShipFunctionality : Functionalities<ShipController>
 
     
 
-    public class FireModule : InputHeldModuleFacade<ActionGuarderMutable, ShipController>, FIXEDUPDATE
+    public class FireModule : InputHeldModuleFacade<ShipController>, FIXEDUPDATE
     {
 
         static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
@@ -75,7 +75,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     }
     
 
-    public class ThrustModuleSub : InputHeldModuleFacade<ActionGuarderMutable, ShipController>, UPDATE, FIXEDUPDATE
+    public class ThrustModuleSub : InputHeldModuleFacade<ShipController>, UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -126,7 +126,7 @@ public class ShipFunctionality : Functionalities<ShipController>
     
     
     
-    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, ActionGuarderMutable, ShipController>, FIXEDUPDATE
+    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -151,7 +151,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         protected override void OnSet(Vector3 rotation)
             => rotationVector = rotation;
 
-        protected override void Implementation(float dt)
+        protected override void Execute(float dt)
         {
             Quaternion deltaScaled = Quaternion.Euler(rotationVector * facade.Config.rotate.scalar);
             Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * facade.transform.rotation;

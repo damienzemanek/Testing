@@ -28,17 +28,26 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
         ///  Delegation of Authority
         /// </summary>
         /// <param name="inputMap"></param>
-        public void RequestAuthority(bool setup = false)
+        public void RequestAuthority()
         {
             //Retrive the Input map stored in the Subordinate
-            TInputMap inputMap;
-            if(setup) inputMap = Subordinate.Value.InitSubordinate();
-            else inputMap = Subordinate.Value.InitSubordinateTemplateCall();
+            if (Subordinate.Value.Input == null)
+            {
+                Subordinate.Value.Input = Subordinate.Value.InjectInputMap();
+                Subordinate.Value.InitSubordinate();
+            }
             
             // Register that InputMap with the Authority
             Authority.Value.AcceptRequest(Subordinate.Value);
             Subordinate.Value.OnAuthorityReceived();
-            Debug.Log("Delegated Authority Complete");
+        }
+
+        public void SetupFirstAuthority(TInputMap inputMap)
+        {
+            Subordinate.Value.Input = inputMap;
+            Subordinate.Value.InitSubordinate();
+            Authority.Value.AcceptRequest(Subordinate.Value);
+            Subordinate.Value.OnAuthorityReceived();
         }
     }
     
@@ -46,18 +55,13 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     
     public TInputMap Input { get; set; }
     public SubordinateContext context { get; set; }
-
-    public TInputMap InitSubordinateTemplateCall()
-    {
-        if (context.Subordinate.Value.Input == null)
-            InitSubordinate();
-        return context.Subordinate.Value.Input;
-    }
     
+
+    public abstract TInputMap InjectInputMap();
     /// <summary>
     /// Initialize Subordinate here, don't use Awake (Is this a design smell?)
     /// </summary>
-    public abstract TInputMap InitSubordinate();
+    public abstract void InitSubordinate();
     public abstract void OnAuthorityReceived();
     public abstract void OnAuthorityLost();
     

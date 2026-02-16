@@ -17,12 +17,8 @@ public class TwoD_TitanController : MonoFacade<
 {
     [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
     [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext context { get; set; }
-    public TwoD_InputMap InitSubordinate()
-    {
-        if(Input == null) Input = new TwoD_InputMap("Titan");
-        InitializeFacade();
-        return Input;
-    }
+    public TwoD_InputMap InjectInputMap() => new("Titan");
+    public void InitSubordinate() => InitializeFacade();
 
     public void OnAuthorityReceived()
     {

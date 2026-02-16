@@ -27,17 +27,16 @@ public class TwoD_PilotController : MonoFacade<
     
     [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
     [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext context { get; set; }
+    
+    public TwoD_InputMap InjectInputMap() => new("Pilot");
 
-
-    public TwoD_InputMap InitSubordinate()
+    public void InitSubordinate()
     {
-        Debug.Log("INITIALIZING SUBORDINATE");
-        if(Input == null) Input = new TwoD_InputMap("Pilot");
         InitializeFacade();
         Blackboard.moveDecay.Start();
         Blackboard.titanProgressTimer.Start();
-        return Input;
     }
+    
 
     public void OnAuthorityReceived()
     {

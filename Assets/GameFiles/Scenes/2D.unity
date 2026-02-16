@@ -1540,7 +1540,7 @@ MonoBehaviour:
   presetWithInitialSubordinate: 1
   presetWithCustomInputMap: 1
   inputMapSettings:
-    ownerName: 
+    ownerName: Pilot
     MouseInputZones: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
   InitialSubordinate:
     underlyingValue: {fileID: 14127280}

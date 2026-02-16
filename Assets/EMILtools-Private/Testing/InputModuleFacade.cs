@@ -8,8 +8,7 @@ using UnityEngine.InputSystem;
 
 
 
-public abstract class InputHeldModuleFacade<TPublisherArgs, TSetActionGuarder, TCoreFacade> : InputHeldModule<TPublisherArgs, TSetActionGuarder>
-    where TSetActionGuarder : IActionGuarder, new()
+public abstract class InputHeldModuleFacade<TPublisherArgs, TCoreFacade> : InputHeldModule<TPublisherArgs>
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
@@ -19,8 +18,7 @@ public abstract class InputHeldModuleFacade<TPublisherArgs, TSetActionGuarder, T
     => this.facade = facade;
 }
 
-public abstract class InputHeldModuleFacade<TSetActionGuarder, TCoreFacade> : InputHeldModule<TSetActionGuarder>
-    where TSetActionGuarder : IActionGuarder, new()
+public abstract class InputHeldModuleFacade<TCoreFacade> : InputHeldModule
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
