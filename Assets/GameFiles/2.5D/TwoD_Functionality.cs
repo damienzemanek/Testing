@@ -321,6 +321,9 @@ public class TwoD_Functionality : Functionalities<TwoD_PilotController>
             facade.Blackboard.moveDecay = new DecayTimer(facade.Config.move.runAlphaMax, facade.Config.move.decayScalar);
             facade.Blackboard.turnSlowdown = new CountdownTimer(facade.Config.move.slowdownTime);
 
+            facade.Blackboard.rb.maxLinearVelocity = facade.Config.move.maxVelMagnitude;
+            facade.Blackboard.rb.maxAngularVelocity = facade.Config.move.maxVelMagnitude;
+            
             facade.InitTimer(facade.Blackboard.moveDecay, true);
             facade.InitTimer(facade.Blackboard.turnSlowdown, true);
         }

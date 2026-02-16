@@ -10,12 +10,15 @@ public interface IInputAuthority<TInputMap, TSubordinateEnum>
 {
     public Dictionary<int, Mapping> InputMappings { get; set; }
     
-    public void Register(IInputSubordinate<TInputMap, TSubordinateEnum>.SubordinateContext context)
+    public void RegisterSubordinateInstance(IInputSubordinate<TInputMap, TSubordinateEnum>.SubordinateContext context, Func<TInputMap> mapFactory = null)
     {
         int key = Convert.ToInt32(context.key);
-        Mapping newMapping = new Mapping(context.Subordinate.Value);
+        
+        TInputMap mapInstance = mapFactory != null ? mapFactory() : new TInputMap();
+        Mapping newMapping = new Mapping(context.Subordinate.Value, mapInstance);
+        
         InputMappings[key] = newMapping;
-        context.Subordinate.Value.Input = newMapping.inputMap;
+        context.Subordinate.Value.Input = newMapping.inputMap; // Align subordinate's stored InputMap with the Mapping's Input map
         Debug.Log("Registered with key " + key + " with new Mapping w/ subordinate : " + context.Subordinate.Value);
     }
 
@@ -35,10 +38,13 @@ public interface IInputAuthority<TInputMap, TSubordinateEnum>
         public TInputMap inputMap;
         public IInputSubordinate<TInputMap, TSubordinateEnum> subordinate;
         public IInitializable Initializable => subordinate as IInitializable;
-        public Mapping(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
+        public Mapping(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate, TInputMap inputMap = null)
         {
-            inputMap = new TInputMap();
+            this.inputMap = inputMap;
             this.subordinate = subordinate;
         }
     }
 }
+
+
+

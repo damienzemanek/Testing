@@ -31,12 +31,9 @@ public class TwoD_PilotController : MonoFacade<
 
     public void InitSubordinate()
     {
-        Debug.Log("init controller");
         InitializeFacade();
-        Blackboard.rb.maxLinearVelocity = Config.move.maxVelMagnitude;
-        Blackboard.rb.maxAngularVelocity = Config.move.maxVelMagnitude;
+
         Functionality.Bind();
-        
         Blackboard.moveDecay.Start();
         Blackboard.titanProgressTimer.Start();
     }

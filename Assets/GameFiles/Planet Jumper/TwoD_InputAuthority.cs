@@ -10,26 +10,15 @@ using static TwoD_InputAuthority;
 [Serializable]
 public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputMap, Subordinates>
 {
-    public static TwoD_InputAuthority Instance { get; private set; }
     public enum Subordinates { Pilot = 0, Titan = 1 }
-    
-    
-    
-    [Serializable]
-    public struct Config : IConfig
-    {
-        [field:SerializeField] public MouseCallbackZones MouseInputZones { get; private set; }
-    }
-    
-    [field: SerializeField] public Config cfg { get; set; }
     public Subordinates currentSubordinate = 0;
+    
 
-    protected override void Awake()
-    {
-        Instance = this;
-        base.Awake();
-    }
-
+    /// <summary>
+    /// Input Mappings
+    /// - Serializable only because of presetting MouseInputZones (for First Delegation)
+    /// </summary>
+    [Serializable]
     public class TwoD_InputMap : IInputMap
     {
         public PersistentAction<bool> Move = new();

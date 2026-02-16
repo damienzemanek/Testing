@@ -5,11 +5,6 @@ using KBCore.Refs;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-public interface IFacade
-{
-    
-}
-
 [Serializable]
 public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard, TActionMap>: ValidatedMonoBehaviour, IFacade
     where TMonoFacade : IFacade    

@@ -15,15 +15,19 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
      [SerializeField] protected TInputReader Reader;
      [SerializeField] protected int mappingCount;
      [ShowInInspector, ReadOnly] protected int currentMapping;
-     [SerializeField] protected bool presetWithInitialSubordinate;
-     [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
+     
+     [FoldoutGroup("Presetting & First Delegation Settings")] [SerializeField] protected bool presetWithInitialSubordinate;
+     [FoldoutGroup("Presetting & First Delegation Settings")] [SerializeField] protected bool presetWithCustomInputMap;
+     [FoldoutGroup("Presetting & First Delegation Settings")] [ShowIf("presetWithCustomInputMap")] public TInputMap inputMapSettings;
+     [FoldoutGroup("Presetting & First Delegation Settings")] [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
      
       [ShowInInspector] public Dictionary<int, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping> InputMappings { get; set; }
 
       protected virtual void Awake()
       {
           InitializeMappingsList(mappingCount);
-          if(presetWithInitialSubordinate) InitialSubordinate.Value.subordinateContext.FirstDelegationOfAuthority();
+          if(presetWithInitialSubordinate) InitialSubordinate.Value.subordinateContext.
+              FirstDelegationOfAuthority(presetWithCustomInputMap ? inputMapSettings : null);
       }
 
       void IInputAuthority<TInputMap, TSubordinateEnum>.DelegateAuthorityTo(int mapIndex, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping mapping)
@@ -36,12 +40,5 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
      
      protected void InitializeMappingsList(int amountOfMappings)
           => InputMappings = new Dictionary<int, IInputAuthority<TInputMap, TSubordinateEnum>.Mapping>(amountOfMappings);
-
-     
-
-
-
-
-
-
+    
 }

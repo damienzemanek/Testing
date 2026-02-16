@@ -130,8 +130,8 @@ GameObject:
   - component: {fileID: 14127275}
   - component: {fileID: 14127274}
   - component: {fileID: 14127273}
-  - component: {fileID: 14127279}
   - component: {fileID: 14127280}
+  - component: {fileID: 14127279}
   - component: {fileID: 14127282}
   m_Layer: 7
   m_Name: Facade Player
@@ -2134,8 +2134,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Reader: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
   mappingCount: 2
-  <cfg>k__BackingField:
-    <MouseInputZones>k__BackingField: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
+  presetWithInitialSubordinate: 1
+  presetWithCustomInputMap: 1
+  inputMapSettings:
+    MouseInputZones: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
+    movement: {x: 0, y: 0}
+    mouse: {x: 0, y: 0}
+  InitialSubordinate:
+    underlyingValue: {fileID: 14127280}
   currentSubordinate: 0
 --- !u!4 &441288468
 Transform:
