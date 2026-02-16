@@ -25,7 +25,7 @@ public class TwoD_PilotController : MonoFacade<
     IInputSubordinate<TwoD_InputMap, Subordinates>
 {
     
-    [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
+    [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly] public TwoD_InputMap Input { get; set; }
     [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext context { get; set; }
     
     public TwoD_InputMap InjectInputMap() => new("Pilot");

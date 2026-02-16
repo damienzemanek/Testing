@@ -19,7 +19,12 @@ public abstract class InputHeldModule<TPublisherArgs> : MonoFunctionalityModule
 
 
     public override void Bind() => action.Add(OnSetTemplateCall);
-    public override void Unbind() => action.Remove(OnSetTemplateCall);
+
+    public override void Unbind()
+    {
+        action.Remove(OnSetTemplateCall);
+        isActive = false;
+    }
     
     public override void SetupModule()
     {
@@ -57,7 +62,12 @@ public abstract class InputHeldModule : MonoFunctionalityModule
 
 
     public override void Bind() => action.Add(OnSetTemplateCall);
-    public override void Unbind() => action.Remove(OnSetTemplateCall);
+
+    public override void Unbind()
+    {
+        action.Remove(OnSetTemplateCall);
+        isActive = false;
+    }
     
     public override void SetupModule()
     {
