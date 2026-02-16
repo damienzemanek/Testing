@@ -17,37 +17,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
         public InterfaceReference<IInputSubordinate<TInputMap, TSubordnateEnumType>, MonoBehaviour> Subordinate;
         [SerializeField, ReadOnly] 
         public InterfaceReference<IInputAuthority<TInputMap, TSubordnateEnumType>, MonoBehaviour> Authority;
-        
         [SerializeField] public TSubordnateEnumType key;
-        
-        
-        /// <summary>a
-        ///  Delegation of Authority
-        /// </summary>
-        /// <param name="inputMap"></param>
-        public bool SendRequest()
-        {
-            //Retrive the Input map stored in the Subordinate
-            if (Subordinate.Value.Input == null)
-            {
-                Subordinate.Value.Input = Subordinate.Value.InjectInputMap();
-                Subordinate.Value.InitSubordinate();
-            }
-            
-            // Register that InputMap with the Authority
-            bool accepted = Authority.Value.ConsiderRequest(Subordinate.Value);
-            if (accepted) Subordinate.Value.OnAuthorityReceived();
-            return accepted;
-        }
-
-        public void SetupFirstAuthority(TInputMap inputMap, IInputAuthority<TInputMap, TSubordnateEnumType> authority)
-        {
-            Authority.Value = authority;
-            Subordinate.Value.Input = inputMap;
-            Subordinate.Value.InitSubordinate();
-            Authority.Value.ConsiderRequest(Subordinate.Value);
-            Subordinate.Value.OnAuthorityReceived();
-        }
     }
     
     public IInputAuthority<TInputMap, TSubordnateEnumType> Authority => context.Authority.Value;
@@ -60,11 +30,39 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     public abstract void OnAuthorityLost();
     
     
+    /// <summary>a
+    ///  Delegation of Authority
+    /// </summary>
+    /// <param name="inputMap"></param>
+    bool SendRequest()
+    {
+        //Retrive the Input map stored in the Subordinate
+        if (context.Subordinate.Value.Input == null)
+        {
+            context.Subordinate.Value.Input = context.Subordinate.Value.InjectInputMap();
+            context.Subordinate.Value.InitSubordinate();
+        }
+            
+        // Register that InputMap with the Authority
+        bool accepted = context.Authority.Value.ConsiderRequest(context.Subordinate.Value);
+        if (accepted) context.Subordinate.Value.OnAuthorityReceived();
+        return accepted;
+    }
+    
+    public void SetupFirstAuthority(TInputMap inputMap, IInputAuthority<TInputMap, TSubordnateEnumType> authority)
+    {
+        context.Authority.Value = authority;
+        context.Subordinate.Value.Input = inputMap;
+        context.Subordinate.Value.InitSubordinate();
+        context.Authority.Value.ConsiderRequest(context.Subordinate.Value);
+        context.Subordinate.Value.OnAuthorityReceived();
+    }
+    
     public bool RequestAuthorityFrom(IInputSubordinate<TInputMap, TSubordnateEnumType> former)
     {
         IInputAuthority<TInputMap, TSubordnateEnumType> formerAuthority = former.Authority;
         context.Authority.Value = former.Authority;
-        bool successful = context.SendRequest();
+        bool successful = SendRequest();
         if(successful) former.OnAuthorityLost();
         else context.Authority.Value = formerAuthority;
         return successful;
