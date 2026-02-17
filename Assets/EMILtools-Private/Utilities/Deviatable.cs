@@ -30,6 +30,7 @@ namespace EMILtools.Utilities
         public float min { get => _valueBetween.x; }
         public float max { get => _valueBetween.y; }
         public Vector2 SetValue(Vector2 _val) => _valueBetween = _val;
+        public static implicit operator float(Deviatable d) => d.value;
     }    
 }
 

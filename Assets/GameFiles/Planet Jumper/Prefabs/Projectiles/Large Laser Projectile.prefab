@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 167753639913555881}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -98,8 +98,9 @@ GameObject:
   - component: {fileID: 176453892515891826}
   - component: {fileID: 8706605852123688932}
   - component: {fileID: 1785779972189713203}
+  - component: {fileID: 6334660335484781664}
   m_Layer: 0
-  m_Name: Laser Projectile
+  m_Name: Large Laser Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -113,9 +114,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960587038153148975}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.3}
-  m_LocalScale: {x: -0.091544, y: 0.09273008, z: 0.70366}
+  m_LocalScale: {x: -4.6421347, y: 4.70228, z: 87.95287}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3188796909319421895}
@@ -140,8 +141,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.441316, y: 3.6190581, z: 1.5111103}
-  m_Center: {x: -0.007556385, y: -0.21744171, z: 0.25555465}
+  m_Size: {x: 3.441316, y: 3.619058, z: 1.042959}
+  m_Center: {x: -0.007556396, y: -0.21744162, z: 0.54044473}
 --- !u!54 &8706605852123688932
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -182,3 +183,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 8706605852123688932}
+--- !u!114 &6334660335484781664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960587038153148975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6fbd5370c573324c9047c0f61473ebe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: 8

@@ -99,6 +99,8 @@ public class ShipFunctionality : Functionalities<ShipController>
             [field: SerializeField] public ForceMode thrustForceMode { get; private set; }
             [field: SerializeField] public float thrustForce { get; private set; }
             [field: SerializeField] public float defaultFOV { get; private set; }
+            [field: SerializeField] public float notMovingSlowScalar { get; private set; }
+
         }
 
         Config config => facade.Config.thrust;
@@ -124,11 +126,14 @@ public class ShipFunctionality : Functionalities<ShipController>
             {
                 facade.Blackboard.thrustFOV.DynamicStart(Operation.Decrease);
                 facade.Blackboard.vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                Slow();
             }
         }
 
         protected override void Execute(float dt)
         => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
+
+        void Slow() => facade.Blackboard.rb.linearVelocity *= facade.Config.thrust.notMovingSlowScalar;
 
         
         public void OnUpdateTick(float dt) => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
@@ -150,14 +155,13 @@ public class ShipFunctionality : Functionalities<ShipController>
         [ShowInInspector, ReadOnly] Quaternion camOffset => facade != null 
                                                                 ? facade.Blackboard.camTransform.rotation 
                                                                 : Quaternion.identity;
-        [ShowInInspector, ReadOnly] bool isRotating;
         [ShowInInspector, ReadOnly] Vector3 rotationVector;
 
 
         public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
  
         protected override void Awake()
-            => executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
+            => executeGuarder = new (new ActionGuard(() => !isActive, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
         
         protected override void OnSet(Vector3 rotation)
             => rotationVector = rotation;

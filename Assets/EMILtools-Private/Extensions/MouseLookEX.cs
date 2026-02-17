@@ -27,6 +27,8 @@ namespace EMILtools.Extensions
             [BoxGroup("Settings")] [SerializeField] public bool clampXRotation = false;
             [BoxGroup("Settings")] [SerializeField] public bool clampYRotation = true;
             [BoxGroup("Settings")] [SerializeField] public bool updateMouseLook = true;
+            [BoxGroup("Settings")] [SerializeField] bool invertX = false;
+            [BoxGroup("Settings")] [SerializeField] bool invertY = true;
             
             [BoxGroup("Settings")] [SerializeField] Vector2 sensitivity = new Vector2(1, 1);
             [BoxGroup("Settings")] [SerializeField] [ShowIf("clampXRotation")] Vector2 clampX = new Vector2(-90f, 90f);
@@ -41,7 +43,9 @@ namespace EMILtools.Extensions
                 
                 // Apply sensitivity
                 look = mouseInput * sensitivity / SENSITIVITY_ADJUSTMENT;
-                look.y *= -1;
+
+                look.x *= invertX ? -1f : 1f;
+                look.y *= invertY ? -1f : 1f;
 
                 // Apply the rotation to the variable
                 rot.x += look.x;

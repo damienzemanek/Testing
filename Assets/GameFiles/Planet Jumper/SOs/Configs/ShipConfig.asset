@@ -17,4 +17,5 @@ MonoBehaviour:
   thrust:
     <thrustForceMode>k__BackingField: 0
     <thrustForce>k__BackingField: 5
-    <defaultFOV>k__BackingField: 70
+    <defaultFOV>k__BackingField: 90
+    <notMovingSlowScalar>k__BackingField: 0.6
