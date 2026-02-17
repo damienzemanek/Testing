@@ -19,6 +19,9 @@ public class TwoD_InputReader : ScriptableObject,
     
     public TwoD_InputMap Input { get => subordinate.Input; }
     [ShowInInspector] public IInputSubordinate<TwoD_InputMap, Subordinates> subordinate { get; set; }
+
+    private float halfScreenWidth;
+    private float screenHeight;
     
     public void Init()
     {
@@ -39,16 +42,14 @@ public class TwoD_InputReader : ScriptableObject,
             Input.MouseInputZones = CreateInstance<MouseCallbackZones>();
             Input.MouseInputZones.w = Screen.width;
             Input.MouseInputZones.h = Screen.height;
+            halfScreenWidth = Input.MouseInputZones.w * 0.5f;
+            screenHeight = Input.MouseInputZones.h;
         }
         
-        float halfScreenWidth = Input.MouseInputZones.w * 0.5f;
-        float screenHeight = Input.MouseInputZones.h;
         Input.MouseInputZones.callbackZones = null;
         Input.MouseInputZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Left, true); Debug.Log("FaceDirection subscribers: " + Input.FaceDirection.Count);
-            }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + Input.FaceDirection.Count);
-            }));
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Left, true); }),
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Right, true); }));
     }
 
     
