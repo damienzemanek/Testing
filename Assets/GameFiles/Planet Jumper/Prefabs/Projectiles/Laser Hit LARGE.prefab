@@ -4841,7 +4841,7 @@ GameObject:
   - component: {fileID: 5588441662099315285}
   - component: {fileID: 5588441662099315284}
   m_Layer: 0
-  m_Name: FX_Shoot_05_hit LARGE
+  m_Name: Laser Hit LARGE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
