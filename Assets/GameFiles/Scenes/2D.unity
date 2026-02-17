@@ -339,7 +339,7 @@ MonoBehaviour:
       cam: {fileID: 1122801504}
       core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
       objectToMove: {fileID: 0}
-      offset: {x: 0, y: 0, z: 0}
+      offset: {x: 0, y: 0, z: 5}
       lockX: 0
       lockY: 1
       lockZ: 0
@@ -1539,10 +1539,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Reader: {fileID: 11400000, guid: 514a0b02afce84c428b50174d27fde63, type: 2}
   presetWithInitialSubordinate: 1
-  presetWithCustomInputMap: 1
-  inputMapSettings:
-    ownerName: Pilot
-    MouseInputZones: {fileID: 11400000, guid: b73cdbf196fcadf438e7e88b9fe1e78a, type: 2}
   InitialSubordinate:
     underlyingValue: {fileID: 14127280}
 --- !u!4 &441288468
@@ -8825,7 +8821,7 @@ PrefabInstance:
       objectReference: {fileID: 352738165}
     - target: {fileID: 843267439844268287, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 299
+      value: 302
       objectReference: {fileID: 0}
     - target: {fileID: 1755171931928348482, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8833,7 +8829,7 @@ PrefabInstance:
       objectReference: {fileID: 171111903}
     - target: {fileID: 1755171931928348482, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1143
+      value: 1146
       objectReference: {fileID: 0}
     - target: {fileID: 2935996584549869998, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8841,7 +8837,7 @@ PrefabInstance:
       objectReference: {fileID: 839155684}
     - target: {fileID: 2935996584549869998, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1247
+      value: 1250
       objectReference: {fileID: 0}
     - target: {fileID: 4136770288292139422, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8849,7 +8845,7 @@ PrefabInstance:
       objectReference: {fileID: 745165250}
     - target: {fileID: 4136770288292139422, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1143
+      value: 1146
       objectReference: {fileID: 0}
     - target: {fileID: 4282856664855661720, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8857,7 +8853,7 @@ PrefabInstance:
       objectReference: {fileID: 1277088740}
     - target: {fileID: 4282856664855661720, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1394
+      value: 1397
       objectReference: {fileID: 0}
     - target: {fileID: 4356241764936541865, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8869,8 +8865,12 @@ PrefabInstance:
       objectReference: {fileID: 601229804}
     - target: {fileID: 4401365549412828406, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 4303
+      value: 4306
       objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<posToMouse>k__BackingField.core
+      value: 
+      objectReference: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
     - target: {fileID: 4815760036686125764, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -8893,7 +8893,7 @@ PrefabInstance:
       objectReference: {fileID: 851229440}
     - target: {fileID: 6213609582122346544, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 752
+      value: 755
       objectReference: {fileID: 0}
     - target: {fileID: 6282474491680080727, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
@@ -8909,7 +8909,7 @@ PrefabInstance:
       objectReference: {fileID: 143116295}
     - target: {fileID: 6545592508280533790, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 752
+      value: 755
       objectReference: {fileID: 0}
     - target: {fileID: 6976002013261386727, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8969,7 +8969,7 @@ PrefabInstance:
       objectReference: {fileID: 1520412486}
     - target: {fileID: 8684086866928651530, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_VersionIndex
-      value: 1394
+      value: 1397
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

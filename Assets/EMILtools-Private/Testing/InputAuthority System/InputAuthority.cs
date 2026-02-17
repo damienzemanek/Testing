@@ -28,9 +28,12 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
       void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
       {
           Reader.subordinate = subordinate;
-          if(initializedReader) return;
-          Reader.Init();
-          initializedReader = true;
+          
+          if(!initializedReader) {
+              Reader.Init();
+              initializedReader = true; }
+          
+          Reader.OnAuthorityChange();
       }
 
       

@@ -6,4 +6,6 @@ public class TitanConfig : Config
 {
     [field: SerializeField] [field: ShowInInspector] public TwoD_InputAuthority.CameraSettings camSettings { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public TitanFunctionality.MountModule.Config mount { get; private set; }
+    [field: SerializeField] [field: ShowInInspector] public TitanFunctionality.LocomotionModule.Config move { get; private set; }
+
 }

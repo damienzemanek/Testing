@@ -20,7 +20,6 @@ public class TwoD_InputReader : ScriptableObject,
     public TwoD_InputMap Input { get => subordinate.Input; }
     [ShowInInspector] public IInputSubordinate<TwoD_InputMap, Subordinates> subordinate { get; set; }
     
-    
     public void Init()
     {
         if (ia == null) ia = new TwoD_IA();
@@ -29,11 +28,15 @@ public class TwoD_InputReader : ScriptableObject,
         ia.Player.SetCallbacks(this);
         ia.Player.Enable();
         
+    }
+    
+    public void OnAuthorityChange()
+    {
         // Looking at the player from the front, reverses the directions (like a mirror)
         if (Input.MouseInputZones == null)
         {
             Debug.LogWarning("MouseInputZones not initialized already... Initializing MouseCallbackZones for TwoD_InputReader");
-            Input.MouseInputZones = ScriptableObject.CreateInstance<MouseCallbackZones>();
+            Input.MouseInputZones = CreateInstance<MouseCallbackZones>();
             Input.MouseInputZones.w = Screen.width;
             Input.MouseInputZones.h = Screen.height;
         }
@@ -47,6 +50,8 @@ public class TwoD_InputReader : ScriptableObject,
             (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Right, true);  Debug.Log("FaceDirection subscribers: " + Input.FaceDirection.Count);
             }));
     }
+
+    
 
     private void OnDisable()
     {

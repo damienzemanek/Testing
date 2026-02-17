@@ -20,6 +20,11 @@ public class TwoD_TitanController : MonoFacade<
     public TwoD_InputMap InjectInputMap() => new("Titan");
     public void InitSubordinate() => InitializeFacade();
 
+    private void Start()
+    {
+        Blackboard.moveDecay.Start();
+    }
+
     public void OnAuthorityReceived()
     {
         GetFunctionality<IAPI_Mount>().Mount();
@@ -37,8 +42,8 @@ public class TwoD_TitanController : MonoFacade<
         if (!Blackboard.hasMounted) return;
         
         base.Update();
-        // if(Blackboard.anims.state == AnimState.Locomotion)
-        //     Blackboard.anims.UpdateLocomotion(Blackboard.facingDir, Blackboard.moveDir, Blackboard.speedAlpha);
+        if(Blackboard.anims.state == AnimState.Locomotion)
+            Blackboard.anims.UpdateLocomotion(Blackboard.facingDir, Blackboard.moveDir, Blackboard.speedAlpha);
     }
     
 

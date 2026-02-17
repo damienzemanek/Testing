@@ -18,7 +18,7 @@ public class ShipInputReader : ScriptableObject,
     public Ship_IA ia;
     public ShipInputMap Input => subordinate.Input;
     public IInputSubordinate<ShipInputMap, Subordinates> subordinate { get; set; }
-    
+
     public void Init()
     {
         ia = new Ship_IA();
@@ -27,6 +27,8 @@ public class ShipInputReader : ScriptableObject,
         ia.Player.Enable();
     }
     
+    public void OnAuthorityChange() { }
+
     public void OnRotate(InputAction.CallbackContext context)
     {
         if (ia.Player.Rotate.IsPressed()) DoRotate();

@@ -14,5 +14,6 @@ public interface IInputReaderSubordinate<TInputMap, TSubordinateEnum> : IInputRe
 {
     public TInputMap Input { get; }
     public IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
-    
+
+    public abstract void OnAuthorityChange();
 }

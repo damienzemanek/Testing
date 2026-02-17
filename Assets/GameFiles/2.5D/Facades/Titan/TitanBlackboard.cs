@@ -21,10 +21,8 @@ public class TitanBlackboard : Blackboard
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public Transform mountLocation { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public MountZone myMountZone { get; private set; }
-
-
+    
     [BoxGroup("Orientation")] [field: SerializeField] public MouseLookEX.RotateToMouseWorldSpace mouseLook { get; private set; }
-    [field: SerializeField] public MouseLookEX.PositionToMouseWorldSpace posToMouse { get; private set; }
 
     [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; set; }
