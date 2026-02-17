@@ -23,7 +23,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     public IInputAuthority<TInputMap, TSubordnateEnumType> Authority => context.Authority.Value;
     
     public TInputMap Input { get; set; }
-    public SubordinateContext context { get; set; }
+    public SubordinateContext context { get; set; }  // Ensure this is Serialized
     public abstract TInputMap InjectInputMap();
     public abstract void InitSubordinate();
     public abstract void OnAuthorityReceived();
@@ -49,13 +49,10 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
         return accepted;
     }
     
-    public void SetupFirstAuthority(TInputMap inputMap, IInputAuthority<TInputMap, TSubordnateEnumType> authority)
+    public void SetupFirstAuthority(IInputAuthority<TInputMap, TSubordnateEnumType> authority)
     {
         context.Authority.Value = authority;
-        context.Subordinate.Value.Input = inputMap;
-        context.Subordinate.Value.InitSubordinate();
-        context.Authority.Value.ConsiderRequest(context.Subordinate.Value);
-        context.Subordinate.Value.OnAuthorityReceived();
+        SendRequest();
     }
     
     public bool RequestAuthorityFrom(IInputSubordinate<TInputMap, TSubordnateEnumType> former)

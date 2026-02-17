@@ -23,6 +23,8 @@ public abstract class InputHeldModuleFacade<TCoreFacade> : InputHeldModule
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }
 
+    protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade ) : base(action, true)
+        => this.facade = facade;
     protected InputHeldModuleFacade(PersistentAction<bool> action, TCoreFacade facade, bool useIsActiveGuard) : base(action, useIsActiveGuard)
         => this.facade = facade;
 }

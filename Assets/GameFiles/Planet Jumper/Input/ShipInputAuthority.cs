@@ -14,15 +14,16 @@ public class ShipInputAuthority : InputAuthority<ShipInputReader, ShipInputMap, 
     public enum Subordinates { Ship = 0 }
 
 
-    public class ShipInputMap : InputMap
+    public class ShipInputMap : InputMap, IInputMouseLook
     {
         [NonSerialized] public PersistentAction<bool> Thrust = new();
         [NonSerialized] public PersistentAction<Vector3, bool> Rotate = new();
         [NonSerialized] public PersistentAction<bool> Fire = new();
-        [NonSerialized] public PersistentAction Move = new();
+        [NonSerialized] public PersistentAction<bool> MouseLook = new();
         [NonSerialized] public PersistentAction SwitchCam = new();
+        [NonSerialized] public PersistentAction Move = new();
         [NonSerialized] public Vector3 rotation;
-        [NonSerialized] public Vector2 mouse;
+        [field: NonSerialized] public Vector2 mouse { get; set; }
         
         public ShipInputMap() { }
         public ShipInputMap(string ownerName) : base(ownerName) { }

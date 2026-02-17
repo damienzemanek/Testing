@@ -162,7 +162,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
     {
         public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
         protected override void OnSet() => facade.Blackboard.isRunning.Value = isActive;
-        protected override void Implementation(float dt) { }
+        protected override void Execute(float dt) { }
     }
 
     public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_Climb
@@ -300,7 +300,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         }
 
 
-        protected override void Implementation(float dt) => facade.Blackboard.mouseLook.Execute();
+        protected override void Execute(float dt) => facade.Blackboard.mouseLook.Execute();
 
         public void LateTick(float dt) => ExecuteTemplateCall(dt);
     }
@@ -318,7 +318,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             
         }
         
-        protected override void Implementation(float dt)
+        protected override void Execute(float dt)
         {
             facade.StartCoroutine(ShootImplementation());
             IEnumerator ShootImplementation()

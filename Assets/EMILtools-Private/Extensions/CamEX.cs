@@ -37,7 +37,6 @@ public static class CamEX
         
         public override void TickImplementation(float deltaTime)
         {
-            Debug.Log("tick");
             if (operation == Operation.Increase)
             {
                 if (Time < initialTime)

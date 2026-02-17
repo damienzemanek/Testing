@@ -48,7 +48,15 @@ public class ShipInputReader : ScriptableObject,
 
     public void OnLook(InputAction.CallbackContext context)
     {
-        Input.mouse = context.ReadValue<Vector2>();
+        if (ia.Player.Look.IsPressed())
+        {
+            Input.mouse = context.ReadValue<Vector2>();
+            Input.MouseLook.Invoke(true);
+        }
+        else
+        {
+            Input.MouseLook.Invoke(false);
+        }
     }
 
     public void OnFire(InputAction.CallbackContext context)

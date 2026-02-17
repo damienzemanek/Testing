@@ -15,12 +15,28 @@ public class ShipFunctionality : Functionalities<ShipController>
 {
     protected override void AddModulesHere()
     {
-        // AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
-        // AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
-        // AddModule(new FireModule(facade.Input.Fire, facade));
-        // AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
+        AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
+        AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
+        AddModule(new FireModule(facade.Input.Fire, facade));
+        AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
+        AddModule(new CannonMouselookModule(facade.Input.MouseLook, facade));
     }
 
+
+
+    public class CannonMouselookModule : InputHeldModuleFacade<ShipController>, UPDATE
+    {
+        public CannonMouselookModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
+
+        protected override void Awake()
+        {
+            executeGuarder.Add(new ActionGuard(() => !facade.Blackboard.usingCannonCam, "Not in Cannon Cam"));
+            facade.Blackboard.cannonMouseLook.Input = facade.Input;
+        }
+        protected override void Execute(float dt) => facade.Blackboard.cannonMouseLook.UpdateMouseLook();
+        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+    }
+    
 
     public class SwitchCamModule : InputPressedModuleFacade<ShipController>
     {
@@ -30,7 +46,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         protected override void OnPress()
         {
             facade.Blackboard.usingCannonCam = !facade.Blackboard.usingCannonCam;
-            facade.cannonMouseLook.updateMouseLook = facade.Blackboard.usingCannonCam;
+            facade.Blackboard.cannonMouseLook.updateMouseLook = facade.Blackboard.usingCannonCam;
             facade.Blackboard.shipCameraObject.SetActive(!facade.Blackboard.usingCannonCam);
             facade.Blackboard.cannonCameraComponent.enabled = facade.Blackboard.usingCannonCam;
         }
@@ -57,7 +73,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         
         protected override void OnSet() { }
 
-        protected override void Implementation(float dt)
+        protected override void Execute(float dt)
         => facade.Blackboard.cannonProjectileSpawner.Spawn();
         
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
@@ -94,7 +110,6 @@ public class ShipFunctionality : Functionalities<ShipController>
         {
             facade.Blackboard.thrustFOV.SetInitialTime(1f);
             facade.InitTimers((facade.Blackboard.thrustFOV, false));
-            Debug.Log("inited thrust module");
         }
 
 
@@ -102,19 +117,17 @@ public class ShipFunctionality : Functionalities<ShipController>
         {
             if (isActive)
             {
-                Debug.Log("active");
                 facade.Blackboard.thrustFOV.DynamicStart(Operation.Increase);
                 facade.Blackboard.vfx_Thrust.Play();
             }
             else
             {
-                Debug.Log("inactive");
                 facade.Blackboard.thrustFOV.DynamicStart(Operation.Decrease);
                 facade.Blackboard.vfx_Thrust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
         }
 
-        protected override void Implementation(float dt)
+        protected override void Execute(float dt)
         => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
 
         
@@ -144,10 +157,8 @@ public class ShipFunctionality : Functionalities<ShipController>
         public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
  
         protected override void Awake()
-        {
-            executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
-            Debug.Log("inited rotate module");
-        }
+            => executeGuarder.Add(new ActionGuard(() => isRotating, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
+        
         protected override void OnSet(Vector3 rotation)
             => rotationVector = rotation;
 

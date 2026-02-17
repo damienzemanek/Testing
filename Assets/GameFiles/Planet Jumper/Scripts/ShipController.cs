@@ -11,18 +11,23 @@ using static CamEX.CurveValue;
 using static Effectability;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
+using static IInputSubordinate<ShipInputAuthority.ShipInputMap,ShipInputAuthority.Subordinates>;
 using static LifecycleEX;
 using static ShipFunctionality;
 using static ShipInputAuthority;
 
 [Serializable]
-public class ShipController : MonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipActionMap>, 
+public class ShipController : MonoFacade<
+        ShipController,
+        ShipFunctionality, 
+        ShipConfig, 
+        ShipBlackboard,
+        ShipActionMap>, 
     ITimerUser,
     IInputSubordinate<ShipInputMap, Subordinates>
 {
-    [BoxGroup("Mouse")] [PropertyOrder(-1)] [SerializeField] public MouseLookSettings cannonMouseLook;
     public ShipInputMap Input { get; set; }
-    public IInputSubordinate<ShipInputMap, Subordinates>.SubordinateContext context { get; set; }
+    [field: SerializeField] [field: PropertyOrder(-1)] public SubordinateContext context { get; set; }
     public ShipInputMap InjectInputMap() => new ("Ship Input Map");
     
     public void InitSubordinate()
@@ -43,16 +48,8 @@ public class ShipController : MonoFacade<ShipController, ShipFunctionality, Ship
     
     void Start()
     {
-        CursorEX.Set(false, CursorLockMode.Locked);
-        cannonMouseLook.updateMouseLook = false;
+        Blackboard.cannonMouseLook.updateMouseLook = false;
         Blackboard.cannonCameraComponent.enabled = false;
-    }
-    
-
-    protected override void Update()
-    {
-        base.Update();
-        cannonMouseLook.UpdateMouseLook();
     }
     
     

@@ -22,8 +22,7 @@ namespace EMILtools_Private.Testing
         {
             AddModulesHere();
             foreach (var t in modules)  t.SetupModule();
-            Debug.Log("Functionality modules succesfully setup");
-            Debug.Log("API count: " + API_Modules.Count);
+            Debug.Log($"{GetType().Name} Functionality modules successfully setup | API Count: " + API_Modules.Count);
         }
         
         public void Bind() { foreach (var t in modules) { t.Bind(); } }

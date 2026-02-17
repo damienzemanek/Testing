@@ -5,7 +5,6 @@ using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.MouseCallbackZones;
-using static EMILtools.Extensions.MouseLookEX;
 
 namespace EMILtools.Extensions
 {
@@ -21,7 +20,8 @@ namespace EMILtools.Extensions
             
             [BoxGroup("References")] [SerializeField] [ShowIf("useBody")] Transform body;
             [BoxGroup("References")] [SerializeField] Transform head;
-            [BoxGroup("References")] [SerializeField] IInputMouseLookReference input;
+
+            [field: BoxGroup("References")] [field: ShowInInspector] [field: ReadOnly] public IInputMouseLook Input { get; set; }
             
             [BoxGroup("Settings")] [SerializeField] public bool useBody = true;
             [BoxGroup("Settings")] [SerializeField] public bool clampXRotation = false;
@@ -37,7 +37,7 @@ namespace EMILtools.Extensions
                 if (!updateMouseLook) return;
                 
                 // Grab the input
-                Vector2 mouseInput = input.Value.mouse; //Debug.Log("Mouse Input: " + mouseInput);
+                Vector2 mouseInput = Input.mouse; //Debug.Log("Mouse Input: " + mouseInput);
                 
                 // Apply sensitivity
                 look = mouseInput * sensitivity / SENSITIVITY_ADJUSTMENT;

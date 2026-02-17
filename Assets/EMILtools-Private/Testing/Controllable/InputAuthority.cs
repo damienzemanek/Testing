@@ -17,14 +17,12 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
      [ShowInInspector, ReadOnly] bool initializedReader = false;
      
      [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithInitialSubordinate;
-     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [SerializeField] protected bool presetWithCustomInputMap;
-     [FoldoutGroup("Presetting & Initial Subordinate Settings")] [ShowIf("presetWithCustomInputMap")] public TInputMap inputMapSettings;
      [FoldoutGroup("Presetting & Initial Subordinate Settings")] [ShowIf("presetWithInitialSubordinate")] public InterfaceReference<IInputSubordinate<TInputMap, TSubordinateEnum>, MonoBehaviour> InitialSubordinate;
 
 
       protected virtual void Awake()
       {
-          if (presetWithInitialSubordinate) InitialSubordinate.Value.SetupFirstAuthority(inputMapSettings, this);
+          if (presetWithInitialSubordinate) InitialSubordinate.Value.SetupFirstAuthority(this);
       }
       
       void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)

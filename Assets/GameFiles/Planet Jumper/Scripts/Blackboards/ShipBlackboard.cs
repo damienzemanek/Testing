@@ -3,13 +3,12 @@ using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 using UnityEngine;
 using static CamEX;
+using static EMILtools.Extensions.MouseLookEX;
 
 
 [Serializable]
-public class ShipBlackboard : Blackboard, IFacadeCompositionElement<ShipController>
+public class ShipBlackboard : Blackboard
 {
-    public ShipController facade { get; set; }
-    
     [field: BoxGroup("Movement")] [field:SerializeField] public Rigidbody rb { get; private set; }
     [field: BoxGroup("Cam")] [field:SerializeField] public Transform camTransform { get; private set; }
     [field: BoxGroup("Cam")] [field:SerializeField] public CinemachineCamera cam { get; private set; }
@@ -24,6 +23,7 @@ public class ShipBlackboard : Blackboard, IFacadeCompositionElement<ShipControll
     
     [BoxGroup("Fire")] [SerializeField] public ProjectileSpawnManager cannonProjectileSpawner;
     [BoxGroup("Fire")] [SerializeField] public Animator gunAnimator;
+    [BoxGroup("Fire")] [SerializeField] public MouseLookSettings cannonMouseLook;
 
     
     

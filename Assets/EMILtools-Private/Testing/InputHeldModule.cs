@@ -85,8 +85,8 @@ public abstract class InputHeldModule : MonoFunctionalityModule
     protected override void ExecuteTemplateCall(float dt) 
     {
         if (executeGuarder.TryEarlyExit()) return;
-        Implementation(dt);
+        Execute(dt);
     }
-    protected abstract void Implementation(float dt);
+    protected abstract void Execute(float dt);
     
 }
