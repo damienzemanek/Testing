@@ -9,32 +9,51 @@ public class CollectibleManager : MonoBehaviour
     public enum Collectible { Coin, Gem, Banana, Soup }
 
     [Serializable]
-    public struct CollectibleData
+    public struct CollectibleContext
     {
         public Collectible type;
-        public float amount;
+        public int amount;
         public ItemSlot slot;
     }
 
-    public CollectibleData[] collectibles;
+    public CollectibleContext[] collectibles;
     public GameObject itemSlotPrefab;
     public Transform itemSlotsParent;
     
     private void Awake()
     {
-        collectibles = new CollectibleData[System.Enum.GetValues(typeof(Collectible)).Length];
+        InitManager();
+        
+    }
+
+    private void OnEnable()
+    {
+        CollectibleEventSystem.OnEvent += Collect;
+    }
+
+    private void OnDisable()
+    {
+        CollectibleEventSystem.OnEvent -= Collect;
+    }
+
+    void InitManager()
+    {
         Array values = Enum.GetValues(typeof(Collectible));
+        int size = Enum.GetValues(typeof(Collectible)).Length;
+        collectibles = new CollectibleContext[size];
+        
         for (int i = 0; i < collectibles.Length; i++)
         {
             collectibles[i].type = (Collectible)values.GetValue(i);
-            collectibles[i].amount = 0f;
+            collectibles[i].amount = 0;
+            
             GameObject newSlot = Instantiate(itemSlotPrefab, itemSlotsParent);
             collectibles[i].slot = newSlot.Get<ItemSlot>();
             collectibles[i].slot.InitSlot(collectibles[i].type);
         }
     }
     
-    public void Collect(int am, Collectible type)
+    public void Collect(Collectible type, int am)
     {
         for (int i = 0; i < collectibles.Length; i++)
             if (collectibles[i].type == type)
@@ -43,5 +62,5 @@ public class CollectibleManager : MonoBehaviour
                 collectibles[i].slot.UpdateSlotUI(collectibles[i].amount);
             }
     }
-
 }
+

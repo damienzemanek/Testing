@@ -884,7 +884,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 274
+  m_VersionIndex: 295
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -1002,7 +1002,7 @@ GameObject:
   - component: {fileID: 3417719169748029302}
   - component: {fileID: 3863831028148100968}
   - component: {fileID: 2215120054225827629}
-  - component: {fileID: 3676490864012198113}
+  - component: {fileID: 6541932517256718616}
   m_Layer: 0
   m_Name: Coin
   m_TagString: Untagged
@@ -1060,13 +1060,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24c02fa99e740f74e862ee2e5b616062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectibleType: 0
+  type: 0
   value: 1
   audioParent: {fileID: 1836370032139871684}
   source: {fileID: 2297050302696961449}
   clip: {fileID: 8300000, guid: 8abcb3978b6d9b3488b61ed4e76e9671, type: 3}
   tag: Player
---- !u!95 &3676490864012198113
+--- !u!95 &6541932517256718616
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -1076,7 +1076,7 @@ Animator:
   m_GameObject: {fileID: 5151417335823618114}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bbbc5fb37d84a394a91f6dad1c334780, type: 2}
+  m_Controller: {fileID: 9100000, guid: a8a74906d23a2ab40af8be205ee2fcff, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -12,7 +12,7 @@ public class ItemSlot : MonoBehaviour
         countText.text = "" + 0;
     }
     
-    public void UpdateSlotUI(float am)
+    public void UpdateSlotUI(int am)
     {
         countText.text = "" + am;
     }

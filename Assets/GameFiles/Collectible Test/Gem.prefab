@@ -1261,7 +1261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24c02fa99e740f74e862ee2e5b616062, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectibleType: 1
+  type: 0
   value: 1
   audioParent: {fileID: 6494285796381864106}
   source: {fileID: 3339641506369085120}
