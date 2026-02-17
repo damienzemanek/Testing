@@ -36,7 +36,6 @@ public class TwoD_PilotController : MonoFacade<
         Blackboard.moveDecay.Start();
         Blackboard.titanProgressTimer.Start();
     }
-    
 
     public void OnAuthorityReceived()
     {

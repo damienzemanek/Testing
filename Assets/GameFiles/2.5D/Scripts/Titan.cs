@@ -10,7 +10,6 @@ using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static PilotConfig;
-using static TwoDimensionalController;
 
 public class Titan : ValidatedMonoBehaviour, ITimerUser
 {

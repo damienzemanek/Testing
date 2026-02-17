@@ -12,37 +12,42 @@ using static Effectability;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static LifecycleEX;
-using static ShipController;
 using static ShipFunctionality;
+using static ShipInputAuthority;
 
 [Serializable]
-public class ShipController : MonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipActionMap> , ITimerUser
+public class ShipController : MonoFacade<ShipController, ShipFunctionality, ShipConfig, ShipBlackboard, ShipActionMap>, 
+    ITimerUser,
+    IInputSubordinate<ShipInputMap, Subordinates>
 {
     [BoxGroup("Mouse")] [PropertyOrder(-1)] [SerializeField] public MouseLookSettings cannonMouseLook;
+    public ShipInputMap Input { get; set; }
+    public IInputSubordinate<ShipInputMap, Subordinates>.SubordinateContext context { get; set; }
+    public ShipInputMap InjectInputMap() => new ("Ship Input Map");
     
-    
-    void Awake()
+    public void InitSubordinate()
     {
         InitializeFacade();   
     }
 
+    public void OnAuthorityReceived()
+    {
+        CursorEX.Set(false, CursorLockMode.Locked);
+        Functionality.Bind();
+    }
+
+    public void OnAuthorityLost()
+    {
+        Functionality.Unbind();
+    }
+    
     void Start()
     {
         CursorEX.Set(false, CursorLockMode.Locked);
         cannonMouseLook.updateMouseLook = false;
         Blackboard.cannonCameraComponent.enabled = false;
     }
-
-    private void OnEnable()
-    {
-        CursorEX.Set(false, CursorLockMode.Locked);
-        Functionality.Bind();
-    }
-
-    private void OnDisable()
-    {
-        Functionality.Unbind();
-    }
+    
 
     protected override void Update()
     {
@@ -56,6 +61,5 @@ public class ShipController : MonoFacade<ShipController, ShipFunctionality, Ship
         this.ShutdownTimers();
         Blackboard.cannonProjectileSpawner.ShutdownTimers();
     }
-    
-    public class ShipActionMap : IActionMap { }
+
 }

@@ -9,10 +9,11 @@ using static EMILtools.Extensions.MouseLookEX;
 using static PilotConfig;
 using static TwoD_IA;
 using static TwoD_InputAuthority;
-using static TwoDimensionalController;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
-public class TwoD_InputReader : ScriptableObject, IPlayerActions, IInputReaderSubordinate<TwoD_InputMap, Subordinates>, IInitializable
+public class TwoD_InputReader : ScriptableObject, 
+    IPlayerActions, 
+    IInputReaderSubordinate<TwoD_InputMap, Subordinates>
 {
     TwoD_IA ia;
     

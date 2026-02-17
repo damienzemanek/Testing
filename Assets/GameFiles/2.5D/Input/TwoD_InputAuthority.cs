@@ -18,9 +18,8 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
     /// - Serializable only because of presetting MouseInputZones (for First Delegation)
     /// </summary>
     [Serializable]
-    public class TwoD_InputMap : IInputMap
+    public class TwoD_InputMap : InputMap
     {
-        [SerializeField] public string ownerName;
         [NonSerialized] public PersistentAction<Vector2, bool> Move = new();
         [NonSerialized] public PersistentAction<bool> Run = new();
         [NonSerialized] public PersistentAction<bool> Look = new();
@@ -31,12 +30,10 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         [NonSerialized] public PersistentAction HoldInteract = new();
         [NonSerialized] public PersistentAction CallInTitan = new();
         public MouseCallbackZones MouseInputZones;
-        
         [NonSerialized] public Vector2 mouse;
 
-        public TwoD_InputMap() { }
-        public TwoD_InputMap(string ownerName) => this.ownerName = ownerName;
-        public TwoD_InputMap(MouseCallbackZones mouseInputZones) => this.MouseInputZones = mouseInputZones;
+        public TwoD_InputMap() : base("TwoD Input Map"){ }
+        public TwoD_InputMap(string ownerName) : base(ownerName) { }
     }
 
     public class PilotActionMap : IActionMap
