@@ -34,20 +34,4 @@ public class ShipInputAuthority : InputAuthority<ShipInputReader, ShipInputMap, 
 
 
     }
-    
-    [Serializable]
-    public struct CameraSettings
-    {
-        public Vector3 followOffset;
-        public Vector3 targetOffset;
-    }
-
-    [Serializable]
-    public class CameraContext : ICamContext
-    {
-        public Camera camera;
-        public CinemachineCamera CM;
-        public CinemachineFollow follow;
-        public CinemachineRotationComposer rotComposer;
-    }
 }
