@@ -8390,6 +8390,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836905746}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1837172699 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 491018500400846660, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+  m_PrefabInstance: {fileID: 2013781408}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1838034432
 Mesh:
   m_ObjectHideFlags: 0
@@ -8871,6 +8876,58 @@ PrefabInstance:
       propertyPath: <Blackboard>k__BackingField.<posToMouse>k__BackingField.core
       value: 
       objectReference: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].flipY
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampY
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZ
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateY
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].rotateZ
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].transform
+      value: 
+      objectReference: {fileID: 1837172699}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampXrot.x
+      value: -60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampXrot.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZrot.x
+      value: -60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4730134310842295261, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
+      propertyPath: <Blackboard>k__BackingField.<mouseLook>k__BackingField.rotatingObjects.Array.data[0].clampZrot.y
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 4815760036686125764, guid: 3e3cecb977e899546b82e4f23e2d11af, type: 3}
       propertyPath: m_Mesh
       value: 

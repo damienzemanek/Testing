@@ -26,6 +26,16 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         // Unbound        
         AddModule(new MountModule(facade));
         AddModule(new MouseInputZonesModule(facade));
+        AddModule(new MouseLookModule(facade));
+    }
+    
+
+    public class MouseLookModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, LATEUPDATE
+    {
+        public MouseLookModule(TwoD_TitanController facade) : base(facade, true) { }
+    
+        public override void Execute() => facade.Blackboard.mouseLook.Execute();
+        public void LateTick(float dt) => ExecuteTemplateCall(dt);
     }
     
     public class MouseInputZonesModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, UPDATE, IAPI_Dependant<MouseModuleContext>

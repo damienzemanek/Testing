@@ -206,6 +206,8 @@ namespace EMILtools.Extensions
 
                     // Rebuild quaternion & apply
                     ro.transform.localRotation = Quaternion.Euler(euler);
+                    
+                    Debug.Log("Rotating");
                 }
             }
             

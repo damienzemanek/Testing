@@ -46,7 +46,7 @@ public class TitanAnims : MonoBehaviour
     public void Play(in AnimToken token, int layer = 0, float normalizedTime = float.NegativeInfinity)
     {
         state = token.state;
-        animator.Play(token.hash, layer, normalizedTime);
+        //animator.Play(token.hash, layer, normalizedTime);
     }
 
 
