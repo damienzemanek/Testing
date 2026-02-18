@@ -18,7 +18,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         AddModule(new DismountModule(facade.Input.HoldInteract, facade));
         AddModule(new LocomotionModule(facade.Input.Move, facade));
         AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
-
+        AddModule(new ShootModule(facade.Input.Shoot, facade));
         
         // Layer 2 -> Actions
         AddModule(new CameraSystemModule(facade.Actions.Mount, facade));
@@ -30,6 +30,30 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
     }
     
 
+    public class ShootModule : InputHeldModuleFacade<TwoD_TitanController>, UPDATE
+    {
+        public ShootModule(PersistentAction<bool> action, TwoD_TitanController facade) : base(action, facade, false) { }
+
+        protected override void Awake()
+            => executeGuarder = new ActionGuarderMutable(
+                new ActionGuard(() => !isActive, AnimateBackToIdle, "Not Active", "Back To Idle"),
+                           new ActionGuard(() => facade.Blackboard.bulletSpawner.fireTimer.isRunning, "Fire Rate On Cooldown"));
+        
+        protected override void Execute(float dt)
+        {
+            if (facade.Blackboard.bulletSpawner.fireTimer.isRunning) return;
+            facade.Blackboard.bulletSpawner.targetPosition = facade.Blackboard.mouseLook.core.contactPoint;
+            facade.Blackboard.bulletSpawner.Spawn();
+            facade.Blackboard.anims.animator.Play(facade.Blackboard.anims.shoot, layer: 1, normalizedTime: 0f);
+        }
+
+        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+        
+        void AnimateBackToIdle() 
+            => facade.Blackboard.anims.animator.CrossFade(facade.Blackboard.anims.move, 0.1f, 0);
+    }
+    
+
     public class MouseLookModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, LATEUPDATE
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade, true) { }
@@ -38,7 +62,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         public void LateTick(float dt) => ExecuteTemplateCall(dt);
     }
     
-    public class MouseInputZonesModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, UPDATE, IAPI_Dependant<MouseModuleContext>
+    public class MouseInputZonesModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, UPDATE, IAPI_Dependant<MouseInputZonesModule.MouseModuleContext>
     {
         public struct MouseModuleContext { public Camera cam; public MouseModuleContext(Camera cam) => this.cam = cam; }
         public MouseInputZonesModule(TwoD_TitanController facade) : base(facade, true) { }

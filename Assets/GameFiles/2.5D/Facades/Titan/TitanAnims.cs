@@ -31,7 +31,7 @@ public class TitanAnims : MonoBehaviour
     public readonly AnimToken land = new("land", AnimState.Locomotion);
     public readonly AnimToken shoot = new("shoot", AnimState.Locomotion);
     public readonly AnimToken upperbodyidle = new("upperbodyidle", AnimState.Locomotion);
-    public readonly AnimToken move = new("Move", AnimState.Locomotion);
+    public readonly AnimToken move = new("Locomotion", AnimState.Locomotion);
     public readonly AnimToken moveback = new("MoveBack", AnimState.Locomotion);
     public readonly AnimToken mountFrontAnim = new("mountFront", AnimState.MountFront);
     public readonly AnimToken dismountAnim = new("dismount", AnimState.Dismount);
@@ -46,7 +46,7 @@ public class TitanAnims : MonoBehaviour
     public void Play(in AnimToken token, int layer = 0, float normalizedTime = float.NegativeInfinity)
     {
         state = token.state;
-        //animator.Play(token.hash, layer, normalizedTime);
+        animator.Play(token.hash, layer, normalizedTime);
     }
 
 
