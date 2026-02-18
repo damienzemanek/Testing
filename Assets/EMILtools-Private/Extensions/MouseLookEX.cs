@@ -201,7 +201,7 @@ namespace EMILtools.Extensions
                     
 
                     ro.transform.rotation = Quaternion.Euler(lookAtEuler);
-                    ro.transform.localEulerAngles = new Vector3(ro.transform.localEulerAngles.x * ro.rotateScaler, 0, ro.transform.localEulerAngles.z);
+                    //ro.transform.localEulerAngles = new Vector3(ro.transform.localEulerAngles.x * ro.rotateScaler, 0, ro.transform.localEulerAngles.z);
 
 
                 }
