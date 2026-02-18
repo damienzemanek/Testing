@@ -10226,6 +10226,7 @@ Transform:
   m_LocalScale: {x: 0.49619, y: 0.49619, z: 0.49619}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2767289955299629615}
   - {fileID: 8530620302462907270}
   - {fileID: 2054423709533115679}
   m_Father: {fileID: 0}
@@ -10314,7 +10315,7 @@ MonoBehaviour:
       targetPosition: {x: 0, y: 0, z: 0}
     <anims>k__BackingField: {fileID: 2782705395070487353}
     <phys>k__BackingField: {fileID: 8527623559060392329}
-    <mountLocation>k__BackingField: {fileID: 2767289955299629615}
+    <mountLocation>k__BackingField: {fileID: 6381707091261659822}
     <myMountZone>k__BackingField: {fileID: 6629431082675660752}
     <mouseLook>k__BackingField:
       cam: {fileID: 0}
@@ -16126,7 +16127,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2767289955299629615}
   - {fileID: 4450341823148253307}
   - {fileID: 8632203379069085978}
   - {fileID: 2531413551585945831}
@@ -23651,6 +23651,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5770680376221589501}
+  - {fileID: 6381707091261659822}
   m_Father: {fileID: 1961461059992757573}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &2541775436175837220
@@ -36361,6 +36362,37 @@ Transform:
   - {fileID: 950063894435577567}
   m_Father: {fileID: 5770680376221589501}
   m_LocalEulerAnglesHint: {x: -8.619, y: 0, z: 0}
+--- !u!1 &4802966783365325191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6381707091261659822}
+  m_Layer: 0
+  m_Name: Mount Animation Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6381707091261659822
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4802966783365325191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -18.77}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8530620302462907270}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4804048223973349210
 GameObject:
   m_ObjectHideFlags: 0
@@ -85851,7 +85883,7 @@ GameObject:
   m_Layer: 0
   m_Name: Mount Zone
   m_TagString: MountZone
-  m_Icon: {fileID: 6519382022992737161, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 419385456094870383, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -85863,12 +85895,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7667885464632461619}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7071068, z: -0, w: -0.7071068}
-  m_LocalPosition: {x: -14, y: -18.970001, z: 0}
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: -0.7071068}
+  m_LocalPosition: {x: -14.319798, y: 0, z: 0.21623178}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 5770680376221589501}
+  m_Father: {fileID: 1961461059992757573}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6629431082675660752
 MonoBehaviour:
