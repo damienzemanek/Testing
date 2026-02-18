@@ -11,7 +11,7 @@ using static TwoD_IA;
 using static TwoD_InputAuthority;
 
 [CreateAssetMenu(fileName = "2D Input Reader", menuName = "ScriptableObjects/2D Input Reader")]
-public class TwoD_InputReader : ScriptableObject, 
+public class TwoD_InputReader : 
     IPlayerActions, 
     IInputReaderSubordinate<TwoD_InputMap, Subordinates>
 {
@@ -39,7 +39,7 @@ public class TwoD_InputReader : ScriptableObject,
         if (Input.MouseInputZones == null)
         {
             Debug.LogWarning("MouseInputZones not initialized already... Initializing MouseCallbackZones for TwoD_InputReader");
-            Input.MouseInputZones = CreateInstance<MouseCallbackZones>();
+            Input.MouseInputZones = new MouseCallbackZones();
             Input.MouseInputZones.w = Screen.width;
             Input.MouseInputZones.h = Screen.height;
             halfScreenWidth = Input.MouseInputZones.w * 0.5f;

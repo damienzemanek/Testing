@@ -8,7 +8,7 @@ using UnityEngine;
 namespace EMILtools.Extensions
 {
     [CreateAssetMenu(fileName = "Mouse Callback Zones", menuName = "ScriptableObjects/Mouse/Callback Zones")]
-    public class MouseCallbackZones : ScriptableObject
+    public class MouseCallbackZones
     { 
         public int w = 1920;
         public int h = 1080;
