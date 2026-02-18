@@ -6,3 +6,8 @@ public interface IAPI_Dependant<T> : IAPI_Module
     protected void GrabDependancies(T context);
 
 }
+
+public interface IAPI_Spawn : IAPI_Module
+{
+    public void Spawn();
+}

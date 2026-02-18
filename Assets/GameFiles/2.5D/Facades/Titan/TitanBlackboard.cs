@@ -42,6 +42,8 @@ public class TitanBlackboard : Blackboard
         set => moveDecay.Time = value;
     }
     
+    [BoxGroup("ReadOnly")] [ReadOnly] public bool canMount = false;
+
     [BoxGroup("ReadOnly")] [ReadOnly] public bool hasMounted = false;
     [field: BoxGroup("ReadOnly")][field: SerializeField] [field:ReadOnly] public CameraContext camContext { get; private set; }
     [field: BoxGroup("ReadOnly")] [field: NonSerialized] public TwoD_PilotController myPilot { get; set; }

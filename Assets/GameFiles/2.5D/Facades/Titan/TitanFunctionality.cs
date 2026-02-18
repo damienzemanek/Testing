@@ -28,6 +28,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         AddModule(new MouseInputZonesModule(facade));
         AddModule(new MouseLookModule(facade));
     }
+
+    
     
 
     public class ShootModule : InputHeldModuleFacade<TwoD_TitanController>, UPDATE
@@ -221,6 +223,9 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         }
         
         public MountModule(TwoD_TitanController facade) : base(facade, true) { }
+
+        protected override void Awake()
+            => executeGuarder.Add(new ActionGuard(() => !facade.Blackboard.canMount, "Cant Mount"));
 
         // Looks like alot of indirection, but Functionality Modules run through the Guards when they Execute;
         // Combined with the IAPI + IEnumerator it's just adding an extra layer of abstraction, +  the IEnumerator

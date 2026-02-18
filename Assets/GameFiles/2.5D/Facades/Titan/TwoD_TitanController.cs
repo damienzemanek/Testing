@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -23,6 +24,7 @@ public class TwoD_TitanController : MonoFacade<
     private void Start()
     {
         Blackboard.moveDecay.Start();
+        OnSpawn();
     }
 
     public void OnAuthorityReceived()
@@ -52,4 +54,17 @@ public class TwoD_TitanController : MonoFacade<
         Functionality.Unbind();
     }
 
+    void OnSpawn()
+    {
+        Blackboard.canMount = false;
+        StartCoroutine(WaitUntilLanded());
+        
+        IEnumerator WaitUntilLanded()
+        {
+            while(!Blackboard.phys.isGrounded) yield return null;
+            Blackboard.anims.Play(Blackboard.anims.land);
+            Blackboard.canMount = true;
+        }
+    }
+    
 }
