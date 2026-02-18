@@ -140,6 +140,8 @@ namespace EMILtools.Extensions
                 public float rotateScaler;
                 
                 public Transform transform;
+
+                public bool swapXWithZ;
                 
                 public bool rotateX;
                 public bool rotateY;
@@ -178,9 +180,16 @@ namespace EMILtools.Extensions
                     ro.transform.LookAt(destination);
                     Vector3 lookAtEuler = ro.transform.eulerAngles;
 
+                    if (ro.swapXWithZ)
+                    {
+                        float save = lookAtEuler.x;
+                        lookAtEuler.x = lookAtEuler.z;
+                        lookAtEuler.z = save; 
+                    }
+
                     if (!ro.rotateX) lookAtEuler.x = prevEuler.x;
                     if (!ro.rotateY) lookAtEuler.y = prevEuler.y;
-                    if (!ro.rotateZ) lookAtEuler.y = prevEuler.z;
+                    if (!ro.rotateZ) lookAtEuler.z = prevEuler.z;
                     
                     if (ro.flipX) lookAtEuler.x *= -1;
                     if (ro.flipY) lookAtEuler.y *= -1;
@@ -189,6 +198,7 @@ namespace EMILtools.Extensions
                     if (ro.clampX) lookAtEuler.x = Mathf.Clamp(lookAtEuler.x, ro.clampXrot.x, ro.clampXrot.y);
                     if (ro.clampY) lookAtEuler.y = Mathf.Clamp(lookAtEuler.y, ro.clampXrot.x, ro.clampXrot.y);
                     if (ro.clampZ) lookAtEuler.z = Mathf.Clamp(lookAtEuler.z, ro.clampXrot.x, ro.clampXrot.y);
+                    
 
                     ro.transform.rotation = Quaternion.Euler(lookAtEuler);
                     ro.transform.localEulerAngles = new Vector3(ro.transform.localEulerAngles.x * ro.rotateScaler, 0, ro.transform.localEulerAngles.z);
