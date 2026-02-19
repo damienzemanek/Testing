@@ -15,11 +15,12 @@ public class ShipFunctionality : Functionalities<ShipController>
 {
     protected override void AddModulesHere()
     {
-        AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
+        // AddModule(new RotateModuleToggleSub(facade.Input.Rotate, facade));
         AddModule(new ThrustModuleSub(facade.Input.Thrust, facade));
         AddModule(new FireModule(facade.Input.Fire, facade));
         AddModule(new SwitchCamModule(facade.Input.SwitchCam, facade));
         AddModule(new CannonMouselookModule(facade.Input.MouseLook, facade));
+        AddModule(new SteerModule(facade.Input.Thrust, facade));
     }
 
 
@@ -100,6 +101,8 @@ public class ShipFunctionality : Functionalities<ShipController>
             [field: SerializeField] public float thrustForce { get; private set; }
             [field: SerializeField] public float defaultFOV { get; private set; }
             [field: SerializeField] public float notMovingSlowScalar { get; private set; }
+            [field: SerializeField] public float maxVelocity { get; private set; }
+
 
         }
 
@@ -112,6 +115,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         {
             facade.Blackboard.thrustFOV.SetInitialTime(1f);
             facade.InitTimers((facade.Blackboard.thrustFOV, false));
+            facade.Blackboard.rb.maxLinearVelocity = config.maxVelocity;
         }
 
 
@@ -131,7 +135,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         }
 
         protected override void Execute(float dt)
-        => facade.Blackboard.rb.AddForce(facade.transform.up * config.thrustForce, config.thrustForceMode);
+        => facade.Blackboard.rb.AddForce(facade.transform.forward * config.thrustForce, config.thrustForceMode);
 
         void Slow() => facade.Blackboard.rb.linearVelocity *= facade.Config.thrust.notMovingSlowScalar;
 
@@ -140,45 +144,75 @@ public class ShipFunctionality : Functionalities<ShipController>
         
         public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
     }
-    
-    
-    
-    
-    public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, ShipController>, FIXEDUPDATE
+
+
+    public class SteerModule : InputHeldModuleFacade<ShipController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
         {
-            [field: SerializeField] public float scalar { get; private set; }
+            [field: SerializeField] public float steerSmooth { get; private set; }
+            [field: SerializeField] public Vector3 offset { get; private set; }
         }
         
-        [ShowInInspector, ReadOnly] Quaternion camOffset => facade != null 
-                                                                ? facade.Blackboard.camTransform.rotation 
-                                                                : Quaternion.identity;
-        [ShowInInspector, ReadOnly] Vector3 rotationVector;
-
-
-        public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
- 
-        protected override void Awake()
-            => executeGuarder = new (new ActionGuard(() => !isActive, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
+        Config cfg => facade.Config.steer;
         
-        protected override void OnSet(Vector3 rotation)
-            => rotationVector = rotation;
+        public SteerModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
+
+        protected override void Awake()
+        => executeGuarder = new (new ActionGuard(() => !isActive, StopSteering));
 
         protected override void Execute(float dt)
         {
-            Quaternion deltaScaled = Quaternion.Euler(rotationVector * facade.Config.rotate.scalar);
-            Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * facade.transform.rotation;
+            Quaternion target = Quaternion.Euler(facade.Blackboard.cam.transform.rotation.eulerAngles + cfg.offset);
 
-            facade.transform.rotation = Quaternion.Lerp(facade.transform.rotation, newRot, 0.1f); 
+            float t = Mathf.Clamp01(cfg.steerSmooth * dt);
+            facade.transform.rotation = Quaternion.Lerp(facade.transform.rotation, target, t);
         }
 
-
-        public void OnFixedTick(float dt)
-        {
-            ExecuteTemplateCall(dt);
-        }
+        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        void StopSteering() => facade.Blackboard.rb.angularVelocity = Vector3.zero;
+        
     }
+    
+    
+    
+    //
+    // public class RotateModuleToggleSub : InputHeldModuleFacade<Vector3, ShipController>, FIXEDUPDATE
+    // {
+    //     [Serializable]
+    //     public struct Config
+    //     {
+    //         [field: SerializeField] public float scalar { get; private set; }
+    //     }
+    //     
+    //     [ShowInInspector, ReadOnly] Quaternion camOffset => facade != null 
+    //                                                             ? facade.Blackboard.camTransform.rotation 
+    //                                                             : Quaternion.identity;
+    //     [ShowInInspector, ReadOnly] Vector3 rotationVector;
+    //
+    //
+    //     public RotateModuleToggleSub(PersistentAction<Vector3, bool> action, ShipController facade) : base(action, facade, true) { }
+    //
+    //     protected override void Awake()
+    //         => executeGuarder = new (new ActionGuard(() => !isActive, () => facade.Blackboard.rb.angularVelocity = Vector3.zero));
+    //     
+    //     protected override void OnSet(Vector3 rotation)
+    //         => rotationVector = rotation;
+    //
+    //     protected override void Execute(float dt)
+    //     {
+    //         Quaternion deltaScaled = Quaternion.Euler(rotationVector * facade.Config.rotate.scalar);
+    //         Quaternion newRot = camOffset * deltaScaled * Quaternion.Inverse(camOffset) * facade.transform.rotation;
+    //
+    //         facade.transform.rotation = Quaternion.Lerp(facade.transform.rotation, newRot, 0.1f); 
+    //     }
+    //
+    //
+    //     public void OnFixedTick(float dt)
+    //     {
+    //         ExecuteTemplateCall(dt);
+    //     }
+    // }
 
 }

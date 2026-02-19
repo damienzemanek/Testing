@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e1d3aaffae0f8544a33ee6c6d07d673, type: 3}
   m_Name: ShipConfig
   m_EditorClassIdentifier: 
-  rotate:
-    <scalar>k__BackingField: 30
+  steer:
+    <steerSmooth>k__BackingField: 8
+    <offset>k__BackingField: {x: -25, y: 0, z: 0}
   thrust:
     <thrustForceMode>k__BackingField: 0
-    <thrustForce>k__BackingField: 5
+    <thrustForce>k__BackingField: 20
     <defaultFOV>k__BackingField: 90
-    <notMovingSlowScalar>k__BackingField: 0.6
+    <notMovingSlowScalar>k__BackingField: 0.3
+    <maxVelocity>k__BackingField: 20

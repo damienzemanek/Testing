@@ -135,14 +135,14 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 3.441316, y: 3.6190581, z: 1.5111103}
-  m_Center: {x: -0.007556385, y: -0.21744171, z: 0.25555465}
+  m_Size: {x: 3.441316, y: 3.6190581, z: 0.17973487}
+  m_Center: {x: -0.007556385, y: -0.21744171, z: 0.46820572}
 --- !u!54 &8706605852123688932
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -162,7 +162,7 @@ Rigidbody:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
