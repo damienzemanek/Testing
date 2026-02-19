@@ -16,7 +16,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
     protected override void AddModulesHere()
     {
         // Layer 1
-        AddModule(new MoveModule(facade.Input.Move, facade));
+        AddModule(new LocomotionModule(facade.Input.Move, facade));
         AddModule(new ShootModule(facade.Input.Shoot, facade));
         AddModule(new LookModule(facade.Input.Look, facade));
         AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
@@ -341,7 +341,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
     }
     
     
-    public class MoveModule : InputHeldModuleFacade<Vector2, TwoD_PilotController>, FIXEDUPDATE
+    public class LocomotionModule : InputHeldModuleFacade<Vector2, TwoD_PilotController>, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -362,7 +362,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
 
         }
 
-        public MoveModule(PersistentAction<Vector2, bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
+        public LocomotionModule(PersistentAction<Vector2, bool> action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         Config cfg => facade.Config.move;
 

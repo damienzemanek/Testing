@@ -17,3 +17,11 @@ MonoBehaviour:
     targetOffset: {x: 0, y: 5, z: 0}
   <mount>k__BackingField:
     <duration>k__BackingField: 1
+  <move>k__BackingField:
+    <speed>k__BackingField: 4300
+    <forceMode>k__BackingField: 0
+    <runAlphaMax>k__BackingField: 1
+    <decayScalar>k__BackingField:
+      val: 1
+    <slowdownTime>k__BackingField: 1
+    <maxVelMagnitude>k__BackingField: 60

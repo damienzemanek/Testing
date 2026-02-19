@@ -9,7 +9,7 @@ using UnityEngine;
 public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> : ValidatedMonoBehaviour, 
      IInputAuthority<TInputMap, TSubordinateEnum>
      where TInputMap : class, IInputMap, new()
-     where TInputReader : ScriptableObject, IInputReaderSubordinate<TInputMap, TSubordinateEnum>, IInitializable
+     where TInputReader : IInputReaderSubordinate<TInputMap, TSubordinateEnum>, new()
      where TSubordinateEnum : Enum
 {
      [SerializeField, Required] protected TInputReader Reader;
@@ -22,15 +22,19 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
 
       protected virtual void Awake()
       {
+          Reader = new TInputReader();
           if (presetWithInitialSubordinate) InitialSubordinate.Value.SetupFirstAuthority(this);
       }
       
       void IInputAuthority<TInputMap, TSubordinateEnum>.ReceiveRequest(IInputSubordinate<TInputMap, TSubordinateEnum> subordinate)
       {
           Reader.subordinate = subordinate;
-          if(initializedReader) return;
-          Reader.Init();
-          initializedReader = true;
+          
+          if(!initializedReader) {
+              Reader.Init();
+              initializedReader = true; }
+          
+          Reader.OnAuthorityChange();
       }
 
       

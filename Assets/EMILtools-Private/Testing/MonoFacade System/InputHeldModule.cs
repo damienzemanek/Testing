@@ -13,7 +13,7 @@ public abstract class InputHeldModule<TPublisherArgs> : MonoFunctionalityModule
     
     bool initialized;
     bool useIsActiveGuard;
-    PersistentAction<TPublisherArgs, bool> action;
+    [NonSerialized] PersistentAction<TPublisherArgs, bool> action;
     [ShowInInspector] protected bool isActive;
     [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
