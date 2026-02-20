@@ -1,20 +1,27 @@
 ﻿using System;
 using EMILtools.Core;
-using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
+using static ITwoD_Blackboard;
 using static Ledge;
-using static PilotConfig;
 using static TwoD_InputAuthority;
 
-[Serializable]
-public class PilotBlackboard : Blackboard
+public interface ITwoD_Blackboard : IBlackboard
 {
-    [field: BoxGroup("References")] [field: SerializeField]  public Rigidbody rb { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; private set; }
+    public enum LookDir { None, Left, Right }
+    public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb, MountFront, Dismount }
+    public Transform facing { get; set; }
+    public LookDir facingDir { get; set; }
+}
+
+[Serializable]
+public class PilotBlackboard : Blackboard, ITwoD_Blackboard
+{
+    [field: BoxGroup("References")] [field: SerializeField] public Rigidbody rb { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; set; }
     [field: BoxGroup("References")] [field: SerializeField]  public CapsuleCollider capsuleCollider { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public WeaponManager weapons { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public ProjectileSpawnManager bulletSpawner { get; private set; }
@@ -33,7 +40,7 @@ public class PilotBlackboard : Blackboard
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer titanProgressTimer { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer spawnTitanTimer { get; set; }
     
-    [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir;
+    [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir { get; set; }
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir moveDir;
     
     [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;

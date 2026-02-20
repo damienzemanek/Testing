@@ -1,12 +1,8 @@
-using System;
-using EMILtools.Core;
 using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
-using static EMILtools.Extensions.MouseLookEX;
-using static PilotConfig;
+using static ITwoD_Blackboard;
 using static TwoD_IA;
 using static TwoD_InputAuthority;
 

@@ -1,5 +1,5 @@
 using UnityEngine;
-using static PilotConfig;
+using static ITwoD_Blackboard;
 
 public class TitanAnims : MonoBehaviour
 {

@@ -6,13 +6,20 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
-public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboard, TActionMap>: ValidatedMonoBehaviour, IFacade
+public abstract class MonoFacade<TMonoFacade, 
+        TFunctionality, 
+        TConfig, 
+        TBlackboard, 
+        TActionMap>:
+        ValidatedMonoBehaviour,
+        IFacade
     where TMonoFacade : IFacade    
     where TConfig : Config                                 // Config does not need to be an interior because it should not have a reference to the facade, it is just data
     where TBlackboard : Blackboard                       
     where TFunctionality : Functionalities<TMonoFacade>,   IFacadeCompositionElement<TMonoFacade>, new()
     where TActionMap : class, IActionMap, new()
 {
+    public FacadeInterfaceContext context { get; set; }
     bool initialized = false;
     [field: Title("Action Mappings")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TActionMap Actions { get; protected set; }
@@ -23,6 +30,8 @@ public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboa
     [field: Title("Functionality Modules")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
 
+    protected virtual void Awake() 
+        => context = new FacadeInterfaceContext(Blackboard, Config, Functionality);
 
     public T GetFunctionality<T>() where T : class, IAPI_Module
     {
@@ -66,4 +75,5 @@ public abstract class MonoFacade<TMonoFacade, TFunctionality, TConfig, TBlackboa
         if (!initialized) return;
         Functionality.LateTick(Time.deltaTime);
     }
+    
 }

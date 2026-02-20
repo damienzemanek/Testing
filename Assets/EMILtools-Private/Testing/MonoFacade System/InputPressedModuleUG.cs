@@ -3,10 +3,13 @@ using EMILtools.Core;
 using Sirenix.OdinInspector;
 
 
-
-public abstract class InputPressedModule : MonoFunctionalityModule
+/// <summary>
+/// Unguarded
+/// No Args
+/// </summary>
+public abstract class InputPressedModuleUG : MonoFunctionalityModule
 {
-    public InputPressedModule(PersistentAction action)
+    public InputPressedModuleUG(PersistentAction action)
      => this.action = action;
     
     bool initialized;
@@ -27,8 +30,11 @@ public abstract class InputPressedModule : MonoFunctionalityModule
     
 }
 
-public abstract class InputPressedModule<TSetActionGuarder> : MonoFunctionalityModule
-    where TSetActionGuarder : IActionGuarder, new()
+/// <summary>
+/// Guarded
+/// No Args
+/// </summary>
+public abstract class InputPressedModule : MonoFunctionalityModule
 {
     
     public InputPressedModule(PersistentAction action)
@@ -39,7 +45,7 @@ public abstract class InputPressedModule<TSetActionGuarder> : MonoFunctionalityM
     
     bool initialized;
     [NonSerialized] PersistentAction action;
-    [ShowInInspector] protected TSetActionGuarder onPressGuarder;
+    [ShowInInspector] protected ActionGuarderMutable onPressGuarder;
     
     
     public override void Bind() => action.Add(OnPressTemplateCall);
@@ -59,11 +65,14 @@ public abstract class InputPressedModule<TSetActionGuarder> : MonoFunctionalityM
         OnPress();
     }
     protected abstract void OnPress();
-    
 }
 
-public abstract class InputPressedModule<T, TSetActionGuarder> : MonoFunctionalityModule
-    where TSetActionGuarder : IActionGuarder, new()
+/// <summary>
+/// Guarded
+/// 1 Args
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public abstract class InputPressedModule<T> : MonoFunctionalityModule
 {
     
     public InputPressedModule(PersistentAction<T> action)
@@ -74,7 +83,7 @@ public abstract class InputPressedModule<T, TSetActionGuarder> : MonoFunctionali
     
     bool initialized;
     [NonSerialized] PersistentAction<T> action;
-    [ShowInInspector] protected TSetActionGuarder onPressGuarder;
+    [ShowInInspector] protected ActionGuarderMutable onPressGuarder;
     
     
     public override void Bind() => action.Add(OnPressTemplateCall);

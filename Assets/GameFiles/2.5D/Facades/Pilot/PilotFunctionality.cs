@@ -7,9 +7,10 @@ using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
+using static ITwoD_Blackboard;
 using static Ledge;
-using static PilotConfig;
 using static TwoD_InputAuthority;
+using static TwoD_SharedModules;
 
 public class PilotFunctionality : Functionalities<TwoD_PilotController>
 {
@@ -19,7 +20,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         AddModule(new LocomotionModule(facade.Input.Move, facade));
         AddModule(new ShootModule(facade.Input.Shoot, facade));
         AddModule(new LookModule(facade.Input.Look, facade));
-        AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
+        AddModule(new FaceDirectionModule<TwoD_PilotController>(facade.Input.FaceDirection, facade));
         AddModule(new JumpModule(facade.Input.Jump, facade));
         AddModule(new TitanCallInModule(facade.Input.CallInTitan, facade));
         AddModule(new RunModule(facade.Input.Run, facade));
@@ -84,7 +85,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
 
-    public class MountTitan : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
+    public class MountTitan : InputPressedModuleFacade<TwoD_PilotController>
     {
         public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
@@ -94,7 +95,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         protected override void OnPress() => facade.Blackboard.hasRequestedMount = true;
     }
 
-    public class TitanCallInModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
+    public class TitanCallInModule : InputPressedModuleFacade<TwoD_PilotController>
     {
         [Serializable]
         public struct Config
@@ -233,7 +234,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         }
     }
 
-    public class JumpModule : InputPressedModuleFacade<ActionGuarderMutable, TwoD_PilotController>
+    public class JumpModule : InputPressedModuleFacade<TwoD_PilotController>
     {
         [Serializable]
         public struct Config
@@ -269,25 +270,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             facade.Blackboard.hasJumped.Value = true;
         }
     }
-
-    public class FaceDirectionModule : InputHeldModuleFacade<LookDir, TwoD_PilotController>, UPDATE
-    {
-        
-        public FaceDirectionModule(PersistentAction<LookDir, bool> action, TwoD_PilotController facade) : base(action, facade, false) { }
-        
-        [ShowInInspector] LookDir dir;
-        
-        protected override void OnSet(LookDir args) => dir = args;
-
-        protected override void Execute(float dt)
-        {
-            if (dir == LookDir.Right) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (dir == LookDir.Left) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
-            facade.Blackboard.facingDir = dir;
-        }
-
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
-    }
+    
 
     public class LookModule : InputHeldModuleFacade<TwoD_PilotController>, LATEUPDATE
     {

@@ -6,9 +6,10 @@ using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using static PilotConfig;
+using static ITwoD_Blackboard;
 using static TitanFunctionality.MouseInputZonesModule;
 using static TwoD_InputAuthority;
+using static TwoD_SharedModules;
 
 public class TitanFunctionality : Functionalities<TwoD_TitanController>
 {
@@ -17,7 +18,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         // Layer 1 -> Direct Input
         AddModule(new DismountModule(facade.Input.HoldInteract, facade));
         AddModule(new LocomotionModule(facade.Input.Move, facade));
-        AddModule(new FaceDirectionModule(facade.Input.FaceDirection, facade));
+        AddModule(new FaceDirectionModule<TwoD_TitanController>(facade.Input.FaceDirection, facade));
         AddModule(new ShootModule(facade.Input.Shoot, facade));
         
         // Layer 2 -> Actions
@@ -73,25 +74,6 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         void IAPI_Dependant<MouseModuleContext>.GrabDependancies(MouseModuleContext context) => facade.Blackboard.mouseLook.cam = context.cam;
     }
     
-    
-    public class FaceDirectionModule : InputHeldModuleFacade<LookDir, TwoD_TitanController>, UPDATE
-    {
-        
-        public FaceDirectionModule(PersistentAction<LookDir, bool> action, TwoD_TitanController facade) : base(action, facade, false) { }
-        
-        [ShowInInspector] LookDir dir;
-        
-        protected override void OnSet(LookDir args) => dir = args;
-
-        protected override void Execute(float dt)
-        {
-            if (dir == LookDir.Right) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (dir == LookDir.Left) facade.Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
-            facade.Blackboard.facingDir = dir;
-        }
-
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
-    }
 
     
     public class LocomotionModule : InputHeldModuleFacade<Vector2, TwoD_TitanController>, UPDATE

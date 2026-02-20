@@ -6,7 +6,7 @@ using static InterfaceEX;
 
 namespace EMILtools_Private.Testing
 {
-    public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>
+    public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>, IFunctionality
         where TMonoFacade : IFacade
     {
         readonly Dictionary<Type, MonoFunctionalityModule> API_Modules = new();

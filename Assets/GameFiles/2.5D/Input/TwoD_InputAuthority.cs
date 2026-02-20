@@ -1,11 +1,9 @@
 using System;
 using EMILtools.Core;
 using EMILtools.Extensions;
-using KBCore.Refs;
-using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 using UnityEngine;
-using static PilotConfig;
+using static ITwoD_Blackboard;
 using static TwoD_InputAuthority;
 
 [Serializable]

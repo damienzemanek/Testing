@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class VolleyProjectileSpawner : MonoBehaviour
 {
+    public bool canFire = true;
     public ProjectileSpawnManager projSpawner;
     public bool volleyFiring = false;
     public float volleyDelay = 1f;
@@ -13,14 +14,17 @@ public class VolleyProjectileSpawner : MonoBehaviour
     public bool volleyOnCooldown;
     public Deviatable animSpeed;
 
+    public Action onVolleyStart;
+    public Action onVolleyEnd;
 
     void Start()
     {
-        this.Get<Animator>().speed = animSpeed;
+        if(this.Has(out Animator anim)) anim.speed = animSpeed;
     }
 
     void Update()
     {
+        if(!canFire) return;
         if(volleyFiring && !volleyOnCooldown) projSpawner.Spawn();
         FireVolley();
     }
@@ -31,6 +35,7 @@ public class VolleyProjectileSpawner : MonoBehaviour
         {
             StartCoroutine(C_FireVolley());
             volleyFiring = true;
+            onVolleyStart?.Invoke();
         }
     }
     IEnumerator C_FireVolley()
@@ -40,6 +45,6 @@ public class VolleyProjectileSpawner : MonoBehaviour
         volleyOnCooldown = true;
         yield return new WaitForSeconds(volleyDelay);
         volleyOnCooldown = false;
-
+        onVolleyEnd?.Invoke();
     }
 }

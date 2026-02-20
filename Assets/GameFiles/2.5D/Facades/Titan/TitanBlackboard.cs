@@ -3,16 +3,16 @@ using EMILtools.Core;
 using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
-using Unity.Cinemachine;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
+using static ITwoD_Blackboard;
 using static TwoD_InputAuthority;
 
 [Serializable]
-public class TitanBlackboard : Blackboard
+public class TitanBlackboard : Blackboard, ITwoD_Blackboard
 {
     [field: BoxGroup("References")] [field: SerializeField] public Rigidbody rb { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; set; }
     [field: BoxGroup("References")] [field: SerializeField] public CapsuleCollider capsuleCollider { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public WeaponManager weapons { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public ProjectileSpawnManager bulletSpawner { get; private set; }
@@ -27,8 +27,8 @@ public class TitanBlackboard : Blackboard
     [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; set; }
     [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; set; }
     
-    [BoxGroup("ReadOnly")] [ReadOnly] public PilotConfig.LookDir facingDir;
-    [BoxGroup("ReadOnly")] [ReadOnly] public PilotConfig.LookDir moveDir;
+    [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir { get; set; }
+    [BoxGroup("ReadOnly")] [ReadOnly] public LookDir moveDir { get; set; }
     
     //[BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public bool canMount = false;
     //[BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting;

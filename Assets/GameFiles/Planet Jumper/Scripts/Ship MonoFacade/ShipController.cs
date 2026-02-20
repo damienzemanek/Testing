@@ -1,19 +1,9 @@
 using System;
-using DG.Tweening;
 using EMILtools.Extensions;
 using Sirenix.OdinInspector;
-using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.Profiling;
-using UnityEngine.Serialization;
-using static CamEX;
-using static CamEX.CurveValue;
-using static Effectability;
-using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Timers.TimerUtility;
 using static IInputSubordinate<ShipInputAuthority.ShipInputMap,ShipInputAuthority.Subordinates>;
-using static LifecycleEX;
-using static ShipFunctionality;
 using static ShipInputAuthority;
 
 [Serializable]
