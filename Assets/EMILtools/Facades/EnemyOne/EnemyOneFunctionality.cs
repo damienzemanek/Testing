@@ -20,12 +20,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController>
     public class TrackTarget : InputPressedModuleFacade<Transform, EnemyOneController>
     {
         public TrackTarget(PersistentAction<Transform> action, EnemyOneController facade) : base(action, facade) { }
-        
-        protected override void OnPress(Transform t)
-        {
-            facade.Blackboard.trackingTarget = t;
-            if(t == null) return;
-        }
+        protected override void OnPress(Transform t) => facade.Blackboard.trackingTarget = t;
     }
 
     public class AimAtTarget : UnboundFunctionalityModuleFacade<EnemyOneController>, UPDATE
@@ -40,8 +35,6 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController>
             Vector3 lookAtLoc = facade.Blackboard.trackingTarget.position + facade.Blackboard.aimOffset;
             var aimPivot = facade.Blackboard.aimPivot;
             aimPivot.LookAt(lookAtLoc);
-            //Vector3 e = aimPivot.eulerAngles;
-            //aimPivot.rotation = Quaternion.Euler(0f, e.y, 0f);
         }
 
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
