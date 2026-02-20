@@ -20,7 +20,6 @@ public class ShipBlackboard : Blackboard
     [field: BoxGroup("Thrust")] [field:SerializeField] public ParticleSystem vfx_Thrust { get; private set; }
     [BoxGroup("Thrust")] public CurveValue thrustFOV;
     
-    
     [BoxGroup("Fire")] [SerializeField] public ProjectileSpawnManager cannonProjectileSpawner;
     [BoxGroup("Fire")] [SerializeField] public Animator gunAnimator;
     [BoxGroup("Fire")] [SerializeField] public MouseLookSettings cannonMouseLook;
