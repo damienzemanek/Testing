@@ -38,9 +38,14 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         public ShootModule(PersistentAction<bool> action, TwoD_TitanController facade) : base(action, facade, false) { }
 
         protected override void Awake()
-            => executeGuarder = new ActionGuarderMutable(
+        { 
+            executeGuarder = new ActionGuarderMutable(
                 new ActionGuard(() => !isActive, AnimateBackToIdle, "Not Active", "Back To Idle"),
-                           new ActionGuard(() => facade.Blackboard.bulletSpawner.fireTimer.isRunning, "Fire Rate On Cooldown"));
+                new ActionGuard(() => facade.Blackboard.bulletSpawner.fireTimer.isRunning, "Fire Rate On Cooldown"));
+            
+            facade.Blackboard.bulletSpawner.OnSpawn = new PersistentAction();
+            facade.Blackboard.bulletSpawner.OnSpawn.Add(AnimateShoot);
+        }
         
         protected override void Execute(float dt)
         {
@@ -51,16 +56,23 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         }
 
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
-        
-        void AnimateBackToIdle() 
-            => facade.Blackboard.anims.animator.CrossFade(facade.Blackboard.anims.move, 0.1f, 0);
+
+        void AnimateBackToIdle()
+        {
+            facade.Blackboard.anims.animator.CrossFade(facade.Blackboard.anims.move, 0.1f, 0);
+            facade.Blackboard.anims.animator.CrossFade(facade.Blackboard.anims.upperbodyidle, 0.1f, 1);
+        }
+        void AnimateShoot() => facade.Blackboard.anims.animator.Play(facade.Blackboard.anims.shoot, layer: 1, normalizedTime: 0f);
     }
     
 
     public class MouseLookModule : UnboundFunctionalityModuleFacade<TwoD_TitanController>, LATEUPDATE
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade, true) { }
-    
+
+        protected override void Awake() =>
+            executeGuarder.Add(new ActionGuard(() => !facade.Blackboard.hasMounted, "Not Mounted"));
+
         public override void Execute() => facade.Blackboard.mouseLook.Execute();
         public void LateTick(float dt) => ExecuteTemplateCall(dt);
     }
@@ -69,6 +81,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
     {
         public struct MouseModuleContext { public Camera cam; public MouseModuleContext(Camera cam) => this.cam = cam; }
         public MouseInputZonesModule(TwoD_TitanController facade) : base(facade, true) { }
+        protected override void Awake() =>
+            executeGuarder.Add(new ActionGuard(() => !facade.Blackboard.hasMounted, "Not Mounted"));
         public override void Execute() => facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
         public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
         void IAPI_Dependant<MouseModuleContext>.GrabDependancies(MouseModuleContext context) => facade.Blackboard.mouseLook.cam = context.cam;
@@ -237,7 +251,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
             
             yield return new WaitForSeconds(facade.Config.mount.duration);
             
-            
+            facade.Blackboard.anims.animator.Play(facade.Blackboard.anims.upperbodyidle);
             facade.Blackboard.moveDecay.Start();
             facade.Blackboard.hasMounted = true;
             if(facade.Blackboard.myPilot != null) facade.Blackboard.myPilot.gameObject.SetActive(false);

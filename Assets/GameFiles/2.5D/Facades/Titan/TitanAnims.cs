@@ -30,7 +30,8 @@ public class TitanAnims : MonoBehaviour
     public readonly AnimToken falling = new("Falling", AnimState.InAir);
     public readonly AnimToken land = new("Land", AnimState.Locomotion);
     public readonly AnimToken shoot = new("Shoot", AnimState.Locomotion);
-    public readonly AnimToken upperbodyidle = new("upperbodyidle", AnimState.Locomotion);
+    public readonly AnimToken upperbodyidle = new("UpperBodyIdle", AnimState.Locomotion);
+    public readonly AnimToken upperbodyland = new("UpperBodyLanding", AnimState.Locomotion);
     public readonly AnimToken move = new("Locomotion", AnimState.Locomotion);
     public readonly AnimToken moveback = new("MoveBack", AnimState.Locomotion);
     public readonly AnimToken mountFrontAnim = new("mountFront", AnimState.MountFront);
