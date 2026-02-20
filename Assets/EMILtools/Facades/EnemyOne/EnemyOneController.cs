@@ -15,6 +15,7 @@ public class EnemyOneController : MonoFacade<
 {
     public class ActionMap : IActionMap
     {
+        [NonSerialized] public PersistentAction<Transform> TrackTarget = new();
         [NonSerialized] public PersistentAction<bool> SeeTarget = new();
         [NonSerialized] public PersistentAction<LookDir, bool> FaceDirection = new();
 
@@ -39,7 +40,12 @@ public class EnemyOneController : MonoFacade<
     public void OnEnterBounds(Collider other)
     {
         Actions.SeeTarget.Invoke(true);
-        Debug.Log("Recfeived");
+        Actions.TrackTarget.Invoke(other.transform);
     }
-    public void OnExitBounds(Collider other) => Actions.SeeTarget.Invoke(false);
+
+    public void OnExitBounds(Collider other)
+    {
+        Actions.SeeTarget.Invoke(false);
+        Actions.TrackTarget.Invoke(null);
+    }
 }

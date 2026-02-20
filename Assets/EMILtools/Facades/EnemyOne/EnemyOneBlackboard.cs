@@ -7,7 +7,10 @@ using static ITwoD_Blackboard;
 public class EnemyOneBlackboard : Blackboard, ITwoD_Blackboard
 {
     public VolleyProjectileSpawner volleySpawner;
-    public bool canSeeTarget = false;
+    [ReadOnly] public bool canSeeTarget = false;
+    public Vector3 aimOffset;
+    [ReadOnly] public Transform trackingTarget;
+    public Transform aimPivot;
     [field:SerializeField] public Transform facing { get; set; }
-    [field:SerializeField] public LookDir facingDir { get; set; }
+    [field: ReadOnly] [field:SerializeField] public LookDir facingDir { get; set; }
 }

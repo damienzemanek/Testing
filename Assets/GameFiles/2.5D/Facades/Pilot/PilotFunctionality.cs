@@ -40,7 +40,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
     }
 
 
-    public class DismountTitanModule : BasicFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>
+    public class DismountTitanModule : BasicFunctionalityModuleFacade<TwoD_PilotController>
     {
         public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
 
@@ -54,7 +54,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
     }
 
 
-    public class CameraSystemModule : BasicFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>, IAPI_CameraSystem
+    public class CameraSystemModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
         
@@ -75,7 +75,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         }
     }
     
-    public class MouseModule : UnboundFunctionalityModuleFacade<TwoD_PilotController, ActionGuarderMutable>, UPDATE
+    public class MouseModule : UnboundFunctionalityModuleFacade<TwoD_PilotController>, UPDATE
     {
         public MouseModule(TwoD_PilotController facade) : base(facade, true) { }
 
@@ -146,7 +146,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
 
     public class DoubleJumpModule : BasicFunctionalityModuleFacade<TwoD_PilotController>
     {
-        public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
+        public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake() => facade.Actions.DoubleJump.Add(Execute);
 
@@ -168,7 +168,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
 
     public class ClimbModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_Climb
     {
-        public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
+        public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake() => facade.Actions.ClimbLedge.Add(Execute);
 
@@ -188,7 +188,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
 
     public class MantleModule : BasicFunctionalityModuleFacade<TwoD_PilotController>, IAPI_Mantler
     {
-        public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
+        public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade, true) { }
 
         protected override void Awake() => facade.Actions.MantleLedge.Add(Execute);
 
@@ -216,7 +216,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         public void CantMantleLedge() => facade.Blackboard.canMantle.Value = false;
     }
 
-    public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_PilotController, ActionGuarderMutable>
+    public class LandModule : BasicFunctionalityModuleFacade<bool, TwoD_PilotController>
     {
         public LandModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade, false) { }
 

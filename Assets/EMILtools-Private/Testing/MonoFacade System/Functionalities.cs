@@ -6,8 +6,8 @@ using static InterfaceEX;
 
 namespace EMILtools_Private.Testing
 {
-    public abstract class Functionalities<TMonoFacade> : IFacadeCompositionElement<TMonoFacade>, IFunctionality
-        where TMonoFacade : IFacade
+    public abstract class Functionalities<TMonoFacade> : IFunctionality
+        where TMonoFacade : class, IFacade
     {
         readonly Dictionary<Type, MonoFunctionalityModule> API_Modules = new();
         [field: NonSerialized] public TMonoFacade facade { get; set; }
@@ -18,7 +18,8 @@ namespace EMILtools_Private.Testing
         List<LATEUPDATE> _late = new();
         public Functionalities() => modules = new List<MonoFunctionalityModule>();
         
-        public void OnAwakeCompositionalElement()
+        public void InjectFacadeReference(IFacade f) => facade = f as TMonoFacade;
+        public void SetupModules()
         {
             AddModulesHere();
             foreach (var t in modules)  t.SetupModule();

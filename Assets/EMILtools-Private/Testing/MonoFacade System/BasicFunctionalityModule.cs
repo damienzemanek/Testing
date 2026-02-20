@@ -2,13 +2,18 @@
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 
-public abstract class BasicFunctionalityModule<TExecuteGuarder> : MonoFunctionalityModule
-    where TExecuteGuarder : class, IActionGuarder, new()
+/// <summary>
+/// For Logic triggered by internal events rather than direct input
+/// ex: Another Module will trigger this one
+///
+/// No Args
+/// </summary>
+public abstract class BasicFunctionalityModule : MonoFunctionalityModule
 {
     bool initialized;
     bool initGuarder;
     [NonSerialized] PersistentAction action;
-    [ShowInInspector] protected TExecuteGuarder executeGuarder;
+    [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
     public BasicFunctionalityModule(PersistentAction action, bool initGuarder)
     {
@@ -19,7 +24,7 @@ public abstract class BasicFunctionalityModule<TExecuteGuarder> : MonoFunctional
     public override void SetupModule()
     {
         if (initialized) return; initialized = true;
-        if(initGuarder) executeGuarder = new TExecuteGuarder();
+        if(initGuarder) executeGuarder = new ActionGuarderMutable();
         Awake();
     }
     protected virtual void Awake() { }
@@ -36,13 +41,17 @@ public abstract class BasicFunctionalityModule<TExecuteGuarder> : MonoFunctional
     public abstract void Execute();
 }
 
-public abstract class BasicFunctionalityModule<T, TExecuteGuarder> : MonoFunctionalityModule
-    where TExecuteGuarder : class, IActionGuarder, new()
+/// <summary>
+/// For Logic triggered by internal events rather than direct input
+/// ex: Another Module will trigger this one
+///
+/// 1 Args
+public abstract class BasicFunctionalityModule<T> : MonoFunctionalityModule
 {
     bool initialized;
     bool initGuarder;
     [NonSerialized] PersistentAction<T> action;
-    [ShowInInspector] protected TExecuteGuarder executeGuarder;
+    [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
     public BasicFunctionalityModule(PersistentAction<T> action, bool initGuarder)
     {
@@ -53,7 +62,7 @@ public abstract class BasicFunctionalityModule<T, TExecuteGuarder> : MonoFunctio
     public override void SetupModule()
     {
         if (initialized) return; initialized = true;
-        if(initGuarder)  executeGuarder = new TExecuteGuarder();
+        if(initGuarder)  executeGuarder = new ActionGuarderMutable();
         Awake();
     }
     protected virtual void Awake() { }

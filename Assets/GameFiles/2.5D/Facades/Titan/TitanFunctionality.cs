@@ -57,7 +57,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
     }
     
 
-    public class MouseLookModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, LATEUPDATE
+    public class MouseLookModule : UnboundFunctionalityModuleFacade<TwoD_TitanController>, LATEUPDATE
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade, true) { }
     
@@ -65,7 +65,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         public void LateTick(float dt) => ExecuteTemplateCall(dt);
     }
     
-    public class MouseInputZonesModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, UPDATE, IAPI_Dependant<MouseInputZonesModule.MouseModuleContext>
+    public class MouseInputZonesModule : UnboundFunctionalityModuleFacade<TwoD_TitanController>, UPDATE, IAPI_Dependant<MouseInputZonesModule.MouseModuleContext>
     {
         public struct MouseModuleContext { public Camera cam; public MouseModuleContext(Camera cam) => this.cam = cam; }
         public MouseInputZonesModule(TwoD_TitanController facade) : base(facade, true) { }
@@ -174,7 +174,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
         }
     }
 
-    public class CameraSystemModule : BasicFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, IAPI_CameraSystem
+    public class CameraSystemModule : BasicFunctionalityModuleFacade<TwoD_TitanController>, IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade, true) { }
         
@@ -196,7 +196,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController>
 
     }
 
-    public class MountModule : UnboundFunctionalityModuleFacade<TwoD_TitanController, ActionGuarderMutable>, IAPI_Mount
+    public class MountModule : UnboundFunctionalityModuleFacade<TwoD_TitanController>, IAPI_Mount
     {
         [Serializable]
         public struct Config

@@ -2,19 +2,18 @@
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 
-public abstract class UnboundFunctionalityModule<TExecuteGuarder> : MonoFunctionalityModule
-    where TExecuteGuarder : class, IActionGuarder, new()
+public abstract class UnboundFunctionalityModule : MonoFunctionalityModule
 {
     bool initialized;
     bool initGuarder;
-    [ShowInInspector] protected TExecuteGuarder executeGuarder;
+    [ShowInInspector] protected ActionGuarderMutable executeGuarder;
 
     public UnboundFunctionalityModule(bool initGuarder) => this.initGuarder = initGuarder;
     
     public override void SetupModule()
     {
         if (initialized) return; initialized = true;
-        if (initGuarder) executeGuarder = new TExecuteGuarder();
+        if (initGuarder) executeGuarder = new ActionGuarderMutable();
         Awake();
     }
     protected virtual void Awake() { }
@@ -33,8 +32,7 @@ public abstract class UnboundFunctionalityModule<TExecuteGuarder> : MonoFunction
     public abstract void Execute();
 }
 
-public abstract class UnboundFunctionalityModuleFacade<TCoreFacade, TExecuteGuarder> : UnboundFunctionalityModule<TExecuteGuarder>
-    where TExecuteGuarder : class, IActionGuarder, new()
+public abstract class UnboundFunctionalityModuleFacade<TCoreFacade> : UnboundFunctionalityModule
     where TCoreFacade : class, IFacade
 {
     [field:ReadOnly] [field:ShowInInspector] [field:NonSerialized] protected TCoreFacade facade { get; set; }

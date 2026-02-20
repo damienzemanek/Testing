@@ -13,10 +13,10 @@ public abstract class MonoFacade<TMonoFacade,
         TActionMap>:
         ValidatedMonoBehaviour,
         IFacade
-    where TMonoFacade : IFacade    
-    where TConfig : Config                                 // Config does not need to be an interior because it should not have a reference to the facade, it is just data
+    where TMonoFacade : class, IFacade    
+    where TConfig : Config                              
     where TBlackboard : Blackboard                       
-    where TFunctionality : Functionalities<TMonoFacade>,   IFacadeCompositionElement<TMonoFacade>, new()
+    where TFunctionality : Functionalities<TMonoFacade>, new()
     where TActionMap : class, IActionMap, new()
 {
     public FacadeInterfaceContext context { get; set; }
@@ -51,8 +51,9 @@ public abstract class MonoFacade<TMonoFacade,
         Debug.Assert(Config != null, $"{name}: Config not assigned");
         Debug.Assert(Blackboard != null, $"{name}: Blackboard not assigned");
         Debug.Assert(Functionality != null, $"{name}: Functionality did not initialize");
-        
-        Functionality.ComposeElement(this);   // Functionality must be last because it depends on the Config and the Blackboard
+
+        Functionality.InjectFacadeReference(this);
+        Functionality.SetupModules();   // Functionality must be last because it depends on the Config and the Blackboard
         
         initialized = true;
     }
