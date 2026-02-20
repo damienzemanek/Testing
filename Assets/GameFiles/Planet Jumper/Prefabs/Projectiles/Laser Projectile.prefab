@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3188796909319421895}
   - component: {fileID: 9029378004514043323}
   - component: {fileID: 4516100145148698610}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 8706605852123688932}
   - component: {fileID: 1785779972189713203}
   - component: {fileID: 9175234426227852376}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Laser Projectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 383
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 128
