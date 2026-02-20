@@ -13,6 +13,7 @@ public class EnemyOneController : MonoFacade<
     ActionMap>,
     IBoundsCheckReceiver
 {
+    
     public class ActionMap : IActionMap
     {
         [NonSerialized] public PersistentAction<Transform> TrackTarget = new();
@@ -48,4 +49,5 @@ public class EnemyOneController : MonoFacade<
         Actions.SeeTarget.Invoke(false);
         Actions.TrackTarget.Invoke(null);
     }
+
 }

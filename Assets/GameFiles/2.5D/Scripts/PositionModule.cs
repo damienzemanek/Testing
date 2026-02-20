@@ -14,7 +14,7 @@ public class PositionModule : MonoBehaviour
     public struct Constrain : IPositionModule
     {
         public Transform transform;
-
+        public bool local;
         public bool x, y, z;
         
         public float constraintX;
@@ -27,7 +27,8 @@ public class PositionModule : MonoBehaviour
             if (x) position.x = constraintX;
             if (y) position.y = constraintY;
             if (z) position.z = constraintZ;
-            transform.position = position;
+            if(!local) transform.position = position;
+            else transform.localPosition = position;
         }
     }
 

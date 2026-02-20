@@ -34,13 +34,15 @@ public static class RotateExtension
     public struct LockRotation
     {
         [SerializeField] public bool active;
+        [ShowIf("active")] [SerializeField] public bool local;
         [ShowIf("active")] [SerializeField] Vector3 rotation;
         [ShowIf("active")] [SerializeField] Transform transform;
 
         public void LockRotationInLateUpdate()
         {
             if (transform == null) this.Error("No transform set");
-            transform.rotation = Quaternion.Euler(rotation);
+            if(!local) transform.rotation = Quaternion.Euler(rotation);
+            else transform.localRotation = Quaternion.Euler(rotation);
         }
     }
     
