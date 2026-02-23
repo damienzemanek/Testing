@@ -26,6 +26,7 @@ public class EnemyOneController : MonoFacade<
     {
         base.Awake();
         InitializeFacade();
+        Blackboard.livingEntity.OnDeath.Add(_ => Blackboard.weaponParent.parent = null);
     }
 
     void OnEnable()
