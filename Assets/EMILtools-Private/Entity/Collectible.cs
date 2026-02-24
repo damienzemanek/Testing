@@ -8,13 +8,11 @@ using EMILtools.Extensions;
 
 public class Collectible : Entity
 {
-    public EffectUser eff_spawn;
     public float enlargeTime = 1f;
     public IntEventChannel scoreChannel;
 
     private void Start()
     {
-        eff_spawn.Play(destroyCancellationToken);
         transform.localScale = Vector3.zero;
         transform.DOScale(Vector3.one, enlargeTime)
             .SetEase(Ease.OutBack);
