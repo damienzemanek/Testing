@@ -17,7 +17,7 @@ public class ShipController : MonoFacade<
     IInputSubordinate<ShipInputMap, Subordinates>
 {
     public ShipInputMap Input { get; set; }
-    [field: SerializeField] [field: PropertyOrder(-1)] public SubordinateContext context { get; set; }
+    [field: SerializeField] [field: PropertyOrder(-1)] public SubordinateContext inputSubordinateContext { get; set; }
     public ShipInputMap InjectInputMap() => new ("Ship Input Map");
     
     public void InitSubordinate()

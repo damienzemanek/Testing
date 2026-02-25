@@ -7,17 +7,22 @@ using static IInputSubordinate<TwoD_InputAuthority.TwoD_InputMap,TwoD_InputAutho
 using static ITwoD_Blackboard;
 using static TwoD_InputAuthority;
 
+
+
 public class TwoD_TitanController : MonoFacade<
-    TwoD_TitanController,
-    TitanFunctionality, 
-    TitanConfig,
-    TitanBlackboard,
-    TitanActionMap>,
+        TwoD_TitanController,
+        TitanFunctionality, 
+        TitanConfig,
+        TitanBlackboard,
+        TitanContext,
+        TitanActionMap>,
     TimerUtility.ITimerUser,
     IInputSubordinate<TwoD_InputMap, Subordinates>
 {
+    
+    
     [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly]  public TwoD_InputMap Input { get; set; }
-    [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext context { get; set; }
+    [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext inputSubordinateContext { get; set; }
     public TwoD_InputMap InjectInputMap() => new("Titan");
     public void InitSubordinate() => InitializeFacade();
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using EMILtools.Timers;
 using UnityEngine.TestTools;
+using static PipelineSystem;
 
 public class PipelineTests
 {
@@ -36,7 +37,7 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
-        var jump = new PipelineBuilder<TestContext>(3)
+        var jump = new PipelineBuilder<TestContext>(size: 3)
             .AddStep(ctx => ctx.Value == 0)
             .AddStep(ctx => ctx.Value == 1)
             .FinalStep(ctx => Jump(ctx));
@@ -51,6 +52,7 @@ public class PipelineTests
         Assert.AreEqual(jumpSuccessfull, true);
         
     }
+    
     
     [Test]
     public void StepFail_FinalDoesNotExecute()
@@ -150,7 +152,6 @@ public class PipelineTests
         Assert.AreEqual(jumpCalled, true, "Jump should be called after total 1100ms.");
     
         yield return null;
-
     }
 
     

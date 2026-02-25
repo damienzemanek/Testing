@@ -65,13 +65,13 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             facade.Blackboard.camContext.rotComposer.TargetOffset = facade.Config.camSettings.targetOffset;
         }
 
-        void IAPI_Dependant<CameraContext>.GrabDependancies(CameraContext context)
+        void IAPI_Dependant<CameraContext>.GrabDependancies(CameraContext injectedContext)
         {
             CameraContext myContext = facade.Blackboard.camContext;
-            myContext.CM = context.CM;
-            myContext.follow = context.follow;
-            myContext.rotComposer = context.rotComposer;
-            myContext.camera = context.camera;
+            myContext.CM = injectedContext.CM;
+            myContext.follow = injectedContext.follow;
+            myContext.rotComposer = injectedContext.rotComposer;
+            myContext.camera = injectedContext.camera;
         }
     }
     
@@ -82,7 +82,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
         protected override void Awake() => executeGuarder.Add(new LazyActionGuard<LazyFuncLite<bool>>
                                            (facade.Blackboard.isMantled.SimpleReactions, () => facade.Blackboard.isMantled, "Is Mantled"));
         public override void Execute() => facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+        public void UpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
 
     public class MountTitan : InputPressedModuleFacade<TwoD_PilotController>
@@ -319,7 +319,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             => facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.upperbodyidle, 0.1f, 1);
 
 
-        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        public void FixedTick(float dt) => ExecuteTemplateCall(dt);
         
     }
     
@@ -411,6 +411,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController>
             }
         }
         
-        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        public void FixedTick(float dt) => ExecuteTemplateCall(dt);
     }
 }

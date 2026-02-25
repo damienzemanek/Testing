@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using EMILtools.Core;
 using EMILtools.Timers;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Timers.TimerUtility;
 using UnityEngine.SceneManagement;
@@ -19,25 +20,26 @@ public class MapBounds : MonoBehaviour, ITimerUser
     public Ref<float> boundsMaxTime;
     public CountdownTimer boundsTimter;
 
+    public int frontEndMenuIndx = 1;
+
     void Awake()
     {
         boundsTimter = new CountdownTimer(boundsMaxTime);
         this.InitTimer(boundsTimter, true);
-
-        boundsTimter.OnTimerStop.Add(() => StartCoroutine(Lose()));
+        boundsTimter.OnTimerStop.Add(Lose);
     }
 
-    IEnumerator Lose()
+    [Button]
+    void Lose() => StartCoroutine(C_Lose());
+    IEnumerator C_Lose()
     {
         playerExplEffect.SetActive(true);
         playerExplEffect.transform.parent = null;
         player.SetActive(false);
-        yield return new WaitForSeconds(2);
-        LoadSceneAsync(0, LoadSceneMode.Single).completed += _ =>
-        {
-            LoadSceneAsync(1, Additive);
-            outOfBounds.Invoke(false);
-        };
+        yield return new WaitForSeconds(0.25f);
+        var loader = FindAnyObjectByType<LoadScene>();
+        if (loader == null) yield break;
+        loader.LoadSceneFadeScreenToOpaque(frontEndMenuIndx);
     }
 
     private void OnTriggerExit(Collider other)

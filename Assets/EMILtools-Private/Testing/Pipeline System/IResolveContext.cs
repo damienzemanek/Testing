@@ -47,8 +47,9 @@ public class Timed : IResolveContext, ITimerUser
 public class Wait : IResolveContext, ITimerUser
 {
     CountdownTimer timer;
-    public Task WaitUntilResolved() => tcs.Task;
     TaskCompletionSource<bool> tcs = new();
+    
+    public Task WaitUntilResolved() => tcs.Task;
     public bool canDelay => true;
     
     public Wait(float sec)

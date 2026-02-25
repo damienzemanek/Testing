@@ -21,17 +21,25 @@ namespace EMILtools.Core
     ///   of Hooks and call Unsubscribe on a stable target, even if other objects have subscribed/unsubscribed in the meantime.
     /// - Fluent API Support: Enables the <c>.Sub().Sub()</c> chaining pattern by providing a consistent object to return and operate upon.
     /// </remarks>
-    
-    public interface IPersistenAction { }
+
+    public interface IPersistentAction
+    {
+        public virtual PersistentAction<T, T2> Add<T, T2>(Action<T, T2> cb) => throw new NotImplementedException();
+        public virtual PersistentAction<T, T2> Remove<T, T2>(Action<T, T2> cb) => throw new NotImplementedException();
+
+    }
 
     
     [Serializable]
-    public sealed class PersistentAction<T, T2> : IPersistenAction
+    public sealed class PersistentAction<T, T2> : IPersistentAction
     {
         Action<T, T2> _action = delegate { };
         
         public void Invoke(T val1, T2 val2) => _action.Invoke(val1, val2);
-        public PersistentAction<T, T2> Add(Action<T, T2> cb) { _action += cb; return this; }
+
+        public PersistentAction<T, T2> Add<T, T2>(Action<T, T2> cb) => (this as IPersistentAction).Add(cb);
+        public PersistentAction<T, T2> Remove<T, T2>(Action<T, T2> cb) => (this as IPersistentAction).Remove(cb);
+        public  PersistentAction<T, T2> Add(Action<T, T2> cb) { _action += cb; return this; }
         public PersistentAction<T, T2> Remove(Action<T, T2> cb) { _action -= cb; return this; }
         
         public int Count => _action.GetInvocationList().Length;
@@ -41,7 +49,7 @@ namespace EMILtools.Core
     }
     
     [Serializable]
-    public sealed class PersistentAction<T> : IPersistenAction
+    public sealed class PersistentAction<T> : IPersistentAction
     {
         Action<T> _action = delegate { };
         
@@ -58,7 +66,7 @@ namespace EMILtools.Core
     /// Non-generic version for simple triggers
     /// </summary>
     [Serializable]
-    public sealed class PersistentAction : IPersistenAction
+    public sealed class PersistentAction : IPersistentAction
     {
         Action _action = delegate { };
 

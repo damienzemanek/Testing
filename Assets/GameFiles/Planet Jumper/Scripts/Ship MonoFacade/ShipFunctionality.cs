@@ -35,7 +35,7 @@ public class ShipFunctionality : Functionalities<ShipController>
             facade.Blackboard.cannonMouseLook.Input = facade.Input;
         }
         protected override void Execute(float dt) => facade.Blackboard.cannonMouseLook.UpdateMouseLook();
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+        public void UpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
     
 
@@ -77,7 +77,7 @@ public class ShipFunctionality : Functionalities<ShipController>
         protected override void Execute(float dt)
         => facade.Blackboard.cannonProjectileSpawner.Spawn();
         
-        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        public void FixedTick(float dt) => ExecuteTemplateCall(dt);
 
 
 
@@ -140,9 +140,9 @@ public class ShipFunctionality : Functionalities<ShipController>
         void Slow() => facade.Blackboard.rb.linearVelocity *= facade.Config.thrust.notMovingSlowScalar;
 
         
-        public void OnUpdateTick(float dt) => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
+        public void UpdateTick(float dt) => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
         
-        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        public void FixedTick(float dt) => ExecuteTemplateCall(dt);
     }
 
 
@@ -170,7 +170,7 @@ public class ShipFunctionality : Functionalities<ShipController>
             facade.transform.rotation = Quaternion.Lerp(facade.transform.rotation, target, t);
         }
 
-        public void OnFixedTick(float dt) => ExecuteTemplateCall(dt);
+        public void FixedTick(float dt) => ExecuteTemplateCall(dt);
         void StopSteering() => facade.Blackboard.rb.angularVelocity = Vector3.zero;
         
     }

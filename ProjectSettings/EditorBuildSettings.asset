@@ -9,11 +9,17 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
-    path: Assets/GameFiles/Scenes/PlanetJumperLevel1.unity
+    path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperFrontEndMenu.unity
+    guid: 4bf4102389f8158498e4afebb6586a6f
+  - enabled: 1
+    path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperLevel1.unity
     guid: 176564a1e323b41488e30d6f0b3c1a62
   - enabled: 1
-    path: Assets/GameFiles/Scenes/PlanetJumperUI.unity
+    path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperUI.unity
     guid: 51e34ad91b25830419535c5442c9e2fd
+  - enabled: 1
+    path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperLoadingScreen.unity
+    guid: 72386ec144c955b458157c615b4e2b91
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: e8cab15e0e723c54eae7c41a6b4d5378, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 57b310d316eee6f4dbf16ee2d664877f, type: 3}

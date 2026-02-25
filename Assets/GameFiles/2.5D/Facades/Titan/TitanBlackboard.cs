@@ -14,18 +14,15 @@ public class TitanBlackboard : Blackboard, ITwoD_Blackboard
     [field: BoxGroup("References")] [field: SerializeField] public Rigidbody rb { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; set; }
     [field: BoxGroup("References")] [field: SerializeField] public CapsuleCollider capsuleCollider { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public Animator animator { get; private set; }
+
     [field: BoxGroup("References")] [field: SerializeField] public WeaponManager weapons { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] public ProjectileSpawnManager bulletSpawner { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] public TitanAnims anims { get; private set; }
     //[field: BoxGroup("References")] [field: SerializeField] public TurnSlowDown turnSlowDown { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public Transform mountLocation { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public MountZone myMountZone { get; private set; }
     
     [BoxGroup("Orientation")] [field: SerializeField] public MouseLookEX.RotateToMouseWorldSpace mouseLook { get; private set; }
-
-    [BoxGroup("Timers")] [field: SerializeField] public DecayTimer moveDecay { get; set; }
-    [BoxGroup("Timers")] [field: SerializeField] public CountdownTimer turnSlowdown { get; set; }
     
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir facingDir { get; set; }
     [BoxGroup("ReadOnly")] [ReadOnly] public LookDir moveDir { get; set; }
@@ -36,17 +33,6 @@ public class TitanBlackboard : Blackboard, ITwoD_Blackboard
     
     // Dynamic Variables
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public float playerHeight => capsuleCollider != null ? capsuleCollider.height : 0;
-    [BoxGroup("ReadOnly")] [ReadOnly, ShowInInspector] public float speedAlpha // Represents the move alpha 
-    {
-        get => moveDecay != null ? moveDecay.Time : ZeroF;
-        set => moveDecay.Time = value;
-    }
-    
-    [BoxGroup("ReadOnly")] [ReadOnly] public bool canMount = false;
-
-    [BoxGroup("ReadOnly")] [ReadOnly] public bool hasMounted = false;
-    [field: BoxGroup("ReadOnly")][field: SerializeField] [field:ReadOnly] public CameraContext camContext { get; private set; }
-    [field: BoxGroup("ReadOnly")] [field: NonSerialized] public TwoD_PilotController myPilot { get; set; }
     
     
     //[BoxGroup("Guards")] [ShowInInspector, ReadOnly] public SimpleGuarderImmutable shootGuarder;

@@ -10,8 +10,6 @@ using static System.Single;
 public class AnimHandle<TAnimEnum>
     where TAnimEnum : Enum
 {
-    
-    
     [Serializable]
     public struct AnimState
     {
@@ -27,10 +25,7 @@ public class AnimHandle<TAnimEnum>
         public void CalculateHash() => hash = Animator.StringToHash(name);
     }
     
-    
-    
     public AnimState[] states;
-    [HideLabel, Required] public Animator animator;
 
     [Button, PropertyOrder(-1)]
     public void RecalculateHashes()
@@ -51,7 +46,11 @@ public class AnimHandle<TAnimEnum>
         return -1;
     }
     
-    public bool Play(TAnimEnum animEnum, int layer = 0, float normalizedTime = NegativeInfinity)
+    public bool Play(
+        Animator animator, 
+        TAnimEnum animEnum, 
+        int layer = 0, 
+        float normalizedTime = NegativeInfinity)
     {
         if (animator == null) return false;
         if (states == null) return false;
@@ -70,15 +69,24 @@ public class AnimHandle<TAnimEnum>
         return false;
     }
     
-    public bool PlayThenOnEnd(TAnimEnum animEnum, Action onEnd, int layer = 0, float normalizedTime = NegativeInfinity)
+    public bool PlayThenOnEnd(
+        Animator animator,
+        TAnimEnum animEnum, 
+        Action onEnd,
+        int layer = 0, 
+        float normalizedTime = NegativeInfinity)
     {
-        if(!Play(animEnum, layer, normalizedTime)) return false;
-        PlayThenOnEndAsync(animEnum, onEnd, layer);
+        if(!Play(animator, animEnum, layer, normalizedTime)) return false;
+        PlayThenOnEndAsync(animator, animEnum, onEnd, layer);
         return true;
     }
     
 
-    async void PlayThenOnEndAsync(TAnimEnum animEnum, Action onEnd, int layer)
+    async void PlayThenOnEndAsync(
+        Animator animator,
+        TAnimEnum animEnum, 
+        Action onEnd,
+        int layer)
     {
         int hash = GetHash(animEnum);
         if (hash == -1) { Debug.LogWarning($"AnimHandle: No hash mapped for enum {animEnum} (layer {layer})."); return; }
@@ -93,6 +101,7 @@ public class AnimHandle<TAnimEnum>
     }
     
     public bool PlayWeightSet(
+        Animator animator,
         TAnimEnum animEnum,
         float initialWeight,
         float endWeight,
@@ -101,12 +110,13 @@ public class AnimHandle<TAnimEnum>
     {
         Animator lclAnimator = animator;
         animator.SetLayerWeight(layer, initialWeight);
-        if(!PlayThenOnEnd(animEnum, SetWeightTo1, layer, normalizedTime)) return false;
+        if(!PlayThenOnEnd(animator, animEnum, SetWeightTo1, layer, normalizedTime)) return false;
         return true;
         void SetWeightTo1() => lclAnimator.SetLayerWeight(layer, endWeight);
     }
     
     public bool PlayWeightSet(
+        Animator animator,
         TAnimEnum animEnum,
         float weight,
         int layer = 0,
@@ -114,11 +124,12 @@ public class AnimHandle<TAnimEnum>
     {
         Animator lclAnimator = animator;
         animator.SetLayerWeight(layer, weight);
-        if(!Play(animEnum, layer, normalizedTime)) return false;
+        if(!Play(animator, animEnum, layer, normalizedTime)) return false;
         return true;
     }
     
     public bool PlayWeightSetOnEnd(
+        Animator animator,
         TAnimEnum animEnum,
         float initialWeight,
         float endWeight,
@@ -129,12 +140,9 @@ public class AnimHandle<TAnimEnum>
         Animator lclAnimator = animator;
         Action lclOnEnd = onEnd;
         animator.SetLayerWeight(layer, initialWeight);
-        if(!PlayThenOnEnd(animEnum, SetWeightTo1, layer, normalizedTime)) return false;
+        if(!PlayThenOnEnd(animator, animEnum, SetWeightTo1, layer, normalizedTime)) return false;
         return true;
         void SetWeightTo1() {lclAnimator.SetLayerWeight(layer, endWeight); lclOnEnd?.Invoke();}
     }
 
-    
-
-    public static implicit operator Animator(AnimHandle<TAnimEnum> animHandle) => animHandle.animator;
 }

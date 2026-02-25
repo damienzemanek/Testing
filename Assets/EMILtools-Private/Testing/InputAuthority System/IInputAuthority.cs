@@ -9,7 +9,7 @@ public interface IInputAuthority<TInputMap, TSubordinateEnum>
     where TInputMap : class, IInputMap, new()
 {
     public TInputMap currentInputMap => subordinate != null ? subordinate.Input : null;
-    public TSubordinateEnum currentSubordinate => subordinate != null ? subordinate.context.key : default;
+    public TSubordinateEnum currentSubordinate => subordinate != null ? subordinate.inputSubordinateContext.key : default;
     IInputSubordinate<TInputMap, TSubordinateEnum> subordinate { get; set; }
     
     /// <summary>

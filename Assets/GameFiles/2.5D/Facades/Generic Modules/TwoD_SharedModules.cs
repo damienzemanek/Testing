@@ -27,6 +27,6 @@ public static class TwoD_SharedModules
             
         }
 
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+        public void UpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
 }

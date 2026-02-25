@@ -61,7 +61,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController>
             else if(targX < myX) facade.Actions.FaceDirection.Invoke(ITwoD_Blackboard.LookDir.Right, true);
         }
 
-        public void OnUpdateTick(float dt) => ExecuteTemplateCall(dt);
+        public void UpdateTick(float dt) => ExecuteTemplateCall(dt);
     }
 
     public class SightModule : InputPressedModuleFacade<bool, EnemyOneController>

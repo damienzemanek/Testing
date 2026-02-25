@@ -1,25 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using EMILtools_Private.Testing;
-using KBCore.Refs;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
+
 [Serializable]
 public abstract class MonoFacade<TMonoFacade, 
-        TFunctionality, 
-        TConfig, 
-        TBlackboard, 
-        TActionMap>:
-        ValidatedMonoBehaviour,
+        TFunctionality,  // Systems and functionality
+        TConfig,         // Immutable Configuration
+        TBlackboard,     // References
+        TContext,        // Transient state 
+        TActionMap>:     // Internal Action bindings
+        MonoBehaviour,
         IFacade
     where TMonoFacade : class, IFacade    
     where TConfig : Config                              
     where TBlackboard : Blackboard                       
-    where TFunctionality : Functionalities<TMonoFacade>, new()
+    where TContext : struct, IModuleUsabableContext               
+    where TFunctionality : Functionalities<TMonoFacade, TContext>, new()
     where TActionMap : class, IActionMap, new()
 {
-    public FacadeInterfaceContext context { get; set; }
+    public TContext context { get; set; }
     bool initialized = false;
     [field: Title("Action Mappings")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TActionMap Actions { get; protected set; }
@@ -29,9 +30,6 @@ public abstract class MonoFacade<TMonoFacade,
     [field:SerializeField, Required] [field:HideLabel] public TBlackboard Blackboard { get; private set; }
     [field: Title("Functionality Modules")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
-
-    protected virtual void Awake() 
-        => context = new FacadeInterfaceContext(Blackboard, Config, Functionality);
 
     public T GetFunctionality<T>() where T : class, IAPI_Module
     {

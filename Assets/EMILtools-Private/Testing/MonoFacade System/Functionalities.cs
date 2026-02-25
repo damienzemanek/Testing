@@ -6,17 +6,18 @@ using static InterfaceEX;
 
 namespace EMILtools_Private.Testing
 {
-    public abstract class Functionalities<TMonoFacade> : IFunctionality
+    public abstract class Functionalities<TMonoFacade, TContext> : IFunctionality
         where TMonoFacade : class, IFacade
+        where TContext : struct, IModuleUsabableContext
     {
-        readonly Dictionary<Type, MonoFunctionalityModule> API_Modules = new();
+        readonly Dictionary<Type, MonoFunctionalityModule<TMonoFacade, TContext>> API_Modules = new();
         [field: NonSerialized] public TMonoFacade facade { get; set; }
         
-        [ShowInInspector] List<MonoFunctionalityModule> modules; 
+        [ShowInInspector] List<MonoFunctionalityModule<TMonoFacade, TContext>> modules; 
         List<UPDATE> _update = new();
         List<FIXEDUPDATE> _fixed = new();
         List<LATEUPDATE> _late = new();
-        public Functionalities() => modules = new List<MonoFunctionalityModule>();
+        public Functionalities() => modules = new List<MonoFunctionalityModule<TMonoFacade, TContext>>();
         
         public void InjectFacadeReference(IFacade f) => facade = f as TMonoFacade;
         public void SetupModules()
@@ -25,15 +26,25 @@ namespace EMILtools_Private.Testing
             foreach (var t in modules)  t.SetupModule();
             Debug.Log($"{GetType().Name} Functionality modules successfully setup | API Count: " + API_Modules.Count);
         }
+
+        public void Bind()
+        {
+            foreach (var t in modules)
+                if(t is IBindable bindable) bindable.Bind();
+        }
+
+        public void Unbind()
+        {
+            foreach (var t in modules)
+                if(t is IBindable bindable) bindable.Unbind();
+            
+        }
+        public void UpdateTick() { foreach (var t in _update) t.UpdateTick(); }
+        public void FixedTick() { foreach (var t in _fixed) { t.FixedTick(); } }
+        public void LateTick() { foreach (var t in _late) t.LateTick(); }
         
-        public void Bind() { foreach (var t in modules) { t.Bind(); } }
-        public void Unbind() { foreach (var t in modules) t.Unbind(); }
-        public void UpdateTick(float dt) { foreach (var t in _update) t.OnUpdateTick(dt); }
-        public void FixedTick(float fdt) { foreach (var t in _fixed) { t.OnFixedTick(fdt); } }
-        public void LateTick(float dt) { foreach (var t in _late) t.LateTick(dt); }
         
-        
-        public void AddModule(MonoFunctionalityModule module)
+        public void AddModule(MonoFunctionalityModule<TMonoFacade, TContext> module)
         {
             modules.Add(module);
             Debug.Log("ADDING module " + module.GetType().Name + " new count is " + modules.Count);
@@ -51,7 +62,7 @@ namespace EMILtools_Private.Testing
             }
         }
 
-        public Dictionary<Type, MonoFunctionalityModule> APIs() => API_Modules;
+        public Dictionary<Type, MonoFunctionalityModule<TMonoFacade, TContext>> APIs() => API_Modules;
 
 
         protected abstract void AddModulesHere();

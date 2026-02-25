@@ -9,8 +9,9 @@ public static class PipelineSystem
     /// </summary>
     public class PipelineExecutor
     {
+        public static PipelineExecutor Executor = new();
         public async Task Execute<TContext>(Pipeline<TContext> pipeline, TContext ctx)
-            where TContext : struct
+            where TContext : struct, IPipelineContext
         {
             for (int i = 0; i < pipeline.Size; i++)
             {
@@ -19,6 +20,7 @@ public static class PipelineSystem
                     ? pipeline[i].ResolveContext.Resolve(pipeline[i].Execute, ctx) 
                     : pipeline[i].Execute(ctx);
 
+                // To do: Fix raceing, block further exeutions if in flight
                 if (hasCtx && pipeline[i].ResolveContext.canDelay) 
                     await pipeline[i].ResolveContext.WaitUntilResolved();
                 
@@ -28,42 +30,30 @@ public static class PipelineSystem
     }
     
     
+
     /// <summary>
-    /// For repeated Pipeline users, cache your pipeline executor
+    /// Slightly more performant option
     /// </summary>
-    /// <param name="executor"></param>
     /// <param name="pipeline"></param>
     /// <param name="ctx"></param>
     /// <typeparam name="TContext"></typeparam>
-    public static Task TryTo<TContext>(this PipelineExecutor executor, Pipeline<TContext> pipeline, in TContext ctx)
-        where TContext : struct
-        => executor.Execute(pipeline, ctx);
+    /// <returns></returns>
+    public static Task TryTo<TContext>(Pipeline<TContext> pipeline, in TContext ctx)
+        where TContext : struct, IPipelineContext
+    => PipelineExecutor.Executor.Execute(pipeline, ctx);
     
+
     /// <summary>
-    /// For repeated Pipeline users, cache your pipeline executor
-    /// Lazy-ish initialization
-    /// </summary>
-    /// <param name="ctx"></param>
-    /// <param name="pipeline"></param>
-    /// <param name="executor"></param>
-    /// <typeparam name="TContext"></typeparam>
-    public static Task TryTo<TContext>(this TContext ctx, Pipeline<TContext> pipeline, out PipelineExecutor executor)
-        where TContext : struct
-    {
-        executor = new PipelineExecutor(); 
-        return executor.Execute(pipeline, ctx);
-    }
-    
-    /// <summary>
-    /// Fire and Forget
-    /// One off
+    /// Regular option
     /// </summary>
     /// <param name="ctx"></param>
     /// <param name="pipeline"></param>
     /// <typeparam name="TContext"></typeparam>
+    /// <returns></returns>
     public static Task TryTo<TContext>(this TContext ctx, Pipeline<TContext> pipeline)
-        where TContext : struct
-    => new PipelineExecutor().Execute(pipeline, ctx);
+        where TContext : struct, IPipelineContext
+    => PipelineExecutor.Executor.Execute(pipeline, ctx);
+    
     
     
 }
