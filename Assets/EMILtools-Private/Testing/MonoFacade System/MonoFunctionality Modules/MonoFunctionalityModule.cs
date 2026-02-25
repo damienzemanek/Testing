@@ -1,4 +1,5 @@
-﻿using Sirenix.OdinInspector;
+﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 
@@ -54,13 +55,9 @@ public interface IBindable
     public void Unbind();
 }
 
-public interface ISettableTMP<T>
-{
-    public void SetTemplateCall(T value);
-    public void PostSetHook(T value);
-}
 
-    
+
+
 
 public abstract class MonoFunctionalityModule<TFacade, TContext> 
     where TFacade : class, IFacade

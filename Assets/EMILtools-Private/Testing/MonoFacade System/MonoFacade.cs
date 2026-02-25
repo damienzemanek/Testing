@@ -11,16 +11,15 @@ public abstract class MonoFacade<TMonoFacade,
         TBlackboard,     // References
         TContext,        // Transient state 
         TActionMap>:     // Internal Action bindings
-        MonoBehaviour,
-        IFacade
-    where TMonoFacade : class, IFacade    
-    where TConfig : Config                              
-    where TBlackboard : Blackboard                       
-    where TContext : struct, IModuleUsabableContext               
+        MonoBehaviour, IFacade
+    where TMonoFacade    : class, IFacade    
+    where TConfig        : Config                              
+    where TBlackboard    : Blackboard                       
+    where TContext       : struct, IModuleUsabableContext               
     where TFunctionality : Functionalities<TMonoFacade, TContext>, new()
-    where TActionMap : class, IActionMap, new()
+    where TActionMap     : class, IActionMap, new()
 {
-    public TContext context { get; set; }
+    public IModuleUsabableContext Context { get; set; }
     bool initialized = false;
     [field: Title("Action Mappings")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TActionMap Actions { get; protected set; }
@@ -60,19 +59,18 @@ public abstract class MonoFacade<TMonoFacade,
     protected virtual void Update()
     {
         if (!initialized) return;
-        Functionality.UpdateTick(Time.deltaTime);
+        Functionality.UpdateTick();
     }
     
     protected virtual void FixedUpdate()
     {
         if (!initialized) return;
-        Functionality.FixedTick(Time.deltaTime);
+        Functionality.FixedTick();
     }
     
     protected virtual void LateUpdate()
     {
         if (!initialized) return;
-        Functionality.LateTick(Time.deltaTime);
+        Functionality.LateTick();
     }
-    
 }

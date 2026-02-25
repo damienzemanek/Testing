@@ -32,10 +32,15 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         // AddModule(new MouseLookModule(facade));
     }
 
-    public class ShootModule : BoundHeldFunctionality<TwoD_TitanController, TitanContext>, UPDATE
+    public class ShootModule : BoundHeldFunctionality<
+        TwoD_TitanController, 
+        TitanContext,
+        ShootModule.Setter>, 
+        UPDATE
     {
+        public class Setter : SettableTemplate<bool> { public override void Set(bool val) { } }
         public ShootModule(PersistentAction<bool> action, TwoD_TitanController facade) : base(action, facade) { }
-
+        
         protected override void Awake(TitanContext ctx)
         {
             ctx.bulletSpawner.OnSpawn = new PersistentAction();
@@ -89,7 +94,11 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     
     
-    public class LocomotionModule : BoundHeldFunctionality<TwoD_TitanController, TitanContext, Vector2>, UPDATE
+    public class LocomotionModule : BoundHeldFunctionality<
+        TwoD_TitanController,
+        TitanContext,
+        LocomotionModule.Setter>, 
+        UPDATE
     {
         [Serializable]
         public struct Config
@@ -102,6 +111,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             [field: SerializeField] public float maxVelMagnitude { get; private set; }
     
         }
+        
+        public class Setter : SettableTemplate<bool, Vector2> { public override void Set(bool active, Vector2 dir) { } }
         public LocomotionModule(PersistentAction<bool> action, TwoD_TitanController facade) : base(action, facade) { }
         
         [ShowInInspector] Vector2 moveVector;
