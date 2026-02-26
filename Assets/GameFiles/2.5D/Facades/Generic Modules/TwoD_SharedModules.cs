@@ -6,7 +6,7 @@ using static ITwoD_Blackboard;
 public static class TwoD_SharedModules
 {
     public class FaceDirectionModule<TFacadeType, TContext> : 
-        BoundHeldFunctionality<TFacadeType, TContext, FaceDirectionModule<TFacadeType, TContext>.Setter>, 
+        BoundSetFunctionality<TFacadeType, TContext, FaceDirectionModule<TFacadeType, TContext>.Setter>, 
         UPDATE
     where TFacadeType : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext, ITwoD_Context
@@ -26,9 +26,9 @@ public static class TwoD_SharedModules
 
         public override bool Execute(TContext ctx)
         {
-            if (InputContext.dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (InputContext.dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
-            ctx.dir = InputContext.dir;
+            if (SetContext.dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+            if (SetContext.dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            ctx.dir = SetContext.dir;
             return true;
         }
 

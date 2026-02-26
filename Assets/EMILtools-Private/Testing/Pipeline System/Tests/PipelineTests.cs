@@ -4,7 +4,6 @@ using System;
 using System.Collections;
 using EMILtools.Timers;
 using UnityEngine.TestTools;
-using static PipelineSystem;
 
 public class PipelineTests
 {

@@ -29,7 +29,8 @@ public class PilotBlackboard : Blackboard, ITwoD_Blackboard
     [field: BoxGroup("References")] [field: SerializeField]  public CapsuleCollider capsuleCollider { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public WeaponManager weapons { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public ProjectileSpawnManager bulletSpawner { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField]  public AnimatorController_TwoD animController { get; private set; }
+
+    [field: BoxGroup("References")] [field: SerializeField] public Animator animator { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField]  public TurnSlowDown turnSlowDown { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public AugmentPhysEX phys { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public CameraContext camContext { get; private set; }

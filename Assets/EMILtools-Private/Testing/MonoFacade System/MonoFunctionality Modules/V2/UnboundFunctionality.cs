@@ -1,4 +1,5 @@
 ﻿using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalityModule<TFacade, TContext>, 
@@ -21,12 +22,10 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
         Awake();
     }
 
+    [Button]
     public void ExecuteTemplateCall()
     {
-        Debug.Log("Trying to ExecuteTemplateCall " + GetType().Name);
         context.TryTo(executionPipeline);
-        Debug.Log("COMPLETED ExecuteTemplateCall " + GetType().Name);
-
     }
     public abstract bool Execute(TContext ctx);
     

@@ -40,7 +40,7 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         public PersistentAction MantleLedge = new();
         public PersistentAction DoubleJump = new();
         public PersistentAction ClimbLedge = new();
-        public PersistentAction<bool> Land = new();
+        public PersistentAction Land = new();
         public PersistentAction Dismount = new();
 
     }

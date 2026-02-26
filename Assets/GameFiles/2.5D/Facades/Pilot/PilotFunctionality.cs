@@ -9,6 +9,7 @@ using UnityEngine;
 using static EMILtools.Extensions.NumEX;
 using static ITwoD_Blackboard;
 using static Ledge;
+using static PilotConfig.PilotAnims;
 using static TwoD_InputAuthority;
 using static TwoD_SharedModules;
 
@@ -16,7 +17,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 {
     protected override void AddModulesHere()
     {
-        // Layer 1
+        //Layer 1
         AddModule(new LocomotionModule(facade.Input.Move, facade));
         AddModule(new ShootModule(facade.Input.Shoot, facade));
         AddModule(new LookModule(facade.Input.Look, facade));
@@ -26,7 +27,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         AddModule(new RunModule(facade.Input.Run, facade));
         AddModule(new MountTitan(facade.Input.Interact, facade));
 
-        // Layer 2
+        //Layer 2
         AddModule(new LandModule(facade.Actions.Land, facade));
         AddModule(new ClimbModule(facade.Actions.ClimbLedge, facade));
         AddModule(new MantleModule(facade.Actions.MantleLedge, facade));
@@ -40,7 +41,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
 
 
-    public class DismountTitanModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>
+    public class DismountTitanModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override int injectAmountOfAddedSteps => 0;
@@ -57,7 +58,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
 
 
-    public class CameraSystemModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>, IAPI_CameraSystem
+    public class CameraSystemModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override int injectAmountOfAddedSteps => 0;
@@ -92,7 +93,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public void UpdateTick() => ExecuteTemplateCall();
     }
 
-    public class MountTitan : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>
+    public class MountTitan : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override int injectAmountOfAddedSteps => 1;
@@ -102,7 +103,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override bool Execute(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
     }
 
-    public class TitanCallInModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>
+    public class TitanCallInModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         [Serializable]
         public struct Config
@@ -150,7 +151,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
     }
 
-    public class DoubleJumpModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>
+    public class DoubleJumpModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
@@ -160,14 +161,15 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public override bool Execute(PilotContext ctx)
         {
-            facade.Blackboard.animController.Play(facade.Blackboard.animController.dbljump);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Jump);
             facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Blackboard.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
             facade.Blackboard.hasDoubleJumped = true;
             return true;
         }
     }
 
-    public class RunModule : BoundHeldFunctionality<TwoD_PilotController, PilotContext, RunModule.Setter>
+    public class RunModule :
+        BoundSetFunctionality<TwoD_PilotController, PilotContext, RunModule.Setter>
     {
         public class Setter : SettableTemplate<bool> {  }
         public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -181,7 +183,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
     }
 
-    public class ClimbModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>, IAPI_Climb
+    public class ClimbModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_Climb
     {
         public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
@@ -191,7 +193,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public override bool Execute(PilotContext ctx)
         {
-            facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.climb, 0.1f);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Climb);
             return true;
         }
 
@@ -199,7 +201,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         {
             facade.Blackboard.isMantled.Value = false;
             facade.Blackboard.rb.isKinematic = false;
-            facade.Blackboard.animController.state = AnimState.Locomotion;
+            facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd);
             float offset = facade.Config.move.mantleXOffset;
             if(facade.Blackboard.ledgeData.dir == LookDir.Right) offset *= -1;
             facade.transform.position = facade.Blackboard.ledgeData.point.position.With(
@@ -208,7 +210,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
 
     public class MantleModule : 
-        BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>, 
+        BoundFunctionality<TwoD_PilotController, PilotContext>, 
         IAPI_Mantler
     {
         public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
@@ -228,8 +230,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.transform.position = facade.transform.position.With(
                 y: facade.Blackboard.ledgeData.point.position.y - facade.Blackboard.playerHeight, 
                 x: facade.Blackboard.ledgeData.point.position.x + offset);
-            facade.Blackboard.animController.state = AnimState.Mantle;
-            facade.Blackboard.animController.Play(facade.Blackboard.animController.mantle);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Mantle);
             return true;
         }
 
@@ -243,33 +244,36 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public void CantMantleLedge() => facade.Blackboard.canMantle.Value = false;
     }
 
-    public class LandModule : BoundSetFunctionality<TwoD_PilotController, PilotContext, LandModule.Setter>
+    public class LandModule : 
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
-        public class Setter : SettableTemplate<bool> 
-             { [ShowInInspector]  public bool landed => unnamedStoredValue1; }
+
+        protected override void Awake()
+         => facade.Blackboard.phys.isGrounded.SimpleReactions.Add(facade.Actions.Land.Invoke);
         
-        protected override void Awake() 
-            => facade.Blackboard.phys.isGrounded.Reactions.Add(facade.Actions.Land.Invoke);
-        
-        public LandModule(IPersistentDelegate _action, TwoD_PilotController facade) : base(_action, facade) { }
+        public LandModule(PersistentAction _action, TwoD_PilotController facade) : base(_action, facade) { }
         public override int injectAmountOfAddedSteps => 1;
         public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => !SetContext.landed, new Callback(() => Debug.Log("Not landed yet")));
+            => builder.AddBlockIf(_ => {
+                bool isBlocked = !facade.Blackboard.phys.isGrounded.Value;
+                Debug.Log($"[LandModule] Pipeline Check: landed={facade.Blackboard.phys.isGrounded.Value}, isBlocked={isBlocked}");
+                return isBlocked;
+            });
 
+        [Button]
         public override bool Execute(PilotContext ctx)
         {
-            facade.Blackboard.animController.state = AnimState.Locomotion;
+            Debug.Log("Landed");
             facade.Blackboard.jumpDelay.Start();
-            facade.Blackboard.animController.Play(facade.Blackboard.animController.land);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Land);
             facade.Blackboard.hasJumped.Value = false;
             facade.Blackboard.hasDoubleJumped = false;
-            Debug.Log("Lanbded");
             return true;
             
         }
     }
 
-    public class JumpModule : BoundFunctionality<TwoD_PilotController, PilotContext, PersistentAction>
+    public class JumpModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         [Serializable]
         public struct Config
@@ -295,7 +299,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public override bool Execute(PilotContext ctx)
         {
-            facade.Blackboard.animController.Play(facade.Blackboard.animController.jump);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Jump);
             PhysEX.Jump(facade.Blackboard.rb, facade.Blackboard.phys.jumpSettings);
             facade.Blackboard.hasJumped.Value = true;
             return true;
@@ -303,7 +307,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
     
 
-    public class LookModule : BoundHeldFunctionality<TwoD_PilotController, PilotContext, LookModule.Setter>, LATEUPDATE
+    public class LookModule : 
+        BoundSetFunctionality<TwoD_PilotController, PilotContext, LookModule.Setter>, 
+        LATEUPDATE
     {
         public class Setter : SettableTemplate<bool> { }
         public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -318,7 +324,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
     
 
-    public class ShootModule : BoundHeldFunctionality<TwoD_PilotController, PilotContext, ShootModule.Setter>, FIXEDUPDATE
+    public class ShootModule :
+        BoundSetFunctionality<TwoD_PilotController, PilotContext, ShootModule.Setter>, 
+        FIXEDUPDATE
     {
         public class Setter : SettableTemplate<bool> {  }
         public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -337,20 +345,21 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             {
                 facade.Blackboard.bulletSpawner.targetPosition = facade.Blackboard.mouseLook.core.contactPoint;
                 if (facade.Blackboard.bulletSpawner.fireTimer.isRunning) yield break;
-                facade.Blackboard.animController.animator.Play(facade.Blackboard.animController.shoot, layer: 1, normalizedTime: 0f);
+                facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot, layer: 1, normalizedTime: 0);
                 yield return null;
                 facade.Blackboard.bulletSpawner.Spawn();
             }
         }
         
-        void AnimateBackToIdle() 
-            => facade.Blackboard.animController.animator.CrossFade(facade.Blackboard.animController.upperbodyidle, 0.1f, 1);
+        void AnimateBackToIdle() => facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle, layer: 1);
 
         public void FixedTick() => ExecuteTemplateCall();
     }
     
     
-    public class LocomotionModule : BoundHeldFunctionality<TwoD_PilotController, PilotContext, LocomotionModule.Setter>, FIXEDUPDATE
+    public class LocomotionModule : 
+        BoundSetFunctionality<TwoD_PilotController, PilotContext, LocomotionModule.Setter>, 
+        FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -363,6 +372,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             public float maxVelMagnitude;
             public float maxSpeed; // run speed
             public float walkAlphaMax;
+            public float speedStep;
+            public float moveJitterTolerance;
             public Ref<float> runAlphaMax; // Should be greater than the greatest blend tree value to avoid jitter
             [field: SerializeField] public Ref<float> slowdownTime { get; private set; }
 
@@ -399,20 +410,20 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         {
             if (!facade.Blackboard.isRunning) Walk();
             else Run();
-            Move(InputContext.movement);
+            Move(SetContext.movement);
             return true;
             
             void Walk()
             {
-                if(facade.Blackboard.speedAlpha < cfg.walkAlphaMax) facade.Blackboard.speedAlpha += facade.Blackboard.animController.speedStep;
-                facade.Blackboard.speedAlpha = ToleranceSet(facade.Blackboard.speedAlpha, cfg.walkAlphaMax, facade.Blackboard.animController.moveJitterTolerance);
+                if(facade.Blackboard.speedAlpha < cfg.walkAlphaMax) facade.Blackboard.speedAlpha += facade.Config.move.speedStep;
+                facade.Blackboard.speedAlpha = ToleranceSet(facade.Blackboard.speedAlpha, cfg.walkAlphaMax, facade.Config.move.moveJitterTolerance);
             }
             void Run()
             {
                 if (facade.Blackboard.speedAlpha > cfg.runAlphaMax)
                     facade.Blackboard.speedAlpha = cfg.runAlphaMax;
                 else if(facade.Blackboard.speedAlpha < cfg.runAlphaMax) 
-                    facade.Blackboard.speedAlpha += facade.Blackboard.animController.speedStep;
+                    facade.Blackboard.speedAlpha += facade.Config.move.speedStep;
             }
             
             void Move(Vector2 move)
@@ -422,6 +433,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
                 Vector3 dir = new Vector3(move.x, 0, 0);
                 facade.Blackboard.moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
+                facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd, layer: 1, normalizedTime: 0);
                 ApplyMoveForce(dir);
 
                 if (prevMoveDir != facade.Blackboard.moveDir)

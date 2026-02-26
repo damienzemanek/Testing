@@ -18,19 +18,19 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     protected override void AddModulesHere()
     {
         // // Layer 1 -> Direct Input
-        AddModule(new DismountModule(facade.Input.HoldInteract, facade));
-        AddModule(new LocomotionModule(facade.Input.Move, facade));
-        AddModule(new FaceDirectionModule<TwoD_TitanController, TitanContext>
-                                    (facade.Input.FaceDirection, facade));
-        AddModule(new ShootModule(facade.Input.Shoot, facade));
-        //
-        // // Layer 2 -> Actions
-        AddModule(new CameraSystemModule(facade.Actions.Mount, facade));
-        //
-        // // Unbound        
-        AddModule(new MountModule(facade));
-        AddModule(new MouseInputZonesModule(facade));
-        AddModule(new MouseLookModule(facade));
+        // AddModule(new DismountModule(facade.Input.HoldInteract, facade));
+        // AddModule(new LocomotionModule(facade.Input.Move, facade));
+        // AddModule(new FaceDirectionModule<TwoD_TitanController, TitanContext>
+        //                             (facade.Input.FaceDirection, facade));
+        // AddModule(new ShootModule(facade.Input.Shoot, facade));
+        // //
+        // // // Layer 2 -> Actions
+        // AddModule(new CameraSystemModule(facade.Actions.Mount, facade));
+        // //
+        // // // Unbound        
+        // AddModule(new MountModule(facade));
+        // AddModule(new MouseInputZonesModule(facade));
+        // AddModule(new MouseLookModule(facade));
     }
     
     
@@ -48,7 +48,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
 
     public class ShootModule : 
-        BoundHeldFunctionality< TwoD_TitanController, TitanContext, ShootModule.Setter>, 
+        BoundSetFunctionality< TwoD_TitanController, TitanContext, ShootModule.Setter>, 
         UPDATE
     {
         public class Setter : SettableTemplate<bool> { }
@@ -112,7 +112,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     
     public class LocomotionModule : 
-        BoundHeldFunctionality< TwoD_TitanController, TitanContext, LocomotionModule.Setter>, 
+        BoundSetFunctionality< TwoD_TitanController, TitanContext, LocomotionModule.Setter>, 
         UPDATE
     {
         [Serializable]
@@ -147,7 +147,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override bool Execute(TitanContext ctx)
         {
             Walk();
-            Move(InputContext.moveVector);
+            Move(SetContext.moveVector);
             
             
             void Walk()
@@ -182,7 +182,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     
     public class DismountModule :
-        BoundFunctionality< TwoD_TitanController, TitanContext, PersistentAction>
+        BoundFunctionality<TwoD_TitanController, TitanContext>
     {
         public DismountModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }
         public override int injectAmountOfAddedSteps => 0;
@@ -213,7 +213,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     
     public class CameraSystemModule :
-        BoundFunctionality< TwoD_TitanController, TitanContext, PersistentAction>, 
+        BoundFunctionality< TwoD_TitanController, TitanContext>, 
         IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }

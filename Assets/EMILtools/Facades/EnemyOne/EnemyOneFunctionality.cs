@@ -86,7 +86,8 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         public void UpdateTick() => ExecuteTemplateCall();
     }
 
-    public class SightModule : BoundHeldFunctionality<EnemyOneController, EnemyOneContext, SightModule.Setter>
+    public class SightModule :
+        BoundSetFunctionality<EnemyOneController, EnemyOneContext, SightModule.Setter>
     {
         public class Setter : SettableTemplate<bool> { }
         public SightModule(PersistentAction<bool> action, EnemyOneController facade) : base(action, facade) { }

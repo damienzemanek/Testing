@@ -31,7 +31,7 @@ public abstract class MonoFacade<TMonoFacade,
     [field: Title("Blackboard")]
     [field:SerializeField, Required] [field:HideLabel] public TBlackboard Blackboard { get; private set; }
     [field: Title("Functionality Modules")]
-    [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
+    [field: ShowInInspector] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
 
     
     public T GetFunctionality<T>() where T : class, IAPI_Module

@@ -41,12 +41,6 @@ public class TwoD_PilotController : MonoFacade<
         Functionality.Unbind();
     }
 
-    protected override void Update()
-    {
-        base.Update();
-        if(Blackboard.animController.state == AnimState.Locomotion)
-            Blackboard.animController.UpdateLocomotion(Blackboard.facingDir, Blackboard.moveDir, Blackboard.speedAlpha);
-    }
     
 
     private void OnDisable()

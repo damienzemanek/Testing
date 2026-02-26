@@ -4,7 +4,9 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "EMILtools"
+        "EMILtools.Timers",
+        "EMILtools.Core",
+        "EMILtools.Testing.Pipeline"
     ],
     "includePlatforms": [
         "Editor"

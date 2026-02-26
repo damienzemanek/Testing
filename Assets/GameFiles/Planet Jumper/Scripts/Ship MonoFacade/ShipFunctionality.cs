@@ -22,7 +22,9 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         AddModule(new SteerModule(facade.Input.Thrust, facade));
     }
 
-    public class CannonMouselookModule : BoundHeldFunctionality<ShipController, ShipContext, CannonMouselookModule.Setter>, UPDATE
+    public class CannonMouselookModule :
+        BoundSetFunctionality<ShipController, ShipContext, CannonMouselookModule.Setter>,
+        UPDATE
     {
         public class Setter : SettableTemplate<bool> { }
         public CannonMouselookModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
@@ -45,7 +47,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public void UpdateTick() => ExecuteTemplateCall();
     }
 
-    public class SwitchCamModule : BoundFunctionality<ShipController, ShipContext, PersistentAction>
+    public class SwitchCamModule : BoundFunctionality<ShipController, ShipContext>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
 
@@ -62,7 +64,9 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         }
     }
 
-    public class FireModule : BoundHeldFunctionality<ShipController, ShipContext, FireModule.Setter>, FIXEDUPDATE
+    public class FireModule :
+        BoundSetFunctionality<ShipController, ShipContext, FireModule.Setter>,
+        FIXEDUPDATE
     {
         public class Setter : SettableTemplate<bool> {  }
         static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
@@ -99,7 +103,9 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         }
     }
 
-    public class ThrustModuleSub : BoundHeldFunctionality<ShipController, ShipContext, ThrustModuleSub.Setter>, UPDATE, FIXEDUPDATE
+    public class ThrustModuleSub : 
+        BoundSetFunctionality<ShipController, ShipContext, ThrustModuleSub.Setter>,
+        UPDATE, FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -150,7 +156,9 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public void FixedTick() => ExecuteTemplateCall();
     }
 
-    public class SteerModule : BoundHeldFunctionality<ShipController, ShipContext, SteerModule.Setter>, FIXEDUPDATE
+    public class SteerModule : 
+        BoundSetFunctionality<ShipController, ShipContext, SteerModule.Setter>,
+        FIXEDUPDATE
     {
         [Serializable]
         public struct Config

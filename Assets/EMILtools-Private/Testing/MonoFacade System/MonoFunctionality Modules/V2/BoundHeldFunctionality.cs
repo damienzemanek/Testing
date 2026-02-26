@@ -6,55 +6,45 @@ using UnityEngine;
 public interface IModuleUsabableContext : IPipelineContext { }
 public struct Empty : IModuleUsabableContext { }
 
-public abstract class BoundFunctionality<TFacade, TContext, TPerisistentAction> : UnboundFunctionality<TFacade, TContext>, 
-        IBindable
-    where TFacade : class, IFacade<TContext>
-    where TContext : struct, IModuleUsabableContext
-    where TPerisistentAction : class, IPersistentAction<Action, TPerisistentAction>, new()
+public interface IExecutableTempalate
 {
-    [NonSerialized] TPerisistentAction action = new();
-
-    protected BoundFunctionality(TPerisistentAction action, TFacade facade) : base(facade)
-        => this.action = action;
-    
-    public void Bind() => action.Add(ExecuteTemplateCall);
-    public void Unbind() => action.Remove(ExecuteTemplateCall);
+    public Delegate TemplateCall { get; }
 }
 
 /// <summary>
-/// Used for
-/// 1. Input Pressed Binary State (Toggled / not Toggled)
-/// 2. Binary State
+/// Only to be used with PersistentAction (No Args)
+/// - Use TContext to pass around information
 /// </summary>
 /// <typeparam name="TFacade"></typeparam>
 /// <typeparam name="TContext"></typeparam>
-/// <typeparam name="SettableTemplate"></typeparam>
-public abstract class BoundSetFunctionality<TFacade, TContext, SettableTemplate> : 
+public abstract class BoundFunctionality<TFacade, TContext> : 
         UnboundFunctionality<TFacade, TContext>, 
         IBindable
     where TFacade : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext
-    where SettableTemplate : class, ISettableTemplate<bool>, new()
 {
-    protected SettableTemplate SetContext => Settable;
-    [NonSerialized] [ShowInInspector] SettableTemplate Settable;
-    protected BoundSetFunctionality(IPersistentDelegate _action, TFacade facade) : base(facade) 
-        => Settable = new SettableTemplate { action = _action };
-
-    public void Bind() => Settable.action.API_Add(Settable.TemplateCall);
-    public void Unbind() => Settable.action.API_Remove(Settable.TemplateCall);
+    [NonSerialized] PersistentAction action = new();
+    protected BoundFunctionality(PersistentAction action, TFacade facade) : base(facade)
+     => this.action = action;
+    
+    /// <summary>
+    /// Binds the EXECUTION PIPELINE to the BOUND ACTION
+    /// </summary>
+    public virtual void Bind() => action.Add(ExecuteTemplateCall);
+    public virtual void Unbind() => action.Remove(ExecuteTemplateCall);
 }
 
 
+
 /// <summary>
-/// Used for
-/// 1. Input Held Binary State (Active / not Active)
-/// 2. Binary State
+/// Can be used with PersistentAction<bool, T2, T3...>
+/// Tracks: isActive
+/// Params: PersistentAction T2, T3...
 /// </summary>
 /// <typeparam name="TFacade"></typeparam>
 /// <typeparam name="TContext"></typeparam>
 /// <typeparam name="SettableTemplate"></typeparam>
-public abstract class BoundHeldFunctionality<
+public abstract class BoundSetFunctionality<
         TFacade,
         TContext,
         SettableTemplate> 
@@ -67,12 +57,17 @@ public abstract class BoundHeldFunctionality<
     /// Alias for Settable.unnamedStoredValue1
     /// </summary>
     protected bool isActive => Settable._unnamedStoredValue1;
-    protected SettableTemplate InputContext => Settable;
+    protected SettableTemplate SetContext => Settable;
     [NonSerialized] [ShowInInspector] SettableTemplate Settable;
-    protected BoundHeldFunctionality(IPersistentDelegate _action, TFacade facade) : base(facade)
-        => Settable = new SettableTemplate { action = _action };
+    protected BoundSetFunctionality(IPersistentDelegate _action, TFacade facade) : base(facade)
+    {
+        Settable = new SettableTemplate();
+        Settable.action = _action;
+        Debug.Log($"Settable action is : " + Settable.action + $" and template call is : " + Settable.TemplateCall + $" for functionality : " + GetType().Name);
+    }
+
     public void Bind() => Settable.action.API_Add(Settable.TemplateCall);
-    public void Unbind() => Settable.action.API_Remove(Settable.TemplateCall);  
+    public void Unbind() => Settable.action.API_Remove(Settable.TemplateCall);
 }
 
 
@@ -107,6 +102,7 @@ public abstract class SettableTemplate<T1> : ISettableTemplate<T1>
     public Delegate TemplateCall => _templateCall;
     void _TemplateCall(T1 val)
     {
+        Debug.Log($"SettableTemplate<T1>: CALLED SET TEMPLATE CALL, val is: : {val} for : {GetType().Name}");
         ((ISettableTemplate<T1>)this)._unnamedStoredValue1 = val;
         Set(val);
     }
@@ -118,8 +114,12 @@ public abstract class SettableTemplate<T1> : ISettableTemplate<T1>
     [NonSerialized] IPersistentAction<Action<T1>> _action;
     public IPersistentDelegate action
     {
-        get => _action; 
-        set => _action = (IPersistentAction<Action<T1>>)value;
+        get => _action;
+        set
+        {
+            Debug.Log($"SettableTemplate<T1>: Setting action to : {value} for : {GetType().Name}");
+            _action = (IPersistentAction<Action<T1>>)value;
+        }
     }
 
     protected virtual void Set(T1 val) { }
@@ -142,6 +142,7 @@ public abstract class SettableTemplate<T1, T2> : ISettableTemplate<T1>
     public Delegate TemplateCall => _templateCall;
     void _TemplateCall(T1 val1, T2 val2)
     {
+        Debug.Log($"SettableTemplate<T1>: CALLED SET TEMPLATE CALL, val is: : {val1} and {val2} for : {GetType().Name}");
         ((ISettableTemplate<T1>)this)._unnamedStoredValue1 = val1;
         unnamedStoredValue2 = val2;
         Set(val1, val2);
