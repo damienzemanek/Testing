@@ -11,7 +11,7 @@ using UnityEngine;
 /// ValueType Execution Hook
 /// </summary>
 /// <typeparam name="TContext"></typeparam>
-public interface IExecutableTMP<TContext> 
+public interface IExecuteTemplate<TContext> 
     where TContext : struct
 {
     public void ExecuteTemplateCall();
@@ -31,7 +31,7 @@ public interface IInjectablePipeline<TContext>
     public virtual Pipeline<TContext> InjectStepsWithFinalStep(PipelineBuilder<TContext> builder)
         => throw new System.NotImplementedException();
 
-    public virtual PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder)
+    public virtual PipelineBuilder<TContext> AddPipelineStepsHere(PipelineBuilder<TContext> builder)
         => throw new System.NotImplementedException();  
 
     public virtual PipelineStepDelegate<TContext> InjectFinalStep() 
@@ -44,7 +44,7 @@ public interface IInjectablePipeline<TContext>
         if (setupWithFinalStep)
             executionPipeline = InjectStepsWithFinalStep(builder);
         else
-            executionPipeline = InjectSteps(builder).FinalStep(InjectFinalStep());
+            executionPipeline = AddPipelineStepsHere(builder).FinalStep(InjectFinalStep());
     }
 }
 
@@ -60,17 +60,16 @@ public interface IBindable
 
 
 public abstract class MonoFunctionalityModule<TFacade, TContext> 
-    where TFacade : class, IFacade
+    where TFacade : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext
 {
     public TFacade facade { get; set; }
-    public TContext context => (TContext)facade.Context;
-    
+    public TContext context => facade.API_Context();
     [Title("$Name"), PropertyOrder(-1)]
     [ShowInInspector] public string Name => "Module: " + this.GetType().Name;
     public abstract void SetupModule();
-    protected virtual void Awake(TContext ctx) { }
-    
+    protected virtual void Awake() { }
+
     public MonoFunctionalityModule(TFacade facade) => this.facade = facade;
 
 }

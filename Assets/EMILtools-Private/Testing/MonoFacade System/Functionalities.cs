@@ -7,11 +7,11 @@ using static InterfaceEX;
 namespace EMILtools_Private.Testing
 {
     public abstract class Functionalities<TMonoFacade, TContext> : IFunctionality
-        where TMonoFacade : class, IFacade
+        where TMonoFacade : class, IFacade<TContext>
         where TContext : struct, IModuleUsabableContext
     {
         readonly Dictionary<Type, MonoFunctionalityModule<TMonoFacade, TContext>> API_Modules = new();
-        [field: NonSerialized] public TMonoFacade facade { get; set; }
+        [field: NonSerialized] public TMonoFacade facade { get; private set; }
         
         [ShowInInspector] List<MonoFunctionalityModule<TMonoFacade, TContext>> modules; 
         List<UPDATE> _update = new();
@@ -19,9 +19,10 @@ namespace EMILtools_Private.Testing
         List<LATEUPDATE> _late = new();
         public Functionalities() => modules = new List<MonoFunctionalityModule<TMonoFacade, TContext>>();
         
-        public void InjectFacadeReference(IFacade f) => facade = f as TMonoFacade;
+        public void InjectFacadeReference(IFacade<TContext> f) => facade = f as TMonoFacade;
         public void SetupModules()
         {
+            Debug.Log(facade.comp);
             AddModulesHere();
             foreach (var t in modules)  t.SetupModule();
             Debug.Log($"{GetType().Name} Functionality modules successfully setup | API Count: " + API_Modules.Count);

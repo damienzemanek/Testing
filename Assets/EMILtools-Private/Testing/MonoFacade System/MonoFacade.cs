@@ -11,16 +11,19 @@ public abstract class MonoFacade<TMonoFacade,
         TBlackboard,     // References
         TContext,        // Transient state 
         TActionMap>:     // Internal Action bindings
-        MonoBehaviour, IFacade
-    where TMonoFacade    : class, IFacade    
+        MonoBehaviour, IFacade<TContext>
+    where TMonoFacade    : class, IFacade<TContext>    
     where TConfig        : Config                              
     where TBlackboard    : Blackboard                       
     where TContext       : struct, IModuleUsabableContext               
     where TFunctionality : Functionalities<TMonoFacade, TContext>, new()
     where TActionMap     : class, IActionMap, new()
 {
-    public IModuleUsabableContext Context { get; set; }
+    public TContext context;
+    public FacadeComposition<TContext> comp { get => composition; private set => composition = value;}
+    FacadeComposition<TContext> composition;
     bool initialized = false;
+
     [field: Title("Action Mappings")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TActionMap Actions { get; protected set; }
     [field: Title("Settings")]
@@ -30,6 +33,7 @@ public abstract class MonoFacade<TMonoFacade,
     [field: Title("Functionality Modules")]
     [field: ShowInInspector] [field:ReadOnly] [field:HideLabel] [field: NonSerialized] public TFunctionality Functionality { get; private set; }
 
+    
     public T GetFunctionality<T>() where T : class, IAPI_Module
     {
         if (Functionality.APIs().TryGetValue(typeof(T), out var module))
@@ -42,6 +46,8 @@ public abstract class MonoFacade<TMonoFacade,
     {
         if (initialized) return;
         
+        context = default;
+        composition = new(Blackboard, Config, Functionality);
         Actions = new();
         Functionality = new ();
         

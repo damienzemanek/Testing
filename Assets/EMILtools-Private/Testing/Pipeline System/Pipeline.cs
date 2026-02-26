@@ -21,7 +21,7 @@ public class PipelineBuilder<TContext>
         addedCount = 0;
     }
 
-    public PipelineBuilder<TContext> AddStep(PipelineStepDelegate<TContext> check, IResolveContext resolveCtx = null) { try 
+    public PipelineBuilder<TContext> AddBlockIf(PipelineStepDelegate<TContext> check, IResolveContext resolveCtx = null) { try 
     {
         steps[addedCount++] = new PipelineStep<TContext>(check, resolveCtx);
         return this;

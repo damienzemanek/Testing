@@ -47,10 +47,7 @@ public class TwoD_TitanController : MonoFacade<
     protected override void Update()
     {
         if (!Blackboard.hasMounted) return;
-        
         base.Update();
-        if(Blackboard.anims.state == AnimState.Locomotion)
-            Blackboard.anims.UpdateLocomotion(Blackboard.facingDir, Blackboard.moveDir, Blackboard.speedAlpha);
     }
     
 
@@ -67,7 +64,7 @@ public class TwoD_TitanController : MonoFacade<
         IEnumerator WaitUntilLanded()
         {
             while(!Blackboard.phys.isGrounded) yield return null;
-            Blackboard.anims.Play(Blackboard.anims.land);
+            Config.animHandle.Play(Blackboard.animator, TitanConfig.TitanAnims.Land);
             Blackboard.canMount = true;
         }
     }

@@ -10,6 +10,7 @@ public class EnemyOneController : MonoFacade<
     EnemyOneFunctionality, 
     EnemyOneConfig, 
     EnemyOneBlackboard, 
+    EnemyOneContext,
     ActionMap>,
     IBoundsCheckReceiver
 {
@@ -18,15 +19,13 @@ public class EnemyOneController : MonoFacade<
     {
         [NonSerialized] public PersistentAction<Transform> TrackTarget = new();
         [NonSerialized] public PersistentAction<bool> SeeTarget = new();
-        [NonSerialized] public PersistentAction<LookDir, bool> FaceDirection = new();
+        [NonSerialized] public PersistentAction<bool, LookDir> FaceDirection = new();
 
     }
 
-    protected override void Awake() 
+    protected void Awake() 
     {
-        base.Awake();
         InitializeFacade();
-        Blackboard.livingEntity.OnDeath.Add(_ => Blackboard.weaponParent.parent = null);
     }
 
     void OnEnable()

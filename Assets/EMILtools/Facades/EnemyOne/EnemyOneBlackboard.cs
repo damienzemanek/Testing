@@ -7,7 +7,7 @@ using static ITwoD_Blackboard;
 public class EnemyOneBlackboard : Blackboard, ITwoD_Blackboard
 {
     public enum AnimState { NONE_ASSIGN_STATE, Idle, Aim, Shoot }
-    public LivingEntity livingEntity;
+    public Animator animator;
     public Transform weaponParent;
     [ReadOnly] public AnimState animState;
     public AnimHandle<AnimState> anims = new AnimHandle<AnimState>();

@@ -23,7 +23,7 @@ public class PipelineTests
         var builder = new PipelineBuilder<TestContext>(2);
         
         // Act
-        builder.AddStep(ctx => true);
+        builder.AddBlockIf(ctx => true);
         var pipeline = builder.FinalStep(ctx => true);
 
         // Assert
@@ -38,8 +38,8 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
         var jump = new PipelineBuilder<TestContext>(size: 3)
-            .AddStep(ctx => ctx.Value == 0)
-            .AddStep(ctx => ctx.Value == 1)
+            .AddBlockIf(ctx => ctx.Value == 0)
+            .AddBlockIf(ctx => ctx.Value == 1)
             .FinalStep(ctx => Jump(ctx));
         bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
 
@@ -61,8 +61,8 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddStep(ctx => ctx.Value == 1)
-            .AddStep(ctx => ctx.Value == 2)
+            .AddBlockIf(ctx => ctx.Value == 1)
+            .AddBlockIf(ctx => ctx.Value == 2)
             .FinalStep(ctx => Jump(ctx));
         bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
 
@@ -81,8 +81,8 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool failedStepCallbackExecuted = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddStep(ctx => ctx.Value == 1)
-            .AddStep(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
+            .AddBlockIf(ctx => ctx.Value == 1)
+            .AddBlockIf(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
             .FinalStep(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => true;
 
@@ -103,8 +103,8 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpCalled = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddStep(ctx => ctx.Value == 0)
-            .AddStep(ctx => ctx.Value == 1, new Timed(1))
+            .AddBlockIf(ctx => ctx.Value == 0)
+            .AddBlockIf(ctx => ctx.Value == 1, new Timed(1))
             .FinalStep(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => jumpCalled = true;
 
@@ -134,8 +134,8 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpCalled = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddStep(ctx => ctx.Value == 0)
-            .AddStep(ctx => ctx.Value == 1, new Wait(1))
+            .AddBlockIf(ctx => ctx.Value == 0)
+            .AddBlockIf(ctx => ctx.Value == 1, new Wait(1))
             .FinalStep(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => jumpCalled = true;
 

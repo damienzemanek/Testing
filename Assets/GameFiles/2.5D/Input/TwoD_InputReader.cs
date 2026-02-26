@@ -44,8 +44,8 @@ public class TwoD_InputReader :
         
         Input.MouseInputZones.callbackZones = null;
         Input.MouseInputZones.AddInitalZones(
-            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Left, true); }),
-            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(LookDir.Right, true); }));
+            (new Rect(0              , 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(true, LookDir.Left); }),
+            (new Rect(halfScreenWidth, 0, halfScreenWidth, screenHeight), () => { Input.FaceDirection.Invoke(true, LookDir.Right); }));
     }
 
     
@@ -60,10 +60,10 @@ public class TwoD_InputReader :
 
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (ia.Player.Move.IsPressed()) Input.Move?.Invoke(context.ReadValue<Vector2>(), true); 
+        if (ia.Player.Move.IsPressed()) Input.Move?.Invoke(true, context.ReadValue<Vector2>()); 
         switch (context.phase)
         {
-            case InputActionPhase.Canceled: Input.Move?.Invoke(Vector2.zero, false); break;
+            case InputActionPhase.Canceled: Input.Move?.Invoke(false, Vector2.zero); break;
         }
     }
 

@@ -5,28 +5,33 @@ using static ITwoD_Blackboard;
 
 public static class TwoD_SharedModules
 {
-    public class FaceDirectionModule<TFacadeType> : InputHeldModuleFacade<LookDir, TFacadeType>, UPDATE
-        where TFacadeType : class, IFacade
+    public class FaceDirectionModule<TFacadeType, TContext> : 
+        BoundHeldFunctionality<TFacadeType, TContext, FaceDirectionModule<TFacadeType, TContext>.Setter>, 
+        UPDATE
+    where TFacadeType : class, IFacade<TContext>
+    where TContext : struct, IModuleUsabableContext, ITwoD_Context
     {
+        public class Setter : SettableTemplate<bool, LookDir> { [ShowInInspector] public LookDir dir => unnamedStoredValue2; }
         ITwoD_Blackboard Blackboard;
-    
-        public FaceDirectionModule(PersistentAction<LookDir, bool> action, TFacadeType facade) : base(action, facade, false) { }
-        
-        [ShowInInspector] LookDir dir;
 
-        protected override void Awake() => Blackboard = facade.Blackboard<ITwoD_Blackboard>();
+        protected override void Awake()
+         => Blackboard = facade.API_Blackboard<ITwoD_Blackboard>() ?? throw new System.ArgumentNullException(nameof(facade), "Facade cannot be null");
 
-        protected override void OnSet(LookDir args) => dir = args;
 
-        protected override void Execute(float dt)
+        public FaceDirectionModule(PersistentAction<bool, LookDir> _action, TFacadeType facade) : base(_action, facade) { }
+        public override int injectAmountOfAddedSteps { get; }
+
+        public override PipelineBuilder<TContext> AddPipelineStepsHere(PipelineBuilder<TContext> builder)
+            => builder;
+
+        public override bool Execute(TContext ctx)
         {
-            if(Blackboard == null) Awake();
-            if (dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
-            Blackboard.facingDir = dir;
-            
+            if (InputContext.dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+            if (InputContext.dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            ctx.dir = InputContext.dir;
+            return true;
         }
 
-        public void UpdateTick(float dt) => ExecuteTemplateCall(dt);
+        public void UpdateTick() => ExecuteTemplateCall();
     }
 }

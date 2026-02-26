@@ -160,7 +160,7 @@ namespace EMILtools.Extensions
                 [ShowIf("clampZ")] public Vector2 clampZrot;
             }
 
-            public Camera cam;
+            [ReadOnly] public Camera cam;
             public MouseToWorldSpace core;
             [BoxGroup("References")] public RotatingObject[] rotatingObjects;
             [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public Quaternion rotation;

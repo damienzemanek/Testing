@@ -12,6 +12,7 @@ public class ShipController : MonoFacade<
         ShipFunctionality, 
         ShipConfig, 
         ShipBlackboard,
+        ShipContext,
         ShipActionMap>, 
     ITimerUser,
     IInputSubordinate<ShipInputMap, Subordinates>

@@ -18,11 +18,11 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
     [Serializable]
     public class TwoD_InputMap : InputMap
     {
-        [NonSerialized] public PersistentAction<Vector2, bool> Move = new();
+        [NonSerialized] public PersistentAction<bool, Vector2> Move = new();
         [NonSerialized] public PersistentAction<bool> Run = new();
         [NonSerialized] public PersistentAction<bool> Look = new();
         [NonSerialized] public PersistentAction<bool> Shoot = new();
-        [NonSerialized] public PersistentAction<LookDir, bool> FaceDirection = new();
+        [NonSerialized] public PersistentAction<bool, LookDir> FaceDirection = new();
         [NonSerialized] public PersistentAction Jump = new();
         [NonSerialized] public PersistentAction Interact = new();
         [NonSerialized] public PersistentAction HoldInteract = new();

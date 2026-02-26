@@ -1,26 +1,30 @@
-﻿public interface IFacade
+﻿public interface IFacade<TContext>
+    where TContext : struct, IModuleUsabableContext
 {
-    public IModuleUsabableContext Context { get; set; }
-    // public FacadeInterfaceContext context { get; set; }
-    //
-    // public TBlackboardType Blackboard<TBlackboardType>() where TBlackboardType : IBlackboard
-    //     => (TBlackboardType)context.Blackboard;
-    // public TConfigType Config<TConfigType>() where TConfigType : IConfig
-    //     => (TConfigType)context.Config;
-    // public TFunctionalityType Functionality<TFunctionalityType>( ) where TFunctionalityType : IFunctionality
-    //     => (TFunctionalityType)context.Functionality;
+    public FacadeComposition<TContext> comp { get; }
+    public TBlackboardType API_Blackboard<TBlackboardType>() where TBlackboardType : IBlackboard
+        => (TBlackboardType)comp.Blackboard;
+    public TConfigType API_Config<TConfigType>() where TConfigType : IConfig
+        => (TConfigType)comp.Config;
+    public TFunctionalityType API_Functionality<TFunctionalityType>() where TFunctionalityType : IFunctionality
+        => (TFunctionalityType)comp.Functionality;
+    public TContext API_Context() => comp.Context;
 }
 
-// public struct FacadeInterfaceContext
-// {
-//     public readonly IBlackboard Blackboard;
-//     public readonly IConfig Config;
-//     public readonly IFunctionality Functionality;
-//     
-//     public FacadeInterfaceContext(IBlackboard _blackboard, IConfig _config, IFunctionality _functionality)
-//     {
-//         Blackboard = _blackboard;
-//         Config = _config;
-//         Functionality = _functionality;
-//     }
-// }
+public struct FacadeComposition<TContext>
+    where TContext : struct, IModuleUsabableContext
+{
+    public readonly IBlackboard Blackboard;
+    public readonly IConfig Config;
+    public readonly IFunctionality Functionality;
+    public TContext Context;
+
+    
+    public FacadeComposition(IBlackboard _blackboard, IConfig _config, IFunctionality _functionality)
+    {
+        Blackboard = _blackboard;
+        Config = _config;
+        Functionality = _functionality;
+        Context = default;
+    }
+}

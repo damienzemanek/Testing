@@ -11,6 +11,7 @@ public class TwoD_PilotController : MonoFacade<
         PilotFunctionality, 
         PilotConfig, 
         PilotBlackboard,
+        PilotContext,
         PilotActionMap>,
     ITimerUser,
     IInputSubordinate<TwoD_InputMap, Subordinates>
@@ -20,6 +21,7 @@ public class TwoD_PilotController : MonoFacade<
     [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext inputSubordinateContext { get; set; }
     
     public TwoD_InputMap InjectInputMap() => new("Pilot");
+    
 
     public void InitSubordinate()
     {
