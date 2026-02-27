@@ -12,3 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98b3b79f2eef19e48b1d8f03dc28f070, type: 3}
   m_Name: EnemyOneConfig
   m_EditorClassIdentifier: 
+  <animHandle>k__BackingField:
+    States:
+    - name: shoot
+      animEnum: 0
+      hash: 1883569342
+    - name: aim
+      animEnum: 1
+      hash: 828945678
+    - name: idle
+      animEnum: 2
+      hash: -601574123
+    BlendTreeVariables: []
