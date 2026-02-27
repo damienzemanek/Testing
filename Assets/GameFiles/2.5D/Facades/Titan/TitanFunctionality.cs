@@ -59,7 +59,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Blackboard.bulletSpawner.OnSpawn.Add(AnimateShoot);
         }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
+            => builder.ExitIf(_ => !isActive)
+                      .ExitIf(_ => facade.Blackboard.isMountingOrDismounting)
                       .ExitIf(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
 
         public override bool ExecutionImplementation(TitanContext ctx)
@@ -72,11 +73,6 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
 
         public void UpdateTick() => Execute();
         
-        void AnimateBackToIdle()
-        {
-            facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd);
-            facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle);
-        }
         void AnimateShoot() => facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot, layer: 1, normalizedTime: 0f);
     }
     
@@ -116,6 +112,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         {
             [field: SerializeField] public float speed { get; private set; }
             [field: SerializeField] public ForceMode forceMode { get; private set; }
+            [field: SerializeField] public float walkAlphaMax { get; private set; }
             [field: SerializeField] public float runAlphaMax { get; private set; }
             [field: SerializeField] public Ref<float> decayScalar { get; private set; }
             [field: SerializeField] public float slowdownTime { get; private set; }
@@ -126,8 +123,10 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             { [ShowInInspector] public Vector2 moveVector => unnamedStoredValue2; }
         
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_TitanController facade) : base(action, facade) { }
-        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) 
-            => builder.ExitIf(_ => !isActive);
+
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
+            => builder.ExitIf(_ => !isActive)
+                      .ExitIf(_ => facade.Blackboard.isMountingOrDismounting);
 
         protected override void Awake()
         {
@@ -148,8 +147,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             
             void Walk()
             {
-                if(facade.Blackboard.speedAlpha < 1f) facade.Blackboard.speedAlpha += 0.1f;
-                facade.Blackboard.speedAlpha = NumEX.ToleranceSet(facade.Blackboard.speedAlpha, 1, 0.2f);
+                if(facade.Blackboard.speedAlpha < facade.Config.move.walkAlphaMax) facade.Blackboard.speedAlpha += 0.1f;
+                facade.Blackboard.speedAlpha = NumEX.ToleranceSet(facade.Blackboard.speedAlpha,facade.Config.move.walkAlphaMax , 0.2f);
             }
     
             void Move(Vector2 move)
@@ -193,14 +192,16 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             IInputSubordinate<TwoD_InputMap, Subordinates> thisTitan = facade;
             IInputSubordinate<TwoD_InputMap, Subordinates> pilot = facade.Blackboard.myPilot;
             facade.Config.animHandle.Play(facade.Blackboard.animator, Dismount);
+            facade.Blackboard.isMountingOrDismounting = true;
+            facade.Blackboard.myPilot.gameObject.SetActive(true);
+            facade.Blackboard.animator.SetLayerWeight(1, 0);
             
-            yield return new WaitForSeconds(facade.Config.mount.duration);
+            yield return new WaitForSeconds(facade.Config.mount.dismountDuration);
             
+            facade.Blackboard.animator.SetLayerWeight(1, 1);
             bool successful = pilot.RequestAuthorityFrom(thisTitan);
             if(!successful) yield break;
             
-            facade.Blackboard.hasMounted = false;
-            facade.Blackboard.myPilot.gameObject.SetActive(true);
             facade.Blackboard.myPilot = null;
             Debug.Log("Titan Dismount Sequence Complete");
         }
@@ -239,7 +240,9 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         [Serializable]
         public struct Config
         {
-            [field: SerializeField] public float duration { get; private set; }   
+            [field: SerializeField] public float duration { get; private set; }
+            [field: SerializeField] public float dismountDuration { get; private set; }   
+
         }
         
         public MountModule(TwoD_TitanController facade) : base(facade) { }
@@ -264,6 +267,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             playerTransform.Get<Rigidbody>().isKinematic = true;
             playerTransform.Get<Collider>().enabled = false;
             facade.Get<AugmentPhysEX>().fallFaster = false;
+            facade.Blackboard.isMountingOrDismounting = true;
             facade.Blackboard.myPilot = playerTransform.Get<TwoD_PilotController>();
             facade.GetFunctionality<IAPI_CameraSystem>().SendDependencies(camContext);
             facade.GetFunctionality<IAPI_Dependant<MouseInputZonesModule.MouseModuleContext>>().SendDependencies(new MouseInputZonesModule.MouseModuleContext(camContext.camera));
@@ -272,14 +276,19 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             // input._lookGuarder = new SimpleGuarderMutable();
             facade.InitTimer(facade.Blackboard.moveDecay, true);
             facade.Config.animHandle.Play(facade.Blackboard.animator, MountFront);
-        
+            facade.Blackboard.animator.SetLayerWeight(1, 0);
+
             
             yield return new WaitForSeconds(facade.Config.mount.duration);
             
+            
+            facade.Blackboard.animator.SetLayerWeight(1, 1);
             facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd);
             facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle, layer: 1);
             facade.Blackboard.moveDecay.Start();
             facade.Blackboard.hasMounted = true;
+            facade.Blackboard.isMountingOrDismounting = false;
+            facade.Blackboard.rb.linearVelocity = Vector3.zero;
             if(facade.Blackboard.myPilot != null) facade.Blackboard.myPilot.gameObject.SetActive(false);
             facade.Actions.Mount.Invoke();
         }

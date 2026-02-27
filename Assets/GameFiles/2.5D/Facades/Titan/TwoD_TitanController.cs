@@ -32,18 +32,20 @@ public class TwoD_TitanController : MonoFacade<
     {
         GetFunctionality<IAPI_Mount>().Mount();
         Functionality.Bind();
-        Blackboard.moveDecay.Start();
+        if(!Blackboard.moveDecay.isRunning) Blackboard.moveDecay.Start();
     }
 
     public void OnAuthorityLost()
     {
         Functionality.Unbind();
-        Blackboard.myMountZone.mounted = false;
+        Input.Move.Invoke(false, Vector2.zero);
+        Blackboard.rb.linearVelocity = Vector3.zero;
+        Blackboard.myMountZone.mounted = Blackboard.hasMounted = Blackboard.isMountingOrDismounting = false;
     }
 
     protected override void Update()
     {
-        if (!Blackboard.hasMounted) return;
+        if (!Blackboard.hasMounted || Blackboard.isMountingOrDismounting) return;
         base.Update();
         Config.animHandle.UpdateAnimBlendFloat(Blackboard.animator, TitanConfig.TitanAnimBlends.Speed, Blackboard.speedAlpha);
     }

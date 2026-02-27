@@ -157,7 +157,6 @@ public class AnimHandle<TAnimEnum, TAnimBlendEnum>
         }
     }
     
-    
     public bool PlayWeightSet(
         Animator animator,
         TAnimEnum animEnum,

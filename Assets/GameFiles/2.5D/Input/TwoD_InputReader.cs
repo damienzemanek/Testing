@@ -107,7 +107,6 @@ public class TwoD_InputReader :
         if (context.phase == InputActionPhase.Performed)
         {
             Debug.Log("HELD INTERACT");
-            Input.HoldInteract.PrintInvokeListNames();
             Input.HoldInteract?.Invoke();
         }
     }
