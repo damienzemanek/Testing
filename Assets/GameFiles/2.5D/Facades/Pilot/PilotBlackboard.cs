@@ -3,6 +3,7 @@ using EMILtools.Core;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static EMILtools.Extensions.MouseLookEX;
 using static EMILtools.Extensions.NumEX;
 using static ITwoD_Blackboard;
@@ -13,7 +14,7 @@ public interface ITwoD_Blackboard : IBlackboard
 {
     public enum LookDir { None, Left, Right }
     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb, MountFront, Dismount }
-    public Transform facing { get; set; }
+    public Transform facingTransformObject { get; set; }
     public LookDir facingDir { get; set; }
 }
 
@@ -26,7 +27,7 @@ public interface ITwoD_Context : IBlackboard
 public class PilotBlackboard : Blackboard, ITwoD_Blackboard
 {
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public Rigidbody rb { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] [field: Required] public Transform facing { get; set; }
+    [field: FormerlySerializedAs("<facing>k__BackingField")] [field: BoxGroup("References")] [field: SerializeField] [field: Required] public Transform facingTransformObject { get; set; }
     [field: BoxGroup("References")] [field: SerializeField] [field: Required]public CapsuleCollider capsuleCollider { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public WeaponManager weapons { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public ProjectileSpawnManager bulletSpawner { get; private set; }

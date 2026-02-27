@@ -176,29 +176,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <Config>k__BackingField: {fileID: 11400000, guid: d85b8547ada8a0f45a425b01d411bc1d, type: 2}
   <Blackboard>k__BackingField:
-    livingEntity: {fileID: 6843147290041116657}
-    weaponParent: {fileID: 7186530471731424483}
-    animState: 0
-    anims:
-      states:
-      - name: idle
-        animEnum: 1
-        hash: -601574123
-      - name: shoot
-        animEnum: 3
-        hash: 1883569342
-      - name: aim
-        animEnum: 2
-        hash: 828945678
-      animator: {fileID: 110202800581988128}
     volleySpawner: {fileID: 31316446190799051}
-    canSeeTarget: 0
-    aimOffset: {x: 0, y: 3, z: 0}
+    <facingDir>k__BackingField: 0
     trackingTarget: {fileID: 0}
     aimPivot: {fileID: 2777018333502040081}
-    lockedAimEueler: {x: 0, y: 0, z: 0}
-    <facing>k__BackingField: {fileID: 4824034196419355210}
-    <facingDir>k__BackingField: 0
+    animator: {fileID: 110202800581988128}
+    weaponParent: {fileID: 7186530471731424483}
+    <facingTransformObject>k__BackingField: {fileID: 4824034196419355210}
 --- !u!114 &31316446190799051
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221,7 +205,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 5751d9994f40b5343b5b268105382a11, type: 2}
     fireInterval:
       val: 0.1
-    fireTimer: {}
     targetSetDirection: 1
     direction: {x: 0, y: 0, z: -1}
     targetAPosition: 0
@@ -270,17 +253,17 @@ MonoBehaviour:
   maxHealth: 5
   deathStatus: 0
   deathAnimHandle:
-    states:
+    States:
     - name: die
       animEnum: 1
       hash: 964231127
-    animator: {fileID: 110202800581988128}
+    BlendTreeVariables: []
   damageLocationAnimHandle:
-    states:
+    States:
     - name: hit
       animEnum: 1
       hash: 1523721793
-    animator: {fileID: 110202800581988128}
+    BlendTreeVariables: []
 --- !u!1 &1759328715081741714
 GameObject:
   m_ObjectHideFlags: 0

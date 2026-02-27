@@ -4,6 +4,7 @@ using EMILtools.Extensions;
 using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static EMILtools.Extensions.NumEX;
 using static ITwoD_Blackboard;
 using static TwoD_InputAuthority;
@@ -12,7 +13,7 @@ using static TwoD_InputAuthority;
 public class TitanBlackboard : Blackboard, ITwoD_Blackboard
 {
     [field: BoxGroup("References")] [field: SerializeField] public Rigidbody rb { get; private set; }
-    [field: BoxGroup("References")] [field: SerializeField] public Transform facing { get; set; }
+    [field: FormerlySerializedAs("<facing>k__BackingField")] [field: BoxGroup("References")] [field: SerializeField] public Transform facingTransformObject { get; set; }
     [field: BoxGroup("References")] [field: SerializeField] public CapsuleCollider capsuleCollider { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] public Animator animator { get; private set; }
 

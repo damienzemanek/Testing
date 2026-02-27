@@ -25,8 +25,8 @@ public static class TwoD_SharedModules
 
         public override bool ExecutionImplementation(TContext ctx)
         {
-            if (SetContext.newFacingDirection == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (SetContext.newFacingDirection == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            if (SetContext.newFacingDirection == LookDir.Right) Blackboard.facingTransformObject.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+            if (SetContext.newFacingDirection == LookDir.Left) Blackboard.facingTransformObject.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
             Blackboard.facingDir = SetContext.newFacingDirection;
             return true;
         }

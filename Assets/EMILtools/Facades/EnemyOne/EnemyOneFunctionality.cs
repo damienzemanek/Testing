@@ -2,6 +2,7 @@
 using System.Collections;
 using EMILtools_Private.Testing;
 using EMILtools.Core;
+using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EnemyOneBlackboard;
@@ -60,7 +61,12 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         
         public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
-            Vector3 lookAtLoc = facade.Blackboard.trackingTarget.position + facade.Blackboard.aimOffset;
+            Vector3 lookAtLoc = Vector3.zero;
+            if(facade.Blackboard.trackingTarget.Has<TwoD_TitanController>())
+                lookAtLoc = facade.Blackboard.trackingTarget.position + facade.Config.titanAimOffset;
+            else if(facade.Blackboard.trackingTarget.Has<TwoD_PilotController>()) 
+                lookAtLoc = facade.Blackboard.trackingTarget.position + facade.Config.pilotAimOffset;
+            else Debug.LogError("Tracking target is neither titan nor pilot");
             var aimPivot = facade.Blackboard.aimPivot;
             aimPivot.LookAt(lookAtLoc);
             Vector3 lockedEuler = aimPivot.eulerAngles;

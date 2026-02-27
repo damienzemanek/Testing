@@ -10183,9 +10183,9 @@ GameObject:
   - component: {fileID: 8527623559060392329}
   - component: {fileID: 2782705395070487353}
   - component: {fileID: 932548145505174478}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: P3 Titan
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10273,7 +10273,7 @@ MonoBehaviour:
   <Config>k__BackingField: {fileID: 11400000, guid: 7ad7c5aa0ce7b6a4fa867aa88648fe7b, type: 2}
   <Blackboard>k__BackingField:
     <rb>k__BackingField: {fileID: 6964917312813252921}
-    <facing>k__BackingField: {fileID: 8530620302462907270}
+    <facingTransformObject>k__BackingField: {fileID: 8530620302462907270}
     <capsuleCollider>k__BackingField: {fileID: 5095773902997319140}
     <animator>k__BackingField: {fileID: 7241339974108905630}
     <weapons>k__BackingField: {fileID: 11400000, guid: 5c4ef6dab0b68574f8e332196f3cd702, type: 2}
@@ -10326,7 +10326,7 @@ MonoBehaviour:
       underlyingValue: {fileID: 605392587582940924}
     Authority:
       underlyingValue: {fileID: 0}
-    key: 0
+    key: 1
 --- !u!114 &8527623559060392329
 MonoBehaviour:
   m_ObjectHideFlags: 0
