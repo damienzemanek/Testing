@@ -45,6 +45,7 @@ public class TwoD_TitanController : MonoFacade<
     {
         if (!Blackboard.hasMounted) return;
         base.Update();
+        Config.animHandle.UpdateAnimBlendFloat(Blackboard.animator, TitanConfig.TitanAnimBlends.Speed, Blackboard.speedAlpha);
     }
     
 

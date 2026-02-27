@@ -46,9 +46,10 @@ public class PilotBlackboard : Blackboard, ITwoD_Blackboard
     [field: SerializeField] public CountdownTimer spawnTitanTimer { get; set; }
     
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LookDir facingDir { get; set; }
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LookDir moveDir;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public LookDir moveDir { get; set; }
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool canMount = false;
-    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting = false;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasDblJumped = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasRequestedMount = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> titanReady = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> isRunning = new ReactiveIntercept<bool>(false);

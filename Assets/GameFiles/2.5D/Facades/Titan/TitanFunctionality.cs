@@ -109,7 +109,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     public class LocomotionModule : 
         BoundSetFunctionality< TwoD_TitanController, TitanContext, LocomotionModule.Setter>, 
-        UPDATE
+        FIXEDUPDATE
     {
         [Serializable]
         public struct Config
@@ -126,7 +126,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             { [ShowInInspector] public Vector2 moveVector => unnamedStoredValue2; }
         
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_TitanController facade) : base(action, facade) { }
-        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) => builder;
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) 
+            => builder.ExitIf(_ => !isActive);
 
         protected override void Awake()
         {
@@ -172,7 +173,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void FixedTick() => Execute();
     }
     
     

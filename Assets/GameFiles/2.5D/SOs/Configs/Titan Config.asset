@@ -45,7 +45,7 @@ MonoBehaviour:
   <mount>k__BackingField:
     <duration>k__BackingField: 2
   <move>k__BackingField:
-    <speed>k__BackingField: 3800
+    <speed>k__BackingField: 12000
     <forceMode>k__BackingField: 0
     <runAlphaMax>k__BackingField: 1
     <decayScalar>k__BackingField:

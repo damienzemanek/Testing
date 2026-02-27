@@ -22,7 +22,6 @@ namespace EMILtools_Private.Testing
         public void InjectFacadeReference(IFacade<TContext> f) => facade = f as TMonoFacade;
         public void SetupModules()
         {
-            Debug.Log(facade.comp);
             AddModulesHere();
             foreach (var t in modules)  t.SetupModule();
             Debug.Log($"{GetType().Name} Functionality modules successfully setup | API Count: " + API_Modules.Count);

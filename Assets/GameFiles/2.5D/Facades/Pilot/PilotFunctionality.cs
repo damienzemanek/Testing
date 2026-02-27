@@ -117,7 +117,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             [field:SerializeField] public Ref<float> spawnTime { get; private set; }
         }
         
-        [ReadOnly] Vector3 spawnPointInAir;
+        [ReadOnly, ShowInInspector] Vector3 spawnPointInAir;
         
         public TitanCallInModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
@@ -143,27 +143,25 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             return true;
         }
 
-        public void TitanReady()
-        {
-            Debug.Log("TITAN READY");
-            facade.Blackboard.titanReady.Value = true;
-        }
-        public void SpawnTitan()
-            => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
+        public void TitanReady() => facade.Blackboard.titanReady.Value = true;
+        public void SpawnTitan() => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
     }
 
     public class DoubleJumpModule : 
         BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
+
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.hasJumped);
+            => builder.ExitIf(_ => !facade.Blackboard.hasJumped)
+                      .ExitIf(_ => facade.Blackboard.hasDblJumped);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
             Debug.Log("Double Jumping");
             facade.Config.animHandle.Play(facade.Blackboard.animator, DoubleJump);
             facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Config.jump.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
+            facade.Blackboard.hasDblJumped = true;
             return true;
         }
     }
@@ -265,6 +263,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.Blackboard.jumpDelay.Start();
             facade.Config.animHandle.Play(facade.Blackboard.animator, Land);
             facade.Blackboard.hasJumped.Value = false;
+            facade.Blackboard.hasDblJumped = false;
             return true;
             
         }
