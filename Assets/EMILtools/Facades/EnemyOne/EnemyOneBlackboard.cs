@@ -9,7 +9,11 @@ public class EnemyOneBlackboard : Blackboard, ITwoD_Blackboard
     public Animator animator;
     public Transform weaponParent;
     public VolleyProjectileSpawner volleySpawner;
-    [ReadOnly] public bool canSeeTarget = false;
+    [ReadOnly] public bool canSeeAndFire
+    {
+        get => volleySpawner.canFire;
+        set => volleySpawner.canFire = value;
+    }
     public Vector3 aimOffset;
     [ReadOnly] public Transform trackingTarget;
     public Transform aimPivot;

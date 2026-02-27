@@ -12,13 +12,12 @@ public class EnemyOneController : MonoFacade<
     EnemyOneBlackboard, 
     EnemyOneContext,
     ActionMap>,
-    IBoundsCheckReceiver
+    IBoundsCheckMsgReceiver
 {
     
     public class ActionMap : IActionMap
     {
-        [NonSerialized] public PersistentAction<Transform> TrackTarget = new();
-        [NonSerialized] public PersistentAction<bool> SeeTarget = new();
+        [NonSerialized] public PersistentAction<bool, Transform> TrackTarget = new();
         [NonSerialized] public PersistentAction<bool, LookDir> FaceDirection = new();
 
     }
@@ -41,15 +40,12 @@ public class EnemyOneController : MonoFacade<
     public void OnEnterBounds(Collider other)
     {
         Debug.Log("entered bounds");
-        Actions.SeeTarget.Invoke(true);
-        Actions.SeeTarget.PrintInvokeListNames();
-        Actions.TrackTarget.Invoke(other.transform);
+        Actions.TrackTarget.Invoke(true, other.transform);
     }
 
     public void OnExitBounds(Collider other)
     {
-        Actions.SeeTarget.Invoke(false);
-        Actions.TrackTarget.Invoke(null);
+        Actions.TrackTarget.Invoke(false, null);
     }
 
 }

@@ -10,7 +10,7 @@ public class BoundsChecker : MonoBehaviour
     [Header("Who will receive the Message?")]
     [SerializeField] bool ThingCollidedWith;
     [SerializeField] bool SelectedReceiver;
-    [SerializeField] [ShowIf("SelectedReceiver")] InterfaceReference<IBoundsCheckReceiver, MonoBehaviour> selectedReceiver;
+    [SerializeField] [ShowIf("SelectedReceiver")] InterfaceReference<IBoundsCheckMsgReceiver, MonoBehaviour> selectedReceiver;
 
     
     [Header("Which trigger callbacks are active?")]
@@ -21,20 +21,17 @@ public class BoundsChecker : MonoBehaviour
     [Header("Layer filtering")]
     [SerializeField] private LayerMask layerMask = ~0;
 
-    HashSet<IBoundsCheckReceiver> collisions;
+    HashSet<IBoundsCheckMsgReceiver> collisions;
 
     void Awake()
     {
         this.Get<Collider>().isTrigger = true;
-        if(ThingCollidedWith) collisions = new HashSet<IBoundsCheckReceiver>();
+        if(ThingCollidedWith) collisions = new HashSet<IBoundsCheckMsgReceiver>();
         if(selectedReceiver == null) Debug.LogError("No Receiver Selected");
         if(selectedReceiver.Value == null) Debug.LogError("No Receiver Selected");
     }
 
-    private bool PassesLayerMask(GameObject go)
-    {
-        return (layerMask.value & (1 << go.layer)) != 0;
-    }
+    bool PassesLayerMask(GameObject go) => (layerMask.value & (1 << go.layer)) != 0;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -43,9 +40,9 @@ public class BoundsChecker : MonoBehaviour
         if (ThingCollidedWith)
         {
             if (!PassesLayerMask(other.gameObject)) return;
-            if (!other.TryGetComponent(out IBoundsCheckReceiver receiver)) return;
-            if (!collisions.Add(receiver)) return;
-            receiver.OnEnterBounds(other);
+            if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
+            if (!collisions.Add(msgReceiver)) return;
+            msgReceiver.OnEnterBounds(other);
         }
 
         if (SelectedReceiver)
@@ -62,9 +59,9 @@ public class BoundsChecker : MonoBehaviour
         if (ThingCollidedWith)
         {
             if (!PassesLayerMask(other.gameObject)) return;
-            if (!other.TryGetComponent(out IBoundsCheckReceiver receiver)) return;
-            if (!collisions.Remove(receiver)) return;
-            receiver.OnExitBounds(other);
+            if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
+            if (!collisions.Remove(msgReceiver)) return;
+            msgReceiver.OnExitBounds(other);
         }
         if(SelectedReceiver) selectedReceiver.Value.OnExitBounds(other);
     }
@@ -76,14 +73,14 @@ public class BoundsChecker : MonoBehaviour
         if (ThingCollidedWith)
         {
             if (!PassesLayerMask(other.gameObject)) return;
-            if (!other.TryGetComponent(out IBoundsCheckReceiver receiver)) return;
-            receiver.OnStayBounds(other);
+            if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
+            msgReceiver.OnStayBounds(other);
         }
         if(SelectedReceiver) selectedReceiver.Value.OnStayBounds(other);
     }
 }
 
-public interface IBoundsCheckReceiver
+public interface IBoundsCheckMsgReceiver
 {
     public virtual void OnEnterBounds(Collider other) { }
     public virtual void OnExitBounds(Collider other) { }
