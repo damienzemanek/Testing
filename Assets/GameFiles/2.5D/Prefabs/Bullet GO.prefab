@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1468679348199373545}
   - component: {fileID: 8425574753739979929}
   - component: {fileID: -234591460618806683}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bullet GO
   m_TagString: Untagged
   m_Icon: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
@@ -86,10 +86,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 136
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 640
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
