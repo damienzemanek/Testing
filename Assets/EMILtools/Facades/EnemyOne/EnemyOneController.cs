@@ -40,7 +40,9 @@ public class EnemyOneController : MonoFacade<
 
     public void OnEnterBounds(Collider other)
     {
+        Debug.Log("entered bounds");
         Actions.SeeTarget.Invoke(true);
+        Actions.SeeTarget.PrintInvokeListNames();
         Actions.TrackTarget.Invoke(other.transform);
     }
 

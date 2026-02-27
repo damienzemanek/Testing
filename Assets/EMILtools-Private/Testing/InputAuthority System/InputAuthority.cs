@@ -23,6 +23,7 @@ public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> 
       protected virtual void Awake()
       {
           Reader = new TInputReader();
+          if(InitialSubordinate.Value == null) Debug.Log("Input Authoriry Initial Subordinate is null!");
           if (presetWithInitialSubordinate) InitialSubordinate.Value.SetupFirstAuthority(this);
       }
       

@@ -91,7 +91,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
     }
 
     public class MountTitan :
@@ -179,7 +179,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
     }
 
     public class ClimbModule : 
@@ -305,7 +305,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     
     public class LookModule : 
         BoundSetFunctionality<TwoD_PilotController, PilotContext, LookModule.Setter>, 
-        LATEUPDATE
+        LATE_UPDATE
     {
         public class Setter : SettableTemplate<bool> { }
         public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -314,12 +314,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         protected override void Awake() => facade.Blackboard.mouseLook.cam = facade.Blackboard.camContext.camera;
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
-        public void LateTick() => Execute();
+        public void OnLateTick() => Execute();
     }
     
     public class ShootModule :
         BoundSetFunctionality<TwoD_PilotController, PilotContext, ShootModule.Setter>, 
-        FIXEDUPDATE
+        FIXED_UPDATE
     {
         public class Setter : SettableTemplate<bool> {  }
         public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -344,12 +344,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             }
         }
         
-        public void FixedTick() => Execute();
+        public void OnFixedTick() => Execute();
     }
     
     public class LocomotionModule : 
         BoundSetFunctionality<TwoD_PilotController, PilotContext, LocomotionModule.Setter>, 
-        FIXEDUPDATE
+        FIXED_UPDATE
     {
         [Serializable]
         public struct Config
@@ -452,6 +452,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             
         }
         
-        public void FixedTick() => Execute();
+        public void OnFixedTick() => Execute();
     }
 }

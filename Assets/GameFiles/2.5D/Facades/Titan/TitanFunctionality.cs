@@ -36,13 +36,13 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     public class MouseLookModule :
         UnboundFunctionality<TwoD_TitanController, TitanContext>, 
-        LATEUPDATE
+        LATE_UPDATE
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
         public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
-        public void LateTick() => Execute();
+        public void OnLateTick() => Execute();
     }
     
 
@@ -71,7 +71,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
         
         void AnimateShoot() => facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot, layer: 1, normalizedTime: 0f);
     }
@@ -94,7 +94,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
             return true; }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
 
         void IAPI_Dependant<MouseModuleContext>.GrabDependancies(MouseModuleContext injectedContext)
             => facade.Blackboard.mouseLook.cam = injectedContext.cam;
@@ -105,7 +105,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
     public class LocomotionModule : 
         BoundSetFunctionality< TwoD_TitanController, TitanContext, LocomotionModule.Setter>, 
-        FIXEDUPDATE
+        FIXED_UPDATE
     {
         [Serializable]
         public struct Config
@@ -172,7 +172,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
-        public void FixedTick() => Execute();
+        public void OnFixedTick() => Execute();
     }
     
     

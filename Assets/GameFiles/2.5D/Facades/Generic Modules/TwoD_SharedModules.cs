@@ -31,6 +31,6 @@ public static class TwoD_SharedModules
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
     }
 }

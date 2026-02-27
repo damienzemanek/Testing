@@ -2,8 +2,10 @@
 using System.Collections;
 using EMILtools_Private.Testing;
 using EMILtools.Core;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using static EnemyOneBlackboard;
+using static EnemyOneConfig.EnemyOneAnims;
 using static TwoD_SharedModules;
 
 public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOneContext>
@@ -11,10 +13,10 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
     protected override void AddModulesHere() 
     {
        AddModule(new SightModule(facade.Actions.SeeTarget, facade));
-       AddModule(new FaceDirectionModule<EnemyOneController, EnemyOneContext>(facade.Actions.FaceDirection, facade));
-       AddModule(new TrackTarget(facade.Actions.TrackTarget, facade));
-       AddModule(new WhichDirectionIsTargetIn(facade));
-       AddModule(new AimAtTarget(facade));
+       // AddModule(new FaceDirectionModule<EnemyOneController, EnemyOneContext>(facade.Actions.FaceDirection, facade));
+       // AddModule(new TrackTarget(facade.Actions.TrackTarget, facade));
+       // AddModule(new WhichDirectionIsTargetIn(facade));
+       // AddModule(new AimAtTarget(facade));
     }
 
     public class TrackTarget : UnboundFunctionality<EnemyOneController, EnemyOneContext>
@@ -39,7 +41,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         // For EnemyOne, it's likely persistent.
     }
 
-    public class AimAtTarget : UnboundFunctionality<EnemyOneController, EnemyOneContext>, LATEUPDATE
+    public class AimAtTarget : UnboundFunctionality<EnemyOneController, EnemyOneContext>, LATE_UPDATE
     {
         public AimAtTarget(EnemyOneController facade) : base(facade) { }
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder)
@@ -59,7 +61,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
             return true;
         }
 
-        public void LateTick() => Execute();
+        public void OnLateTick() => Execute();
     }
 
     public class WhichDirectionIsTargetIn : UnboundFunctionality<EnemyOneController, EnemyOneContext>, UPDATE
@@ -80,11 +82,12 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
     }
 
     public class SightModule :
-        BoundSetFunctionality<EnemyOneController, EnemyOneContext, SightModule.Setter>
+        BoundSetFunctionality<EnemyOneController, EnemyOneContext, SightModule.Setter>,
+        ON_SET
     {
         public class Setter : SettableTemplate<bool> { }
         public SightModule(PersistentAction<bool> action, EnemyOneController facade) : base(action, facade) { }
@@ -93,51 +96,29 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         {
             facade.Blackboard.volleySpawner.canFire = false;
             facade.Blackboard.volleySpawner.projSpawner.OnSpawn ??= new PersistentAction();
-            facade.Blackboard.volleySpawner.projSpawner.OnSpawn.Add(ShootStateChange);
-            facade.Blackboard.volleySpawner.onVolleyEnd += VolleyEnd;
+            facade.Blackboard.volleySpawner.projSpawner.OnSpawn.Add(OnShootAnim);
         }
 
-        void ShootStateChange()
-        {
-            facade.Blackboard.animState = AnimState.Shoot;
-            facade.Blackboard.anims.Play(facade.Blackboard.animator, AnimState.Shoot, normalizedTime: 0f);
-        }
+        void OnShootAnim() => facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot, layer: 1, normalizedTime: 0);
         
-        void VolleyEnd() 
-        { 
-            if(facade.Blackboard.animState == AnimState.Idle) facade.Blackboard.animState = AnimState.Aim; 
-        }
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder) => builder;
 
         public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
+            Debug.Log("Sight module executed");
             bool canSeeTarget = isActive;
             if (canSeeTarget)
             {
                 facade.Blackboard.volleySpawner.canFire = true;
-                VolleyEnd();
             }
             else
             {
                 facade.Blackboard.volleySpawner.canFire = false;
-                facade.Blackboard.animState = AnimState.Idle;
             }
-            facade.Blackboard.anims.Play(facade.Blackboard.animator, facade.Blackboard.animState);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot);
             return true;
         }
-        
-        public new void Bind()
-        {
-            base.Bind();
-            facade.Actions.SeeTarget.Add(OnSeeTargetChanged);
-        }
-        
-        public new void Unbind()
-        {
-            base.Unbind();
-            facade.Actions.SeeTarget.Remove(OnSeeTargetChanged);
-        }
 
-        void OnSeeTargetChanged(bool obj) => Execute();
+        public void OnSet() => Execute();
     }
 }

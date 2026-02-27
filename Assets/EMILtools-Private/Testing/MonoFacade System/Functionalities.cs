@@ -15,8 +15,8 @@ namespace EMILtools_Private.Testing
         
         [ShowInInspector] List<MonoFunctionalityModule<TMonoFacade, TContext>> modules; 
         List<UPDATE> _update = new();
-        List<FIXEDUPDATE> _fixed = new();
-        List<LATEUPDATE> _late = new();
+        List<FIXED_UPDATE> _fixed = new();
+        List<LATE_UPDATE> _late = new();
         public Functionalities() => modules = new List<MonoFunctionalityModule<TMonoFacade, TContext>>();
         
         public void InjectFacadeReference(IFacade<TContext> f) => facade = f as TMonoFacade;
@@ -39,9 +39,9 @@ namespace EMILtools_Private.Testing
                 if(t is IBindable bindable) bindable.Unbind();
             
         }
-        public void UpdateTick() { foreach (var t in _update) t.UpdateTick(); }
-        public void FixedTick() { foreach (var t in _fixed) { t.FixedTick(); } }
-        public void LateTick() { foreach (var t in _late) t.LateTick(); }
+        public void UpdateTick() { foreach (var t in _update) t.OnUpdateTick(); }
+        public void FixedTick() { foreach (var t in _fixed) { t.OnFixedTick(); } }
+        public void LateTick() { foreach (var t in _late) t.OnLateTick(); }
         
         
         public void AddModule(MonoFunctionalityModule<TMonoFacade, TContext> module)
@@ -50,8 +50,8 @@ namespace EMILtools_Private.Testing
             Debug.Log("ADDING module " + module.GetType().Name + " new count is " + modules.Count);
 
             if (module is UPDATE u) { _update.Add(u); }
-            if (module is FIXEDUPDATE f) _fixed.Add(f);
-            if (module is LATEUPDATE l) _late.Add(l);
+            if (module is FIXED_UPDATE f) _fixed.Add(f);
+            if (module is LATE_UPDATE l) _late.Add(l);
             if (module is IAPI_Module)
             {
                 foreach (var iface in GetInterfacesAssignableTo<IAPI_Module>(module.GetType()))

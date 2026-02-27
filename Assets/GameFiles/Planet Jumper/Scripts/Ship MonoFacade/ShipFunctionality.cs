@@ -42,7 +42,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void UpdateTick() => Execute();
+        public void OnUpdateTick() => Execute();
     }
 
     public class SwitchCamModule : BoundFunctionality<ShipController, ShipContext>
@@ -62,7 +62,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
 
     public class FireModule :
         BoundSetFunctionality<ShipController, ShipContext, FireModule.Setter>,
-        FIXEDUPDATE
+        FIXED_UPDATE
     {
         public class Setter : SettableTemplate<bool> {  }
         static readonly int fireAnimNameLeft = Animator.StringToHash("fireLeft");
@@ -86,7 +86,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void FixedTick() => Execute();
+        public void OnFixedTick() => Execute();
 
         void ShootAnim()
         {
@@ -100,7 +100,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
 
     public class ThrustModuleSub : 
         BoundSetFunctionality<ShipController, ShipContext, ThrustModuleSub.Setter>,
-        UPDATE, FIXEDUPDATE
+        UPDATE, FIXED_UPDATE
     {
         [Serializable]
         public struct Config
@@ -145,13 +145,13 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
 
         void Slow() => facade.Blackboard.rb.linearVelocity *= facade.Config.thrust.notMovingSlowScalar;
 
-        public void UpdateTick() => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
-        public void FixedTick() => Execute();
+        public void OnUpdateTick() => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
+        public void OnFixedTick() => Execute();
     }
 
     public class SteerModule : 
         BoundSetFunctionality<ShipController, ShipContext, SteerModule.Setter>,
-        FIXEDUPDATE
+        FIXED_UPDATE
     {
         [Serializable]
         public struct Config
@@ -176,7 +176,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void FixedTick() => Execute();
+        public void OnFixedTick() => Execute();
         void StopSteering() => facade.Blackboard.rb.angularVelocity = Vector3.zero;
     }
 }

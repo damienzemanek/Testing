@@ -41,7 +41,7 @@ public struct BlendTreeVariable<TAnimBlendEnum>
     public void CalculateHash() => hash = Animator.StringToHash(name);
 }
 
-[LabelWidth(75)]
+[LabelWidth(125)]
 [InlineProperty]
 [Serializable]
 public class AnimHandle<TAnimEnum, TAnimBlendEnum>

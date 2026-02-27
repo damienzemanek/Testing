@@ -11,6 +11,8 @@ public interface IBindable
     public void Unbind();
 }
 
+public interface ISettableImplementer { }
+
 /// <summary>
 /// Binds a functionality to a PersistentAction
 /// - Only to be used with PersistentAction (No Args)
@@ -49,7 +51,9 @@ public abstract class BoundSetFunctionality<
         TFacade,
         TContext,
         SettableTemplate> 
-        : UnboundFunctionality<TFacade, TContext>, IBindable
+        : UnboundFunctionality<TFacade, TContext>, 
+    IBindable,
+    ISettableImplementer
     where TFacade : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext
     where SettableTemplate : class, ISettableTemplate<bool>, new()
@@ -57,7 +61,7 @@ public abstract class BoundSetFunctionality<
     /// <summary>
     /// Alias for Settable.unnamedStoredValue1
     /// </summary>
-    protected bool isActive => Settable._unnamedStoredValue1;
+    [ShowInInspector] protected bool isActive => Settable._unnamedStoredValue1;
     protected SettableTemplate SetContext => Settable;
     [NonSerialized] [ShowInInspector] SettableTemplate Settable;
     protected BoundSetFunctionality(IPersistentDelegate _action, TFacade facade) : base(facade)
@@ -67,7 +71,16 @@ public abstract class BoundSetFunctionality<
         Debug.Log($"Settable action is : " + Settable.action + $" and template call is : " + Settable.TemplateCall + $" for functionality : " + GetType().Name);
     }
 
-    public void Bind() => Settable.action.Add(Settable.TemplateCall);
-    public void Unbind() => Settable.action.Add(Settable.TemplateCall);
+    public void Bind()
+    {
+        Settable.action.Add(Settable.TemplateCall);
+        if(this is ON_SET onSet) Settable.OnSet.Add(onSet.OnSet);
+    }
+
+    public void Unbind()
+    {
+        Settable.action.Remove(Settable.TemplateCall);
+        if(this is ON_SET onSet) Settable.OnSet.Remove(onSet.OnSet);
+    }
 }
 
