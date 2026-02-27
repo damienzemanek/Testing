@@ -33,10 +33,8 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         {
             facade.Blackboard.cannonMouseLook.Input = facade.Input;
         }
-        
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<ShipContext> AddPipelineStepsHere(PipelineBuilder<ShipContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.usingCannonCam);
+        public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam);
 
         public override bool Execute(ShipContext ctx)
         {
@@ -50,9 +48,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
     public class SwitchCamModule : BoundFunctionality<ShipController, ShipContext>
     {
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<ShipContext> AddPipelineStepsHere(PipelineBuilder<ShipContext> builder) => builder;
+        public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder) => builder;
 
         public override bool Execute(ShipContext ctx)
         {
@@ -80,10 +76,9 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             facade.Blackboard.cannonProjectileSpawner.OnSpawn ??= new PersistentAction();
             facade.Blackboard.cannonProjectileSpawner.OnSpawn.Add(ShootAnim);
         }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<ShipContext> AddPipelineStepsHere(PipelineBuilder<ShipContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.usingCannonCam || !isActive);
+        
+        public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam || !isActive);
 
         public override bool Execute(ShipContext ctx)
         {
@@ -129,9 +124,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             facade.InitTimers((facade.Blackboard.thrustFOV, false));
             facade.Blackboard.rb.maxLinearVelocity = config.maxVelocity;
         }
-
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<ShipContext> AddPipelineStepsHere(PipelineBuilder<ShipContext> builder) => builder;
+        public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder) => builder;
 
         public override bool Execute(ShipContext ctx)
         {
@@ -172,10 +165,8 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         Config cfg => facade.Config.steer;
 
         public SteerModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<ShipContext> AddPipelineStepsHere(PipelineBuilder<ShipContext> builder)
-            => builder.AddBlockIf(_ => !isActive, new Callback(StopSteering));
+        public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
+            => builder.ExitIf(_ => !isActive, new Callback(StopSteering));
 
         public override bool Execute(ShipContext ctx)
         {

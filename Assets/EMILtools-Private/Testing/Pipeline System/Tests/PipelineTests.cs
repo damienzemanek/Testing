@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using System;
+using EMILtools.Core;
 using System.Collections;
 using EMILtools.Timers;
 using UnityEngine.TestTools;
@@ -22,8 +23,8 @@ public class PipelineTests
         var builder = new PipelineBuilder<TestContext>(2);
         
         // Act
-        builder.AddBlockIf(ctx => true);
-        var pipeline = builder.FinalStep(ctx => true);
+        builder.ExitIf(ctx => true);
+        var pipeline = builder.InjectMainMethod(ctx => true);
 
         // Assert
         Assert.AreEqual(2, pipeline.Size);
@@ -37,9 +38,9 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
         var jump = new PipelineBuilder<TestContext>(size: 3)
-            .AddBlockIf(ctx => ctx.Value == 0)
-            .AddBlockIf(ctx => ctx.Value == 1)
-            .FinalStep(ctx => Jump(ctx));
+            .ExitIf(ctx => ctx.Value == 0)
+            .ExitIf(ctx => ctx.Value == 1)
+            .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
 
         
@@ -60,9 +61,9 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddBlockIf(ctx => ctx.Value == 1)
-            .AddBlockIf(ctx => ctx.Value == 2)
-            .FinalStep(ctx => Jump(ctx));
+            .ExitIf(ctx => ctx.Value == 1)
+            .ExitIf(ctx => ctx.Value == 2)
+            .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
 
         //Act
@@ -80,9 +81,9 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool failedStepCallbackExecuted = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddBlockIf(ctx => ctx.Value == 1)
-            .AddBlockIf(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
-            .FinalStep(ctx => Jump(ctx));
+            .ExitIf(ctx => ctx.Value == 1)
+            .ExitIf(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
+            .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => true;
 
         
@@ -102,9 +103,9 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpCalled = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddBlockIf(ctx => ctx.Value == 0)
-            .AddBlockIf(ctx => ctx.Value == 1, new Timed(1))
-            .FinalStep(ctx => Jump(ctx));
+            .ExitIf(ctx => ctx.Value == 0)
+            .ExitIf(ctx => ctx.Value == 1, new Timed(1))
+            .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => jumpCalled = true;
 
         
@@ -133,9 +134,9 @@ public class PipelineTests
         var myctx = new TestContext(2);
         bool jumpCalled = false;
         var jump = new PipelineBuilder<TestContext>(3)
-            .AddBlockIf(ctx => ctx.Value == 0)
-            .AddBlockIf(ctx => ctx.Value == 1, new Wait(1))
-            .FinalStep(ctx => Jump(ctx));
+            .ExitIf(ctx => ctx.Value == 0)
+            .ExitIf(ctx => ctx.Value == 1, new Wait(1))
+            .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => jumpCalled = true;
 
         

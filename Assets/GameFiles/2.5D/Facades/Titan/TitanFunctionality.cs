@@ -39,9 +39,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         LATEUPDATE
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade) { }
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.hasMounted);
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
         public override bool Execute(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
         public void LateTick() => ExecuteTemplateCall();
     }
@@ -59,11 +58,9 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Blackboard.bulletSpawner.OnSpawn = new PersistentAction();
             facade.Blackboard.bulletSpawner.OnSpawn.Add(AnimateShoot);
         }
-
-        public override int injectAmountOfAddedSteps => 2;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder)
-            => builder.AddBlockIf(_ => !isActive, new Callback(AnimateBackToIdle))
-                      .AddBlockIf(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
+            => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
+                      .ExitIf(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
 
         public override bool Execute(TitanContext ctx)
         {
@@ -94,9 +91,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             { public Camera cam; public MouseModuleContext(Camera cam) => this.cam = cam; }
         
         public MouseInputZonesModule(TwoD_TitanController facade) : base(facade) { }
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.hasMounted);
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
 
         public override bool Execute(TitanContext ctx) {
             facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
@@ -130,8 +126,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             { [ShowInInspector] public Vector2 moveVector => unnamedStoredValue2; }
         
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_TitanController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder) => builder;
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) => builder;
 
         protected override void Awake()
         {
@@ -185,8 +180,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         BoundFunctionality<TwoD_TitanController, TitanContext>
     {
         public DismountModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder)
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder;
 
         public override bool Execute(TitanContext ctx) {
@@ -217,8 +211,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder) => builder;
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) => builder;
 
         public override bool Execute(TitanContext ctx)
         {
@@ -249,10 +242,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         }
         
         public MountModule(TwoD_TitanController facade) : base(facade) { }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<TitanContext> AddPipelineStepsHere(PipelineBuilder<TitanContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.canMount);
+        public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.canMount);
 
         public override bool Execute(TitanContext ctx) 
         { facade.StartCoroutine(MountSequence(ctx)); return true; }

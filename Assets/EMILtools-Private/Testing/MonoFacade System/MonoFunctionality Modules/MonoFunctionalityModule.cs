@@ -18,37 +18,6 @@ public interface IExecuteTemplate<TContext>
     public bool Execute(TContext ctx);
 }
 
-public interface IInjectablePipeline<TContext>
-    where TContext : struct, IPipelineContext
-{
-    public Pipeline<TContext> executionPipeline { get; set; }
-    
-    /// <summary>
-    /// Inject the size of the pipeline for runtime immutability and stability
-    /// </summary>
-    public abstract int injectAmountOfAddedSteps { get; }
-
-    public virtual Pipeline<TContext> InjectStepsWithFinalStep(PipelineBuilder<TContext> builder)
-        => throw new System.NotImplementedException();
-
-    public virtual PipelineBuilder<TContext> AddPipelineStepsHere(PipelineBuilder<TContext> builder)
-        => throw new System.NotImplementedException();  
-
-    public virtual PipelineStepDelegate<TContext> InjectFinalStep() 
-        => throw new System.NotImplementedException(); 
-    
-    public void Setup(bool setupWithFinalStep)
-    {
-        // + 1 to accomodate for the final step
-        var builder = new PipelineBuilder<TContext>(injectAmountOfAddedSteps + 1);
-        if (setupWithFinalStep)
-            executionPipeline = InjectStepsWithFinalStep(builder);
-        else
-            executionPipeline = AddPipelineStepsHere(builder).FinalStep(InjectFinalStep());
-    }
-}
-
-
 public interface IBindable
 {
     public void Bind();

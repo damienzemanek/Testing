@@ -8,25 +8,29 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
     where TFacade : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext
 {
-    protected UnboundFunctionality(TFacade facade) : base(facade) { }
-    public abstract int injectAmountOfAddedSteps { get; }
-    public abstract PipelineBuilder<TContext> AddPipelineStepsHere(PipelineBuilder<TContext> builder);
+    // Variables
     public Pipeline<TContext> executionPipeline { get; set; }
-    public PipelineStepDelegate<TContext> InjectFinalStep() => new(Execute);
     
+    // Ctor
+    protected UnboundFunctionality(TFacade facade) : base(facade) { }
+    
+    // API Access
     protected IInjectablePipeline<TContext> injectablePipeline => this;
     protected IExecuteTemplate<TContext> ExecuteTemplate => this;
+    
+    // Methods
+    public abstract PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder);
+    public PipelineStepDelegate<TContext> InjectMainStep() => new(Execute);
+    [Button] public void ExecuteTemplateCall() => context.TryTo(executionPipeline);
+    public abstract bool Execute(TContext ctx);
     public override void SetupModule()
     {
         injectablePipeline.Setup(setupWithFinalStep: false);
         Awake();
     }
+    
 
-    [Button]
-    public void ExecuteTemplateCall()
-    {
-        context.TryTo(executionPipeline);
-    }
-    public abstract bool Execute(TContext ctx);
+
+
     
 }

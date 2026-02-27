@@ -44,8 +44,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class DismountTitanModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder) => builder;
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
         public override bool Execute(PilotContext ctx)
         {
@@ -61,8 +60,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class CameraSystemModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder) => builder;
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
         
         public override bool Execute(PilotContext ctx)
         {
@@ -85,9 +83,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class MouseModule : UnboundFunctionality<TwoD_PilotController, PilotContext>, UPDATE
     {
         public MouseModule(TwoD_PilotController facade) : base(facade) { }
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => facade.Blackboard.isMantled);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
         public override bool Execute(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
         public void UpdateTick() => ExecuteTemplateCall();
@@ -96,9 +93,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class MountTitan : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.canMount);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.canMount);
 
         public override bool Execute(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
     }
@@ -129,9 +125,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.InitTimer(facade.Blackboard.spawnTitanTimer, true);
         }
 
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => facade.Blackboard.titanReady);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => facade.Blackboard.titanReady);
 
         public override bool Execute(PilotContext ctx)
         {
@@ -154,10 +149,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class DoubleJumpModule : BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => facade.Blackboard.hasDoubleJumped);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => facade.Blackboard.hasDoubleJumped);
 
         public override bool Execute(PilotContext ctx)
         {
@@ -173,8 +166,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public class Setter : SettableTemplate<bool> {  }
         public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder) => builder;
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
         public override bool Execute(PilotContext ctx)
         {
@@ -186,10 +178,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     public class ClimbModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_Climb
     {
         public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder) 
-            => builder.AddBlockIf(_ => !facade.Blackboard.isMantled);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) 
+            => builder.ExitIf(_ => !facade.Blackboard.isMantled);
 
         public override bool Execute(PilotContext ctx)
         {
@@ -214,11 +204,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         IAPI_Mantler
     {
         public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 2;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => !facade.Blackboard.canMantle)
-                      .AddBlockIf(_ => facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => !facade.Blackboard.canMantle)
+                      .ExitIf(_ => facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir);
 
         public override bool Execute(PilotContext ctx)
         {
@@ -252,9 +240,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
          => facade.Blackboard.phys.isGrounded.SimpleReactions.Add(facade.Actions.Land.Invoke);
         
         public LandModule(PersistentAction _action, TwoD_PilotController facade) : base(_action, facade) { }
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => {
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => {
                 bool isBlocked = !facade.Blackboard.phys.isGrounded.Value;
                 Debug.Log($"[LandModule] Pipeline Check: landed={facade.Blackboard.phys.isGrounded.Value}, isBlocked={isBlocked}");
                 return isBlocked;
@@ -288,14 +275,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.Blackboard.jumpDelay = new CountdownTimer(facade.Config.jump.delay);
             facade.InitTimer(facade.Blackboard.jumpDelay, true);
         }
-
-        public override int injectAmountOfAddedSteps => 5;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => facade.Blackboard.isMantled, new Callback(() => facade.Actions.ClimbLedge.Invoke()))
-                      .AddBlockIf(_ => facade.Blackboard.canMantle, new Callback(() => facade.Actions.MantleLedge.Invoke()))
-                      .AddBlockIf(_ => facade.Blackboard.hasJumped, new Callback(() => facade.Actions.DoubleJump.Invoke()))
-                      .AddBlockIf(_ => facade.Blackboard.jumpOnCooldown)
-                      .AddBlockIf(_ => !facade.Blackboard.phys.isGrounded);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => facade.Blackboard.isMantled, new Callback(() => facade.Actions.ClimbLedge.Invoke()))
+                      .ExitIf(_ => facade.Blackboard.canMantle, new Callback(() => facade.Actions.MantleLedge.Invoke()))
+                      .ExitIf(_ => facade.Blackboard.hasJumped, new Callback(() => facade.Actions.DoubleJump.Invoke()))
+                      .ExitIf(_ => facade.Blackboard.jumpOnCooldown)
+                      .ExitIf(_ => !facade.Blackboard.phys.isGrounded);
 
         public override bool Execute(PilotContext ctx)
         {
@@ -313,10 +298,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public class Setter : SettableTemplate<bool> { }
         public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 1;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => facade.Blackboard.isMantled);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
         public override bool Execute(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
@@ -330,11 +313,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public class Setter : SettableTemplate<bool> {  }
         public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
-
-        public override int injectAmountOfAddedSteps => 2;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder)
-            => builder.AddBlockIf(_ => !isActive, new Callback(AnimateBackToIdle))
-                      .AddBlockIf(_ => facade.Blackboard.isMantled);
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
+                      .ExitIf(_ => facade.Blackboard.isMantled);
         
         public override bool Execute(PilotContext ctx)
         {
@@ -402,9 +383,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.InitTimer(facade.Blackboard.moveDecay, true);
             facade.InitTimer(facade.Blackboard.turnSlowdown, true);
         }
-
-        public override int injectAmountOfAddedSteps => 0;
-        public override PipelineBuilder<PilotContext> AddPipelineStepsHere(PipelineBuilder<PilotContext> builder) => builder;
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
         public override bool Execute(PilotContext ctx)
         {

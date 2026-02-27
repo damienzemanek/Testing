@@ -11,17 +11,16 @@ public static class TwoD_SharedModules
     where TFacadeType : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext, ITwoD_Context
     {
-        public class Setter : SettableTemplate<bool, LookDir> { [ShowInInspector] public LookDir dir => unnamedStoredValue2; }
+        public class Setter : SettableTemplate<bool, LookDir> 
+            { [ShowInInspector] public LookDir dir => unnamedStoredValue2; }
+        
         ITwoD_Blackboard Blackboard;
 
         protected override void Awake()
          => Blackboard = facade.API_Blackboard<ITwoD_Blackboard>() ?? throw new System.ArgumentNullException(nameof(facade), "Facade cannot be null");
-
-
+        
         public FaceDirectionModule(PersistentAction<bool, LookDir> _action, TFacadeType facade) : base(_action, facade) { }
-        public override int injectAmountOfAddedSteps { get; }
-
-        public override PipelineBuilder<TContext> AddPipelineStepsHere(PipelineBuilder<TContext> builder)
+        public override PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder)
             => builder;
 
         public override bool Execute(TContext ctx)
