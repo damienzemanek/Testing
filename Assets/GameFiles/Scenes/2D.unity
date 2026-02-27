@@ -278,12 +278,11 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 5751d9994f40b5343b5b268105382a11, type: 2}
       fireInterval:
         val: 0.1
-      fireTimer: {}
       targetSetDirection: 0
       direction: {x: 0, y: 0, z: 0}
       targetAPosition: 0
       targetPosition: {x: 0, y: 0, z: 0}
-    <animController>k__BackingField: {fileID: 14127282}
+    <animator>k__BackingField: {fileID: 572845870}
     <turnSlowDown>k__BackingField: {fileID: 11400000, guid: 2d253e366a6dc3940a396789c0b35f5a, type: 2}
     <phys>k__BackingField: {fileID: 14127279}
     <camContext>k__BackingField:
@@ -325,11 +324,6 @@ MonoBehaviour:
       lockPosZ: 0
       lerpSpeed: 5
       moveOptions: 0
-    <moveDecay>k__BackingField: {}
-    <jumpDelay>k__BackingField: {}
-    <turnSlowdown>k__BackingField: {}
-    <titanProgressTimer>k__BackingField: {}
-    <spawnTitanTimer>k__BackingField: {}
     moveDir: 0
     canMount: 0
     isShooting: 0
@@ -345,7 +339,6 @@ MonoBehaviour:
       _value: 0
     canMantle:
       _value: 0
-    dblJumpMult: 1.5
     ledgeData:
       dir: 0
       point: {fileID: 0}

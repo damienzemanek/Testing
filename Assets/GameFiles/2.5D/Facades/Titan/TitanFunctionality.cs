@@ -41,7 +41,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public MouseLookModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
-        public override bool Execute(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
+        public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
         public void LateTick() => ExecuteTemplateCall();
     }
     
@@ -62,7 +62,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
                       .ExitIf(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
 
-        public override bool Execute(TitanContext ctx)
+        public override bool ExecutionImplementation(TitanContext ctx)
         {
             facade.Blackboard.bulletSpawner.targetPosition = facade.Blackboard.mouseLook.core.contactPoint;
             facade.Blackboard.bulletSpawner.Spawn();
@@ -94,7 +94,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
 
-        public override bool Execute(TitanContext ctx) {
+        public override bool ExecutionImplementation(TitanContext ctx) {
             facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
             return true; }
 
@@ -139,7 +139,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Blackboard.rb.maxAngularVelocity = facade.Config.move.maxVelMagnitude;
         }
         
-        public override bool Execute(TitanContext ctx)
+        public override bool ExecutionImplementation(TitanContext ctx)
         {
             Walk();
             Move(SetContext.moveVector);
@@ -183,7 +183,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder;
 
-        public override bool Execute(TitanContext ctx) {
+        public override bool ExecutionImplementation(TitanContext ctx) {
             facade.StartCoroutine(DismountSequence(ctx));
             return true; }
         
@@ -213,7 +213,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public CameraSystemModule(PersistentAction action, TwoD_TitanController facade) : base(action, facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder) => builder;
 
-        public override bool Execute(TitanContext ctx)
+        public override bool ExecutionImplementation(TitanContext ctx)
         {
             facade.Blackboard.camContext.CM.Target.TrackingTarget = facade.transform;
             facade.Blackboard.camContext.follow.FollowOffset = facade.Config.camSettings.followOffset;
@@ -245,7 +245,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.canMount);
 
-        public override bool Execute(TitanContext ctx) 
+        public override bool ExecutionImplementation(TitanContext ctx) 
         { facade.StartCoroutine(MountSequence(ctx)); return true; }
 
         public void Mount() => ExecuteTemplateCall();

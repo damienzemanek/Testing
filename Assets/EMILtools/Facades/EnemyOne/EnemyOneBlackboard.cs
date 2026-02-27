@@ -10,7 +10,7 @@ public class EnemyOneBlackboard : Blackboard, ITwoD_Blackboard
     public Animator animator;
     public Transform weaponParent;
     [ReadOnly] public AnimState animState;
-    public AnimHandle<AnimState> anims = new AnimHandle<AnimState>();
+    public AnimHandle<AnimState, NoBlends> anims = new();
     public VolleyProjectileSpawner volleySpawner;
     [ReadOnly] public bool canSeeTarget = false;
     public Vector3 aimOffset;

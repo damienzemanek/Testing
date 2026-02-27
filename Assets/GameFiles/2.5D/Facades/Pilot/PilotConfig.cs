@@ -14,7 +14,12 @@ public class PilotConfig : Config
         LocomotionFwd, LocomotionBack,
         MountFrontAnim, DismountAnim
     }
-    public AnimHandle<PilotAnims> animHandle;
+
+    public enum PilotAnimBlends
+    {
+        Speed,
+    }
+    public AnimHandle<PilotAnims, PilotAnimBlends> animHandle;
     [field: SerializeField] [field: ShowInInspector] public PilotFunctionality.LocomotionModule.Config move { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public PilotFunctionality.TitanCallInModule.Config titan { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public PilotFunctionality.JumpModule.Config jump { get; private set; }

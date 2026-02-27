@@ -46,7 +46,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.transform.parent = null;
             facade.Blackboard.capsuleCollider.enabled = true;
@@ -62,7 +62,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
         
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Blackboard.camContext.CM.Target.TrackingTarget = facade.Blackboard.camFollowTransform;
             facade.Blackboard.camContext.follow.FollowOffset = facade.Config.camSettings.followOffset;
@@ -86,7 +86,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
-        public override bool Execute(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
+        public override bool ExecutionImplementation(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
         public void UpdateTick() => ExecuteTemplateCall();
     }
 
@@ -96,7 +96,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.canMount);
 
-        public override bool Execute(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
+        public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
     }
 
     public class TitanCallInModule : BoundFunctionality<TwoD_PilotController, PilotContext>
@@ -128,7 +128,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.titanReady);
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Blackboard.posToMouse.objectToMove = GameObject.Instantiate(facade.Config.titan.fxCallInPrefab, null).transform;    
             facade.Blackboard.posToMouse.Execute();
@@ -152,10 +152,10 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.hasDoubleJumped);
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Config.animHandle.Play(facade.Blackboard.animator, Jump);
-            facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Blackboard.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
+            facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Config.jump.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
             facade.Blackboard.hasDoubleJumped = true;
             return true;
         }
@@ -168,7 +168,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Blackboard.isRunning.Value = isActive;
             return true;
@@ -181,7 +181,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) 
             => builder.ExitIf(_ => !facade.Blackboard.isMantled);
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Config.animHandle.Play(facade.Blackboard.animator, Climb);
             return true;
@@ -208,7 +208,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => builder.ExitIf(_ => !facade.Blackboard.canMantle)
                       .ExitIf(_ => facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir);
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             Debug.Log("MANTLING");
             facade.Blackboard.isMantled.Value = true;
@@ -248,7 +248,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             });
 
         [Button]
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             Debug.Log("Landed");
             facade.Blackboard.jumpDelay.Start();
@@ -266,6 +266,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public struct Config
         {
             [field:SerializeField] public Ref<float> delay { get; private set; }
+            [field:SerializeField] public float dblJumpMult { get; private set; }
+
         }
         
         public JumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
@@ -282,7 +284,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
                       .ExitIf(_ => facade.Blackboard.jumpOnCooldown)
                       .ExitIf(_ => !facade.Blackboard.phys.isGrounded);
 
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Config.animHandle.Play(facade.Blackboard.animator, Jump);
             PhysEX.Jump(facade.Blackboard.rb, facade.Blackboard.phys.jumpSettings);
@@ -301,7 +303,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
-        public override bool Execute(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
+        public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
         public void LateTick() => ExecuteTemplateCall();
     }
@@ -317,7 +319,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
                       .ExitIf(_ => facade.Blackboard.isMantled);
         
-        public override bool Execute(PilotContext ctx)
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.StartCoroutine(ShootImplementation());
             return true;
@@ -365,7 +367,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public class Setter : SettableTemplate<bool, Vector2>
         {
-            public Vector2 movement => unnamedStoredValue2;
+            [ShowInInspector] public Vector2 movement => unnamedStoredValue2;
         }
 
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_PilotController facade) : base(action, facade) { }
@@ -383,9 +385,11 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.InitTimer(facade.Blackboard.moveDecay, true);
             facade.InitTimer(facade.Blackboard.turnSlowdown, true);
         }
-        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
 
-        public override bool Execute(PilotContext ctx)
+        public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
+            => builder.ExitIf(_ => !isActive);
+
+        public override bool ExecutionImplementation(PilotContext ctx)
         {
             if (!facade.Blackboard.isRunning) Walk();
             else Run();
@@ -408,17 +412,14 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             void Move(Vector2 move)
             {
                 if (move.x == 0) return;
-                LookDir prevMoveDir = facade.Blackboard.moveDir;
-
                 Vector3 dir = new Vector3(move.x, 0, 0);
                 facade.Blackboard.moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
-                facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd, layer: 1, normalizedTime: 0);
-                ApplyMoveForce(dir);
 
-                if (prevMoveDir != facade.Blackboard.moveDir)
-                    facade.Blackboard.turnSlowdown.Restart();
+                AnimateLocomotion();
+                ApplyMoveForce(dir);
+                SlowdownIfTurned();
                 
-                
+                // Compositional Functions
                 void ApplyMoveForce(Vector3 dir)
                 {
                     float runSpeedIncludingDecay = (facade.Blackboard.speedAlpha > cfg.walkAlphaMax ? cfg.maxSpeed : cfg.moveForce);
@@ -427,7 +428,20 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
                     if (!facade.Blackboard.phys.isGrounded) actualSpeed *= facade.Blackboard.phys.fallSettings.inAirMoveScalar;
                     facade.Blackboard.rb.AddForce(dir * actualSpeed, cfg.forceMode);
                 }
+                void AnimateLocomotion()
+                {
+                    if(facade.Blackboard.moveDir == facade.Blackboard.facingDir) facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd, layer: 0);
+                    else facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionBack, layer: 0);
+                }
+                void SlowdownIfTurned()
+                {
+                    LookDir prevMoveDir = facade.Blackboard.moveDir;
+                    if (prevMoveDir != facade.Blackboard.moveDir)
+                        facade.Blackboard.turnSlowdown.Restart();
+                }
             }
+            
+            
         }
         
         public void FixedTick() => ExecuteTemplateCall();

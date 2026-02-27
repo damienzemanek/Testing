@@ -23,7 +23,7 @@ public static class TwoD_SharedModules
         public override PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder)
             => builder;
 
-        public override bool Execute(TContext ctx)
+        public override bool ExecutionImplementation(TContext ctx)
         {
             if (SetContext.dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
             if (SetContext.dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);

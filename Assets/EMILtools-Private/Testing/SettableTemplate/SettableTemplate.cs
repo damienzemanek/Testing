@@ -17,7 +17,6 @@ public abstract class SettableTemplate<T1> : ISettableTemplate<T1>
     public Delegate TemplateCall => _templateCall;
     void _TemplateCall(T1 val)
     {
-        Debug.Log($"SettableTemplate<T1>: CALLED SET TEMPLATE CALL, val is: : {val} for : {GetType().Name}");
         ((ISettableTemplate<T1>)this)._unnamedStoredValue1 = val;
         Set(val);
     }
@@ -54,7 +53,6 @@ public abstract class SettableTemplate<T1, T2> : ISettableTemplate<T1>
     public Delegate TemplateCall => _templateCall;
     void _TemplateCall(T1 val1, T2 val2)
     {
-        Debug.Log($"SettableTemplate<T1>: CALLED SET TEMPLATE CALL, val is: : {val1} and {val2} for : {GetType().Name}");
         ((ISettableTemplate<T1>)this)._unnamedStoredValue1 = val1;
         unnamedStoredValue2 = val2;
         Set(val1, val2);

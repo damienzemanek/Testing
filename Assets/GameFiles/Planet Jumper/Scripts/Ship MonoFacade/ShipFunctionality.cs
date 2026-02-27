@@ -36,7 +36,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam);
 
-        public override bool Execute(ShipContext ctx)
+        public override bool ExecutionImplementation(ShipContext ctx)
         {
             facade.Blackboard.cannonMouseLook.UpdateMouseLook();
             return true;
@@ -50,7 +50,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public SwitchCamModule(PersistentAction action, ShipController facade) : base(action, facade) { }
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder) => builder;
 
-        public override bool Execute(ShipContext ctx)
+        public override bool ExecutionImplementation(ShipContext ctx)
         {
             facade.Blackboard.usingCannonCam = !facade.Blackboard.usingCannonCam;
             facade.Blackboard.cannonMouseLook.updateMouseLook = facade.Blackboard.usingCannonCam;
@@ -80,7 +80,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam || !isActive);
 
-        public override bool Execute(ShipContext ctx)
+        public override bool ExecutionImplementation(ShipContext ctx)
         {
             facade.Blackboard.cannonProjectileSpawner.Spawn();
             return true;
@@ -126,7 +126,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         }
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder) => builder;
 
-        public override bool Execute(ShipContext ctx)
+        public override bool ExecutionImplementation(ShipContext ctx)
         {
             if (isActive)
             {
@@ -168,7 +168,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
             => builder.ExitIf(_ => !isActive, new Callback(StopSteering));
 
-        public override bool Execute(ShipContext ctx)
+        public override bool ExecutionImplementation(ShipContext ctx)
         {
             Quaternion target = Quaternion.Euler(facade.Blackboard.cam.transform.rotation.eulerAngles + cfg.offset);
             float t = Mathf.Clamp01(cfg.steerSmooth * Time.fixedDeltaTime);

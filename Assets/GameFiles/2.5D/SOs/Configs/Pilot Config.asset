@@ -12,16 +12,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab7d6de56aaf4b968b59af39d94f4135, type: 3}
   m_Name: Pilot Config
   m_EditorClassIdentifier: 
+  animHandle:
+    States:
+    - name: Move
+      animEnum: 8
+      hash: 1326225478
+    - name: MoveBack
+      animEnum: 9
+      hash: -900361299
+    - name: jump
+      animEnum: 0
+      hash: -1481439722
+    - name: inair
+      animEnum: 2
+      hash: -891812872
+    - name: land
+      animEnum: 3
+      hash: -1476340264
+    - name: dbljump
+      animEnum: 1
+      hash: 2107398815
+    - name: mantle
+      animEnum: 4
+      hash: -580185574
+    - name: climb
+      animEnum: 5
+      hash: 1571378954
+    - name: shoot
+      animEnum: 6
+      hash: 1883569342
+    - name: upperbodyidle
+      animEnum: 7
+      hash: 0
+    BlendTreeVariables:
+    - name: Speed
+      blendEnum: 0
+      hash: -823668238
   <move>k__BackingField:
     moveForce: 90
     forceMode: 0
     decayScalar:
-      val: 2.5
+      val: 3
     mantleXOffset: 1
     mantleDelay: 1
     maxVelMagnitude: 100
     maxSpeed: 290
     walkAlphaMax: 1
+    speedStep: 0.15
+    moveJitterTolerance: 0.15
     runAlphaMax:
       val: 2.2
     <slowdownTime>k__BackingField:
@@ -37,6 +75,7 @@ MonoBehaviour:
   <jump>k__BackingField:
     <delay>k__BackingField:
       val: 0.1
+    <dblJumpMult>k__BackingField: 0
   <camSettings>k__BackingField:
     followOffset: {x: 0, y: 2, z: -17}
     targetOffset: {x: 0, y: 2, z: 0}

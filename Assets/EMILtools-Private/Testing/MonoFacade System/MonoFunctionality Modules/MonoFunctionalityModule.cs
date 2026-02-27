@@ -15,7 +15,7 @@ public interface IExecuteTemplate<TContext>
     where TContext : struct
 {
     public void ExecuteTemplateCall();
-    public bool Execute(TContext ctx);
+    public bool ExecutionImplementation(TContext ctx);
 }
 
 

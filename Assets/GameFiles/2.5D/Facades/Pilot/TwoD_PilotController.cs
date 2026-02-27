@@ -41,6 +41,11 @@ public class TwoD_PilotController : MonoFacade<
         Functionality.Unbind();
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        Config.animHandle.UpdateAnimBlendFloat(Blackboard.animator, PilotConfig.PilotAnimBlends.Speed, Blackboard.speedAlpha);
+    }
     
 
     private void OnDisable()

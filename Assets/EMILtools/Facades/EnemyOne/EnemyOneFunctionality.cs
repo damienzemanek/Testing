@@ -26,7 +26,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         }
         
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder) => builder;
-        public override bool Execute(EnemyOneContext ctx) => true;
+        public override bool ExecutionImplementation(EnemyOneContext ctx) => true;
 
         public void Track(Transform t) => facade.Blackboard.trackingTarget = t;
         
@@ -45,7 +45,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.volleySpawner.canFire);
         
-        public override bool Execute(EnemyOneContext ctx)
+        public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
             if (facade.Blackboard.trackingTarget == null) return false;
             
@@ -68,7 +68,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.volleySpawner.canFire);
 
-        public override bool Execute(EnemyOneContext ctx)
+        public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
             if (facade.Blackboard.trackingTarget == null) return false;
 
@@ -109,7 +109,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
         }
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder) => builder;
 
-        public override bool Execute(EnemyOneContext ctx)
+        public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
             bool canSeeTarget = isActive;
             if (canSeeTarget)

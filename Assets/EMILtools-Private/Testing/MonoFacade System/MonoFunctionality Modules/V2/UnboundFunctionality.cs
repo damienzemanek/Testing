@@ -19,7 +19,7 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
     protected IExecuteTemplate<TContext> ExecuteTemplate => this;
     
     // Methods
-    public PipelineStepDelegate<TContext> InjectMainStep() => new(Execute);
+    public PipelineStepDelegate<TContext> InjectMainStep() => new(ExecutionImplementation);
     [Button] public void ExecuteTemplateCall() => context.TryTo(executionPipeline);
     public override void SetupModule()
     {
@@ -40,7 +40,7 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
     /// </summary>
     /// <param name="ctx"></param>
     /// <returns></returns>
-    public abstract bool Execute(TContext ctx);
+    public abstract bool ExecutionImplementation(TContext ctx);
 
     
 

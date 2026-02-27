@@ -21,8 +21,8 @@ public class LivingEntity : Entity,
     [ShowInInspector, ReadOnly] public DeathType deathStatus;
 
     
-    public AnimHandle<DeathType> deathAnimHandle;
-    public AnimHandle<DamageLocation> damageLocationAnimHandle;
+    public AnimHandle<DeathType, NoBlends> deathAnimHandle;
+    public AnimHandle<DamageLocation, NoBlends> damageLocationAnimHandle;
     [HideInInspector] public PersistentAction<DeathType> OnDeath = new();
 
     
