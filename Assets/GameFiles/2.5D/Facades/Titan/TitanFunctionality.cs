@@ -42,7 +42,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
         public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
-        public void LateTick() => ExecuteTemplateCall();
+        public void LateTick() => Execute();
     }
     
 
@@ -70,7 +70,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
         
         void AnimateBackToIdle()
         {
@@ -98,7 +98,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
             return true; }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
 
         void IAPI_Dependant<MouseModuleContext>.GrabDependancies(MouseModuleContext injectedContext)
             => facade.Blackboard.mouseLook.cam = injectedContext.cam;
@@ -172,7 +172,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
     }
     
     
@@ -248,7 +248,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public override bool ExecutionImplementation(TitanContext ctx) 
         { facade.StartCoroutine(MountSequence(ctx)); return true; }
 
-        public void Mount() => ExecuteTemplateCall();
+        public void Mount() => Execute();
         
         IEnumerator MountSequence(TitanContext ctx)
         {

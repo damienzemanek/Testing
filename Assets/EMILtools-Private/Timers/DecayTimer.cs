@@ -21,13 +21,7 @@ namespace EMILtools.Timers
 
         public override void TickImplementation(float deltaTime)
         {
-            Debug.Log("Decaying: " + Time);
-            if (Time > 0)
-            {
-                Debug.Log("Decaying by " + (deltaTime * decayMult));
-                Time -= (deltaTime * decayMult);
-                Debug.Log("Decayed to: " + Time);
-            }
+            if (Time > 0) { Time -= (deltaTime * decayMult); }
             if (Time < 0) { Time = 0; }
         }
         

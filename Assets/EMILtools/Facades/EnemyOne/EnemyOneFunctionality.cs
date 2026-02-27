@@ -59,7 +59,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
             return true;
         }
 
-        public void LateTick() => ExecuteTemplateCall();
+        public void LateTick() => Execute();
     }
 
     public class WhichDirectionIsTargetIn : UnboundFunctionality<EnemyOneController, EnemyOneContext>, UPDATE
@@ -80,7 +80,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
             return true;
         }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
     }
 
     public class SightModule :
@@ -138,6 +138,6 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
             facade.Actions.SeeTarget.Remove(OnSeeTargetChanged);
         }
 
-        void OnSeeTargetChanged(bool obj) => ExecuteTemplateCall();
+        void OnSeeTargetChanged(bool obj) => Execute();
     }
 }

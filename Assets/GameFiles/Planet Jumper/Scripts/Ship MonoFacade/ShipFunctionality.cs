@@ -42,7 +42,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
     }
 
     public class SwitchCamModule : BoundFunctionality<ShipController, ShipContext>
@@ -86,7 +86,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void FixedTick() => ExecuteTemplateCall();
+        public void FixedTick() => Execute();
 
         void ShootAnim()
         {
@@ -146,7 +146,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         void Slow() => facade.Blackboard.rb.linearVelocity *= facade.Config.thrust.notMovingSlowScalar;
 
         public void UpdateTick() => facade.Blackboard.cam.Lens.FieldOfView = facade.Blackboard.thrustFOV.Evaluate * config.defaultFOV;
-        public void FixedTick() => ExecuteTemplateCall();
+        public void FixedTick() => Execute();
     }
 
     public class SteerModule : 
@@ -176,7 +176,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             return true;
         }
 
-        public void FixedTick() => ExecuteTemplateCall();
+        public void FixedTick() => Execute();
         void StopSteering() => facade.Blackboard.rb.angularVelocity = Vector3.zero;
     }
 }

@@ -115,12 +115,13 @@ public class AnimHandle<TAnimEnum, TAnimBlendEnum>
         if (States == null) { Debug.LogError("States Null"); return false;}
         if (layer < 0 || layer >= animator.layerCount)  { Debug.LogError("Layer Out of Index Range"); return false;}
         if(states == null) { Debug.LogError("States Dictionary Null"); return false;}
-        if(!states.TryGetValue(animEnum, out var hash2))
+        if(!states.TryGetValue(animEnum, out var hash))
         {
             Debug.LogError($"AnimHandle: No state mapped for enum {animEnum}");
             return false;
         }
-        animator.Play(hash2, layer, normalizedTime);
+        if(hash == 0) { Debug.LogError($"AnimHandle: Hash for enum {animEnum} is 0, Please Recalculate Hashes"); return false;}
+        animator.Play(hash, layer, normalizedTime);
         return true;
     }
     

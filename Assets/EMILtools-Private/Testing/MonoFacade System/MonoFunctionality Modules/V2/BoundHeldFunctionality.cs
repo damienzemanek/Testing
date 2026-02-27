@@ -31,8 +31,8 @@ public abstract class BoundFunctionality<TFacade, TContext> :
     /// <summary>
     /// Binds the EXECUTION PIPELINE to the BOUND ACTION
     /// </summary>
-    public virtual void Bind() => action.Add(ExecuteTemplateCall);
-    public virtual void Unbind() => action.Remove(ExecuteTemplateCall);
+    public virtual void Bind() => action.Add(Execute);
+    public virtual void Unbind() => action.Remove(Execute);
 }
 
 

@@ -12,7 +12,7 @@ public static class TwoD_SharedModules
     where TContext : struct, IModuleUsabableContext, ITwoD_Context
     {
         public class Setter : SettableTemplate<bool, LookDir> 
-            { [ShowInInspector] public LookDir dir => unnamedStoredValue2; }
+            { [ShowInInspector] public LookDir newFacingDirection => unnamedStoredValue2; }
         
         ITwoD_Blackboard Blackboard;
 
@@ -25,12 +25,12 @@ public static class TwoD_SharedModules
 
         public override bool ExecutionImplementation(TContext ctx)
         {
-            if (SetContext.dir == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
-            if (SetContext.dir == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
-            ctx.dir = SetContext.dir;
+            if (SetContext.newFacingDirection == LookDir.Right) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.left, Vector3.up);
+            if (SetContext.newFacingDirection == LookDir.Left) Blackboard.facing.transform.rotation = Quaternion.LookRotation(Vector3.right, Vector3.up);
+            Blackboard.facingDir = SetContext.newFacingDirection;
             return true;
         }
 
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
     }
 }

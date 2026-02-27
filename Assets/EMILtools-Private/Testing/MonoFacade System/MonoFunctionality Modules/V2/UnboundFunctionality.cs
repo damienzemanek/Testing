@@ -20,7 +20,7 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
     
     // Methods
     public PipelineStepDelegate<TContext> InjectMainStep() => new(ExecutionImplementation);
-    [Button] public void ExecuteTemplateCall() => context.TryTo(executionPipeline);
+    [Button] public void Execute() => context.TryTo(executionPipeline);
     public override void SetupModule()
     {
         injectablePipeline.Setup(setupWithFinalStep: false);

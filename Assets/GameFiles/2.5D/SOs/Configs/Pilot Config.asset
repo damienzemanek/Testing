@@ -43,7 +43,7 @@ MonoBehaviour:
       hash: 1883569342
     - name: upperbodyidle
       animEnum: 7
-      hash: 0
+      hash: -290766780
     BlendTreeVariables:
     - name: Speed
       blendEnum: 0

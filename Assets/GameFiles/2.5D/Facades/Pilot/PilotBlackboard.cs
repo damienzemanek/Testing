@@ -14,6 +14,7 @@ public interface ITwoD_Blackboard : IBlackboard
     public enum LookDir { None, Left, Right }
     public enum AnimState { Locomotion, Jump, InAir, Land, Mantle, Climb, MountFront, Dismount }
     public Transform facing { get; set; }
+    public LookDir facingDir { get; set; }
 }
 
 public interface ITwoD_Context : IBlackboard

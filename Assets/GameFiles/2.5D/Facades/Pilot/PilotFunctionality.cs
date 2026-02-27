@@ -87,7 +87,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
-        public void UpdateTick() => ExecuteTemplateCall();
+        public void UpdateTick() => Execute();
     }
 
     public class MountTitan : BoundFunctionality<TwoD_PilotController, PilotContext>
@@ -162,17 +162,19 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     }
 
     public class RunModule :
-        BoundSetFunctionality<TwoD_PilotController, PilotContext, RunModule.Setter>
+        BoundSetFunctionality<TwoD_PilotController, PilotContext, RunModule.Setter>, 
+        UPDATE
     {
         public class Setter : SettableTemplate<bool> {  }
         public RunModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
-
         public override bool ExecutionImplementation(PilotContext ctx)
         {
             facade.Blackboard.isRunning.Value = isActive;
             return true;
         }
+
+        public void UpdateTick() => Execute();
     }
 
     public class ClimbModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_Climb
@@ -305,7 +307,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
-        public void LateTick() => ExecuteTemplateCall();
+        public void LateTick() => Execute();
     }
     
 
@@ -316,16 +318,18 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public class Setter : SettableTemplate<bool> {  }
         public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !isActive, new Callback(AnimateBackToIdle))
+            => builder.ExitIf(_ => !isActive)
                       .ExitIf(_ => facade.Blackboard.isMantled);
         
         public override bool ExecutionImplementation(PilotContext ctx)
         {
+            Debug.Log("shooting");
             facade.StartCoroutine(ShootImplementation());
             return true;
 
             IEnumerator ShootImplementation()
             {
+                Debug.Log("c shooting");
                 facade.Blackboard.bulletSpawner.targetPosition = facade.Blackboard.mouseLook.core.contactPoint;
                 if (facade.Blackboard.bulletSpawner.fireTimer.isRunning) yield break;
                 facade.Config.animHandle.Play(facade.Blackboard.animator, Shoot, layer: 1, normalizedTime: 0);
@@ -334,9 +338,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             }
         }
         
-        void AnimateBackToIdle() => facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle, layer: 1);
-
-        public void FixedTick() => ExecuteTemplateCall();
+        public void FixedTick() => Execute();
     }
     
     
@@ -413,7 +415,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             {
                 if (move.x == 0) return;
                 Vector3 dir = new Vector3(move.x, 0, 0);
-                facade.Blackboard.moveDir = move.x < 0 ? LookDir.Right : LookDir.Left;
+                facade.Blackboard.moveDir = move.x < 0 ? LookDir.Left : LookDir.Right;
 
                 AnimateLocomotion();
                 ApplyMoveForce(dir);
@@ -430,6 +432,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
                 }
                 void AnimateLocomotion()
                 {
+                    if (facade.Blackboard.hasJumped) return;
                     if(facade.Blackboard.moveDir == facade.Blackboard.facingDir) facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd, layer: 0);
                     else facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionBack, layer: 0);
                 }
@@ -444,6 +447,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             
         }
         
-        public void FixedTick() => ExecuteTemplateCall();
+        public void FixedTick() => Execute();
     }
 }

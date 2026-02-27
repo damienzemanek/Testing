@@ -14,7 +14,7 @@ using UnityEngine;
 public interface IExecuteTemplate<TContext> 
     where TContext : struct
 {
-    public void ExecuteTemplateCall();
+    public void Execute();
     public bool ExecutionImplementation(TContext ctx);
 }
 
