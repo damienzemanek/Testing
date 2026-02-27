@@ -126,7 +126,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => facade.Blackboard.titanReady);
+            => builder.ExitIf(_ => !facade.Blackboard.titanReady);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -150,13 +150,13 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => facade.Blackboard.hasDoubleJumped);
+            => builder.ExitIf(_ => !facade.Blackboard.hasJumped);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
-            facade.Config.animHandle.Play(facade.Blackboard.animator, Jump);
+            Debug.Log("Double Jumping");
+            facade.Config.animHandle.Play(facade.Blackboard.animator, DoubleJump);
             facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Config.jump.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
-            facade.Blackboard.hasDoubleJumped = true;
             return true;
         }
     }
@@ -256,7 +256,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.Blackboard.jumpDelay.Start();
             facade.Config.animHandle.Play(facade.Blackboard.animator, Land);
             facade.Blackboard.hasJumped.Value = false;
-            facade.Blackboard.hasDoubleJumped = false;
             return true;
             
         }
