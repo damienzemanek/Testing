@@ -308,7 +308,6 @@ GameObject:
   - component: {fileID: 5421472232260395147}
   - component: {fileID: 2690394470497772402}
   - component: {fileID: 1415117755089234654}
-  - component: {fileID: 6318527356700272851}
   m_Layer: 8
   m_Name: Sight Bounds Check
   m_TagString: Untagged
@@ -405,28 +404,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6318527356700272851
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9193891472876706722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 270159429b9904449b5a90e644e4ea26, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ThingCollidedWith: 0
-  SelectedReceiver: 1
-  selectedReceiver:
-    underlyingValue: {fileID: 2682313964535678023}
-  enter: 1
-  exit: 1
-  stay: 0
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!1001 &7532795353362611555
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -3622,7 +3622,7 @@ MonoBehaviour:
   <Config>k__BackingField: {fileID: 11400000, guid: 5dd6631f4b818804190b73cce39cfe49, type: 2}
   <Blackboard>k__BackingField:
     <rb>k__BackingField: {fileID: 6455269880221550586}
-    <facing>k__BackingField: {fileID: 6102052169739827894}
+    <facingTransformObject>k__BackingField: {fileID: 6102052169739827894}
     <capsuleCollider>k__BackingField: {fileID: 6680253834578972900}
     <weapons>k__BackingField: {fileID: 11400000, guid: 51a3f36b700985d43bb47bd56d5a4080, type: 2}
     <bulletSpawner>k__BackingField:
@@ -3680,9 +3680,9 @@ MonoBehaviour:
       lockPosZ: 0
       lerpSpeed: 5
       moveOptions: 0
-    moveDir: 0
     canMount: 0
     isShooting: 0
+    hasDblJumped: 0
     hasRequestedMount: 0
     titanReady:
       _value: 0
@@ -4931,12 +4931,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7730861021600059619}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
-  m_LocalPosition: {x: -0.02, y: 0.23, z: 1.99}
-  m_LocalScale: {x: 0.25034952, y: 0.25034958, z: 0.25034946}
+  m_LocalRotation: {x: -8.094501e-10, y: 1, z: 0.0000000037252894, w: -0.00000005814944}
+  m_LocalPosition: {x: -0.02, y: 0.053, z: 1.17}
+  m_LocalScale: {x: 0.25034955, y: 0.25034958, z: 0.25034946}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 2541346553628246554}
+  m_Father: {fileID: 902710889658232816}
   m_LocalEulerAnglesHint: {x: 0.68, y: -180, z: 0.041}
 --- !u!114 &2831871789977943521
 MonoBehaviour:
@@ -5125,6 +5125,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1791397612986492263}
+  - {fileID: 5536170004408128972}
   m_Father: {fileID: 2541346553628246554}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8259310827392389106
@@ -5226,7 +5227,6 @@ Transform:
   - {fileID: 3811637719150067931}
   - {fileID: 8879768677438476248}
   - {fileID: 3847665875527207960}
-  - {fileID: 5536170004408128972}
   - {fileID: 902710889658232816}
   m_Father: {fileID: 7398645390905318447}
   m_LocalEulerAnglesHint: {x: 10.508993, y: 1.3199363, z: 0.604261}
