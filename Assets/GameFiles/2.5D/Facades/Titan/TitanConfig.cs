@@ -5,7 +5,8 @@ using UnityEngine;
 public class TitanConfig : Config
 {
     public enum TitanAnims { Falling, Land, Shoot, UpperBodyIdle, UpperBodyLanding, LocomotionFwd, LocomotionBackwd, MountFront, Dismount }
-    [field: SerializeField] [field: ShowInInspector] public AnimHandle<TitanAnims, NoBlends> animHandle { get; private set; }
+    public enum TitanAnimBlends { Speed, }
+    [field: SerializeField] [field: ShowInInspector] public AnimHandle<TitanAnims, TitanAnimBlends> animHandle { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public TwoD_InputAuthority.CameraSettings camSettings { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public TitanFunctionality.MountModule.Config mount { get; private set; }
     [field: SerializeField] [field: ShowInInspector] public TitanFunctionality.LocomotionModule.Config move { get; private set; }

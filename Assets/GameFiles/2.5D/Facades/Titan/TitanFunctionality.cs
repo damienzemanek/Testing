@@ -17,20 +17,20 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
 {
     protected override void AddModulesHere()
     {
-        // // Layer 1 -> Direct Input
-        // AddModule(new DismountModule(facade.Input.HoldInteract, facade));
-        // AddModule(new LocomotionModule(facade.Input.Move, facade));
-        // AddModule(new FaceDirectionModule<TwoD_TitanController, TitanContext>
-        //                             (facade.Input.FaceDirection, facade));
-        // AddModule(new ShootModule(facade.Input.Shoot, facade));
-        // //
-        // // // Layer 2 -> Actions
-        // AddModule(new CameraSystemModule(facade.Actions.Mount, facade));
-        // //
-        // // // Unbound        
-        // AddModule(new MountModule(facade));
-        // AddModule(new MouseInputZonesModule(facade));
-        // AddModule(new MouseLookModule(facade));
+        // Layer 1 -> Direct Input
+        AddModule(new DismountModule(facade.Input.HoldInteract, facade));
+        AddModule(new LocomotionModule(facade.Input.Move, facade));
+        AddModule(new FaceDirectionModule<TwoD_TitanController, TitanContext>
+                                    (facade.Input.FaceDirection, facade));
+        AddModule(new ShootModule(facade.Input.Shoot, facade));
+        //
+        // // Layer 2 -> Actions
+        AddModule(new CameraSystemModule(facade.Actions.Mount, facade));
+        //
+        // // Unbound        
+        AddModule(new MountModule(facade));
+        AddModule(new MouseInputZonesModule(facade));
+        AddModule(new MouseLookModule(facade));
     }
     
     
@@ -275,7 +275,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             
             yield return new WaitForSeconds(facade.Config.mount.duration);
             
-            facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, LocomotionFwd);
+            facade.Config.animHandle.Play(facade.Blackboard.animator, UpperBodyIdle, layer: 1);
             facade.Blackboard.moveDecay.Start();
             facade.Blackboard.hasMounted = true;
             if(facade.Blackboard.myPilot != null) facade.Blackboard.myPilot.gameObject.SetActive(false);

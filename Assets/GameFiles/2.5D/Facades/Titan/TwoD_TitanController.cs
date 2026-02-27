@@ -26,16 +26,13 @@ public class TwoD_TitanController : MonoFacade<
     public TwoD_InputMap InjectInputMap() => new("Titan");
     public void InitSubordinate() => InitializeFacade();
 
-    private void Start()
-    {
-        Blackboard.moveDecay.Start();
-        OnSpawn();
-    }
+    private void Start() => OnSpawn();
 
     public void OnAuthorityReceived()
     {
         GetFunctionality<IAPI_Mount>().Mount();
         Functionality.Bind();
+        Blackboard.moveDecay.Start();
     }
 
     public void OnAuthorityLost()

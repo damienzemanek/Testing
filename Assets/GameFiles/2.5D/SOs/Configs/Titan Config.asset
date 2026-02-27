@@ -12,11 +12,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26364373ddc0eff438f845ac5a95e8e4, type: 3}
   m_Name: Titan Config
   m_EditorClassIdentifier: 
+  <animHandle>k__BackingField:
+    States:
+    - name: Falling
+      animEnum: 0
+      hash: 998495048
+    - name: Land
+      animEnum: 1
+      hash: 137525990
+    - name: Locomotion
+      animEnum: 5
+      hash: -2089788878
+    - name: UpperBodyLanding
+      animEnum: 4
+      hash: -929641249
+    - name: Shoot
+      animEnum: 2
+      hash: -1316629574
+    - name: UpperBodyIdle
+      animEnum: 3
+      hash: 76662489
+    - name: MountFront
+      animEnum: 7
+      hash: 1569126247
+    BlendTreeVariables:
+    - name: Speed
+      blendEnum: 0
+      hash: -823668238
   <camSettings>k__BackingField:
     followOffset: {x: 0, y: 12, z: -30}
     targetOffset: {x: 0, y: 5, z: 0}
   <mount>k__BackingField:
-    <duration>k__BackingField: 1
+    <duration>k__BackingField: 2
   <move>k__BackingField:
     <speed>k__BackingField: 3800
     <forceMode>k__BackingField: 0

@@ -13,7 +13,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     [Serializable]
     public class SubordinateContext
     {
-        [SerializeField, Required]
+        [SerializeField]
         public InterfaceReference<IInputSubordinate<TInputMap, TSubordnateEnumType>, MonoBehaviour> Subordinate;
         [SerializeField, ReadOnly] 
         public InterfaceReference<IInputAuthority<TInputMap, TSubordnateEnumType>, MonoBehaviour> Authority;
@@ -36,6 +36,7 @@ public interface IInputSubordinate<TInputMap, TSubordnateEnumType>
     /// <param name="inputMap"></param>
     bool SendRequest()
     {
+        if(inputSubordinateContext.Subordinate.Value == null) Debug.LogError("Did not set self as Subordinate");
         //Retrive the Input map stored in the Subordinate
         if (inputSubordinateContext.Subordinate.Value.Input == null)
         {

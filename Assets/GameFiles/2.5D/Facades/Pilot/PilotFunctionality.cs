@@ -40,8 +40,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
     }
 
-
-    public class DismountTitanModule : BoundFunctionality<TwoD_PilotController, PilotContext>
+    public class DismountTitanModule :
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DismountTitanModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
@@ -56,8 +56,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
     }
 
-
-    public class CameraSystemModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_CameraSystem
+    public class CameraSystemModule : 
+        BoundFunctionality<TwoD_PilotController, PilotContext>,
+        IAPI_CameraSystem
     {
         public CameraSystemModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) => builder;
@@ -80,9 +81,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
     }
     
-    public class MouseModule : UnboundFunctionality<TwoD_PilotController, PilotContext>, UPDATE
+    public class MouseModule : 
+        UnboundFunctionality<TwoD_PilotController, PilotContext>,
+        UPDATE
     {
         public MouseModule(TwoD_PilotController facade) : base(facade) { }
+        
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
 
@@ -90,7 +94,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public void UpdateTick() => Execute();
     }
 
-    public class MountTitan : BoundFunctionality<TwoD_PilotController, PilotContext>
+    public class MountTitan :
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
@@ -99,7 +104,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
     }
 
-    public class TitanCallInModule : BoundFunctionality<TwoD_PilotController, PilotContext>
+    public class TitanCallInModule :
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         [Serializable]
         public struct Config
@@ -146,7 +152,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
     }
 
-    public class DoubleJumpModule : BoundFunctionality<TwoD_PilotController, PilotContext>
+    public class DoubleJumpModule : 
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
@@ -177,7 +184,9 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public void UpdateTick() => Execute();
     }
 
-    public class ClimbModule : BoundFunctionality<TwoD_PilotController, PilotContext>, IAPI_Climb
+    public class ClimbModule : 
+        BoundFunctionality<TwoD_PilotController, PilotContext>, 
+        IAPI_Climb
     {
         public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) 
@@ -261,7 +270,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
     }
 
-    public class JumpModule : BoundFunctionality<TwoD_PilotController, PilotContext>
+    public class JumpModule : 
+        BoundFunctionality<TwoD_PilotController, PilotContext>
     {
         [Serializable]
         public struct Config
@@ -294,7 +304,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
     }
     
-
     public class LookModule : 
         BoundSetFunctionality<TwoD_PilotController, PilotContext, LookModule.Setter>, 
         LATEUPDATE
@@ -303,13 +312,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.ExitIf(_ => facade.Blackboard.isMantled);
-
+        protected override void Awake() => facade.Blackboard.mouseLook.cam = facade.Blackboard.camContext.camera;
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
         public void LateTick() => Execute();
     }
     
-
     public class ShootModule :
         BoundSetFunctionality<TwoD_PilotController, PilotContext, ShootModule.Setter>, 
         FIXEDUPDATE
@@ -339,7 +347,6 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         
         public void FixedTick() => Execute();
     }
-    
     
     public class LocomotionModule : 
         BoundSetFunctionality<TwoD_PilotController, PilotContext, LocomotionModule.Setter>, 
