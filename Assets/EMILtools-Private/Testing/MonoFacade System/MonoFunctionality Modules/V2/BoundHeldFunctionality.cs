@@ -4,9 +4,16 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 public interface IModuleUsabableContext : IPipelineContext { }
+ 
+public interface IBindable
+{
+    public void Bind();
+    public void Unbind();
+}
 
 /// <summary>
-/// Only to be used with PersistentAction (No Args)
+/// Binds a functionality to a PersistentAction
+/// - Only to be used with PersistentAction (No Args)
 /// - Use TContext to pass around information
 /// </summary>
 /// <typeparam name="TFacade"></typeparam>
@@ -31,9 +38,9 @@ public abstract class BoundFunctionality<TFacade, TContext> :
 
 
 /// <summary>
-/// Can be used with PersistentAction<bool, T2, T3...>
-/// Tracks: isActive
-/// Params: PersistentAction T2, T3...
+/// Binds a functionality to a PersistentAction<...>
+/// - Set Args with SettableTemplate
+/// - Tracks: isActive
 /// </summary>
 /// <typeparam name="TFacade"></typeparam>
 /// <typeparam name="TContext"></typeparam>

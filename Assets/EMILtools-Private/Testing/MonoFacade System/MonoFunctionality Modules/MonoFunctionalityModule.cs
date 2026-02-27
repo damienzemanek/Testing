@@ -18,11 +18,6 @@ public interface IExecuteTemplate<TContext>
     public bool Execute(TContext ctx);
 }
 
-public interface IBindable
-{
-    public void Bind();
-    public void Unbind();
-}
 
 
 
@@ -32,13 +27,29 @@ public abstract class MonoFunctionalityModule<TFacade, TContext>
     where TFacade : class, IFacade<TContext>
     where TContext : struct, IModuleUsabableContext
 {
-    public TFacade facade { get; set; }
-    public TContext context => facade.API_Context();
     [Title("$Name"), PropertyOrder(-1)]
     [ShowInInspector] public string Name => "Module: " + this.GetType().Name;
-    public abstract void SetupModule();
-    protected virtual void Awake() { }
+    
+    
+    // ---------- Variables ----------
+    public TFacade facade { get; set; }
+    public TContext context => facade.API_Context();
+    
 
+    // ---------- Ctor ----------
     public MonoFunctionalityModule(TFacade facade) => this.facade = facade;
+    
+    
+    // ---------- Abstracts ----------
+    
+    /// <summary>
+    /// Set up the module, called from Monobehaviour's Awake
+    /// </summary>
+    protected virtual void Awake() { }
+    
+    /// <summary>
+    /// "Template Method Pattern" For Awake
+    /// </summary>
+    public abstract void SetupModule();
 
 }

@@ -19,15 +19,29 @@ public abstract class UnboundFunctionality<TFacade, TContext> : MonoFunctionalit
     protected IExecuteTemplate<TContext> ExecuteTemplate => this;
     
     // Methods
-    public abstract PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder);
     public PipelineStepDelegate<TContext> InjectMainStep() => new(Execute);
     [Button] public void ExecuteTemplateCall() => context.TryTo(executionPipeline);
-    public abstract bool Execute(TContext ctx);
     public override void SetupModule()
     {
         injectablePipeline.Setup(setupWithFinalStep: false);
         Awake();
     }
+    
+    // Abstract    
+    /// <summary>
+    /// Inject steps into the pipeline
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
+    public abstract PipelineBuilder<TContext> InjectSteps(PipelineBuilder<TContext> builder);
+    
+    /// <summary>
+    /// Execute the functionality's purpose
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <returns></returns>
+    public abstract bool Execute(TContext ctx);
+
     
 
 
