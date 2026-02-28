@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
+
 [Serializable]
 public abstract class MonoFacade<TMonoFacade, 
         TFunctionality,  // Systems and functionality
