@@ -15,8 +15,9 @@ public class Projectile : Entity
 
     void OnCollisionEnter(Collision other)
     {
-        if (!other.gameObject.CompareTag(data.tag)) return;
-        GameObject.Instantiate(data.hitEffectPrefab, transform.position, Quaternion.identity);
+        if (other.gameObject.TryGetComponent(out IDamageable damageable)) 
+            damageable.TakeDamage(data.CreateDamageContext(IDamageable.DamageLocation.Body));
+        Instantiate(data.hitEffectPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
     

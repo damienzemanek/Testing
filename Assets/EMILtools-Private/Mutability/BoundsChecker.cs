@@ -36,10 +36,10 @@ public class BoundsChecker : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!enter) return;
+        if (!PassesLayerMask(other.gameObject)) return;
 
         if (ThingCollidedWith)
         {
-            if (!PassesLayerMask(other.gameObject)) return;
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
             if (!collisions.Add(msgReceiver)) return;
             msgReceiver.OnEnterBounds(other);
@@ -55,10 +55,10 @@ public class BoundsChecker : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!exit) return;
-        
+        if (!PassesLayerMask(other.gameObject)) return;
+
         if (ThingCollidedWith)
         {
-            if (!PassesLayerMask(other.gameObject)) return;
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
             if (!collisions.Remove(msgReceiver)) return;
             msgReceiver.OnExitBounds(other);
@@ -69,10 +69,10 @@ public class BoundsChecker : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         if (!stay) return;
-        
+        if (!PassesLayerMask(other.gameObject)) return;
+
         if (ThingCollidedWith)
         {
-            if (!PassesLayerMask(other.gameObject)) return;
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
             msgReceiver.OnStayBounds(other);
         }

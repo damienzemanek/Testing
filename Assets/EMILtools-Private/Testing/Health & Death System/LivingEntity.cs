@@ -20,7 +20,7 @@ public class LivingEntity : Entity,
     [ShowInInspector, ReadOnly] int deathLayer = 3;
     [ShowInInspector, ReadOnly] public DeathType deathStatus;
 
-    
+    public Animator animator;
     public AnimHandle<DeathType, NoBlends> deathAnimHandle;
     public AnimHandle<DamageLocation, NoBlends> damageLocationAnimHandle;
     [HideInInspector] public PersistentAction<DeathType> OnDeath = new();
@@ -36,30 +36,35 @@ public class LivingEntity : Entity,
     
     public void TakeDamage(DamageInfo info)
     {
+        Debug.Log("Taking Damage");
         health.Value -= info.dmg;
     }
     
     [Button]
     public void TakeDamage(int dmg) => health.Value -= dmg;
-    
-    void CheckDie(float v) {   }
 
-    // public void LocationalDamageReaction() 
-    //     => damageLocationAnimHandle.PlayWeightSet(
-    //         DamageLocation.Body,
-    //         initialWeight: 1, 
-    //         endWeight: ZeroF, 
-    //         hitLayer, 
-    //         RestartAnimation);
+    void CheckDie(float v)
+    {
+        if (v > 0) LocationalDamageReaction();
+        else Die();
+    }
+
+    public void LocationalDamageReaction() 
+        => damageLocationAnimHandle.PlayWeightSet(
+            animator,
+            DamageLocation.Body,
+            initialWeight: 1, 
+            endWeight: ZeroF, 
+            hitLayer, 
+            RestartAnimation);
     
-    
-    // void Die()
-    // {
-    //     if (isDead) return;
-    //     isDead = true;
-    //     deathStatus = DeathType.Regular;
-    //     OnDeath.Invoke(deathStatus);
-    //     deathAnimHandle.PlayWeightSet(deathStatus, 1, deathLayer, FromBeginning);
-    // }
+    void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+        deathStatus = DeathType.Regular;
+        OnDeath.Invoke(deathStatus);
+        deathAnimHandle.PlayWeightSet(animator, deathStatus, 1, deathLayer, FromBeginning);
+    }
 
 }

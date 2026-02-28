@@ -2918,6 +2918,11 @@ Transform:
   - {fileID: 626161575}
   m_Father: {fileID: 1638707284}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1591768903 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 110202800581988128, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+  m_PrefabInstance: {fileID: 5762171280875986493}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1638707283
 GameObject:
   m_ObjectHideFlags: 0
@@ -3607,6 +3612,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: P1 Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 3395399891910081361, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 119
+      objectReference: {fileID: 0}
+    - target: {fileID: 3395399891910081361, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_IncludeLayers.m_Bits
+      value: 904
+      objectReference: {fileID: 0}
     - target: {fileID: 4170325790542696933, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalScale.x
       value: 81.14729
@@ -3658,6 +3671,30 @@ PrefabInstance:
     - target: {fileID: 6050888146841865473, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6442082990744482468, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843147290041116657, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1591768903}
+    - target: {fileID: 6843147290041116657, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: maxHealth
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843147290041116657, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: deathAnimHandle.States.Array.data[0].animEnum
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6843147290041116657, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: damageLocationAnimHandle.States.Array.data[0].animEnum
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9193891472876706722, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_Layer
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
