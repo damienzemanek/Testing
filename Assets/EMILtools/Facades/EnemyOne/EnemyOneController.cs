@@ -36,7 +36,7 @@ public class EnemyOneController : MonoFacade<
     {
         Functionality.Unbind();
     }
-
+    
     public void OnEnterBounds(Collider other)
     {
         Debug.Log("entered bounds");

@@ -10181,8 +10181,8 @@ GameObject:
   - component: {fileID: 6964917312813252921}
   - component: {fileID: 605392587582940924}
   - component: {fileID: 8527623559060392329}
-  - component: {fileID: 2782705395070487353}
   - component: {fileID: 932548145505174478}
+  - component: {fileID: 5590178444627278678}
   m_Layer: 7
   m_Name: P3 Titan
   m_TagString: Player
@@ -10360,7 +10360,7 @@ MonoBehaviour:
     checkDist: 3
     mask:
       serializedVersion: 2
-      m_Bits: 8
+      m_Bits: 9
   fallSettings:
     forceMode: 2
     mult: 65
@@ -10370,18 +10370,6 @@ MonoBehaviour:
   rb: {fileID: 6964917312813252921}
   isGrounded:
     _value: 0
---- !u!114 &2782705395070487353
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308783947298401499}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b164c6483cfcedb469cd82ef3b14e2eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &932548145505174478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10395,6 +10383,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   constrain:
+    <active>k__BackingField: 1
     transform: {fileID: 1961461059992757573}
     local: 0
     x: 0
@@ -10403,6 +10392,45 @@ MonoBehaviour:
     constraintX: 0
     constraintY: 0
     constraintZ: 0
+  forceMaintainPosition:
+    <active>k__BackingField: 0
+    transform: {fileID: 0}
+    local: 0
+    savedPos: {x: 0, y: 0, z: 0}
+--- !u!114 &5590178444627278678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308783947298401499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b5058e0ba4855149960de366808b6f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 250
+  destroyOnDeath: 0
+  disablesOnDeath:
+    behaviours:
+    - {fileID: 605392587582940924}
+    colliders:
+    - {fileID: 5095773902997319140}
+  isDead: 0
+  deathStatus: 0
+  animator: {fileID: 7241339974108905630}
+  deathAnimHandle:
+    States:
+    - name: die
+      animEnum: 0
+      hash: 964231127
+    BlendTreeVariables: []
+  damageLocationAnimHandle:
+    States:
+    - name: hit
+      animEnum: 0
+      hash: 1523721793
+    BlendTreeVariables: []
 --- !u!1 &1368883319397325040
 GameObject:
   m_ObjectHideFlags: 0
@@ -23509,7 +23537,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8530620302462907270}
-  m_Layer: 0
+  - component: {fileID: 1048363046978254850}
+  m_Layer: 2
   m_Name: Facing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23532,6 +23561,27 @@ Transform:
   - {fileID: 5770680376221589501}
   m_Father: {fileID: 1961461059992757573}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!65 &1048363046978254850
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2539495966538164733}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.05, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2541775436175837220
 GameObject:
   m_ObjectHideFlags: 0
