@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
-public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> : ValidatedMonoBehaviour, 
+public abstract class InputAuthority<TInputReader, TInputMap, TSubordinateEnum> : MonoBehaviour, 
      IInputAuthority<TInputMap, TSubordinateEnum>
      where TInputMap : class, IInputMap, new()
      where TInputReader : IInputReaderSubordinate<TInputMap, TSubordinateEnum>, new()

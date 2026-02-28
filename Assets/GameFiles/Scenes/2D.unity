@@ -1095,6 +1095,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 1.174
       objectReference: {fileID: 0}
+    - target: {fileID: 6455269880221550586, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: m_Mass
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 6852239174198850126, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
       propertyPath: <Blackboard>k__BackingField.<camContext>k__BackingField.CM
       value: 
@@ -3671,6 +3675,10 @@ PrefabInstance:
     - target: {fileID: 6050888146841865473, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6442082990744482468, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_Mass
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6442082990744482468, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_CollisionDetection

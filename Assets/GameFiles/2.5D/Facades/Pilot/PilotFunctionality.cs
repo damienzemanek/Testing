@@ -394,7 +394,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !isActive);
+            => builder.ExitIf(_ => !isActive)
+                      .ExitIf(_ => facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {

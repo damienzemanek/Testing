@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using static Effectability;
 using DG.Tweening;
 using EMILtools.Core;
 using EMILtools.Extensions;

@@ -49,14 +49,14 @@ MonoBehaviour:
       blendEnum: 0
       hash: -823668238
   <move>k__BackingField:
-    moveForce: 90
+    moveForce: 16000
     forceMode: 0
     decayScalar:
       val: 3
     mantleXOffset: 1
     mantleDelay: 1
     maxVelMagnitude: 100
-    maxSpeed: 290
+    maxSpeed: 45000
     walkAlphaMax: 1
     speedStep: 0.15
     moveJitterTolerance: 0.15
