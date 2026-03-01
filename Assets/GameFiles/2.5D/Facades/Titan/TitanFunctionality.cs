@@ -7,6 +7,7 @@ using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static ITwoD_Blackboard;
+using static StepType;
 using static TitanConfig;
 using static TitanConfig.TitanAnims;
 using static TwoD_InputAuthority;
@@ -40,7 +41,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     {
         public MouseLookModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.hasMounted);
         public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
         public void OnLateTick() => Execute();
     }
@@ -59,9 +60,9 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             facade.Blackboard.bulletSpawner.OnSpawn.Add(AnimateShoot);
         }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !isActive)
-                      .ExitIf(_ => facade.Blackboard.isMountingOrDismounting)
-                      .ExitIf(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
+            => builder.Add_ShortCircuit(_ => !isActive)
+                      .Add_ShortCircuit(_ => facade.Blackboard.isMountingOrDismounting)
+                      .Add_ShortCircuit(_ => facade.Blackboard.bulletSpawner.fireTimer.isRunning);
 
         public override bool ExecutionImplementation(TitanContext ctx)
         {
@@ -88,7 +89,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         
         public MouseInputZonesModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.hasMounted);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.hasMounted);
 
         public override bool ExecutionImplementation(TitanContext ctx) {
             facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse);
@@ -125,8 +126,8 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_TitanController facade) : base(action, facade) { }
 
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !isActive)
-                      .ExitIf(_ => facade.Blackboard.isMountingOrDismounting);
+            => builder.Add_ShortCircuit(_ => !isActive)
+                      .Add_ShortCircuit(_ => facade.Blackboard.isMountingOrDismounting);
 
         protected override void Awake()
         {
@@ -247,7 +248,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         
         public MountModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.canMount);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.canMount);
 
         public override bool ExecutionImplementation(TitanContext ctx) 
         { facade.StartCoroutine(MountSequence(ctx)); return true; }

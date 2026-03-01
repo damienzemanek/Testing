@@ -1,7 +1,5 @@
 using NUnit.Framework;
 using UnityEngine;
-using System;
-using EMILtools.Core;
 using System.Collections;
 using EMILtools.Timers;
 using UnityEngine.TestTools;
@@ -20,10 +18,10 @@ public class PipelineTests
     public void PipelineBuilder_CreatesCorrectSize()
     {
         // Arrange
-        var builder = new PipelineBuilder<TestContext>(2);
+        var builder = new PipelineBuilder<TestContext>();
         
         // Act
-        builder.ExitIf(ctx => true);
+        builder.Add_ShortCircuit(ctx => true);
         var pipeline = builder.InjectMainMethod(ctx => true);
 
         // Assert
@@ -37,20 +35,28 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
-        var jump = new PipelineBuilder<TestContext>(size: 3)
-            .ExitIf(ctx => ctx.Value == 0)
-            .ExitIf(ctx => ctx.Value == 1)
-            .InjectMainMethod(ctx => Jump(ctx));
-        bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
+        var jump = new PipelineBuilder<TestContext>()
+            .Add_ShortCircuit(ctx => ctx.Value == 1)
+            .Add_ShortCircuit(ctx => ctx.Value == 1)
+            .InjectMainMethod(MainMethod);
+        Debug.Log("------- Setup Complete -------");
 
         
         // Act
         myctx.TryTo(jump);
-        
+        Debug.Log("------- Act Complete -------");
+
         
         //Assert
-        Assert.AreEqual(jumpSuccessfull, true);
-        
+        Assert.AreEqual(true, jumpSuccessfull);
+        Debug.Log("------- Assert Complete -------");
+
+        bool MainMethod(TestContext ctx)
+        {
+            Debug.Log("Main Method Being Called");
+            jumpSuccessfull = true;
+            return false;
+        }
     }
     
     
@@ -60,9 +66,9 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool jumpSuccessfull = false;
-        var jump = new PipelineBuilder<TestContext>(3)
-            .ExitIf(ctx => ctx.Value == 1)
-            .ExitIf(ctx => ctx.Value == 2)
+        var jump = new PipelineBuilder<TestContext>()
+            .Add_ShortCircuit(ctx => ctx.Value == 1)
+            .Add_ShortCircuit(ctx => ctx.Value == 2)
             .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) { jumpSuccessfull = true; return true; }
 
@@ -80,9 +86,9 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool failedStepCallbackExecuted = false;
-        var jump = new PipelineBuilder<TestContext>(3)
-            .ExitIf(ctx => ctx.Value == 1)
-            .ExitIf(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
+        var jump = new PipelineBuilder<TestContext>()
+            .Add_ShortCircuit(ctx => ctx.Value == 1)
+            .Add_ShortCircuit(ctx => ctx.Value == 2, new Callback(() => failedStepCallbackExecuted = true))
             .InjectMainMethod(ctx => Jump(ctx));
         bool Jump(TestContext ctx) => true;
 
@@ -102,10 +108,10 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool jumpCalled = false;
-        var jump = new PipelineBuilder<TestContext>(3)
-            .ExitIf(ctx => ctx.Value == 0)
-            .ExitIf(ctx => ctx.Value == 1, new Timed(1))
-            .InjectMainMethod(ctx => Jump(ctx));
+        var jump = new PipelineBuilder<TestContext>()
+            .Add_ShortCircuit(ctx => ctx.Value == 0)
+            .Add_ShortCircuit(ctx => ctx.Value == 1, new Timed(1))
+            .InjectMainMethod(Jump);
         bool Jump(TestContext ctx) => jumpCalled = true;
 
         
@@ -133,10 +139,10 @@ public class PipelineTests
         // Arrange
         var myctx = new TestContext(2);
         bool jumpCalled = false;
-        var jump = new PipelineBuilder<TestContext>(3)
-            .ExitIf(ctx => ctx.Value == 0)
-            .ExitIf(ctx => ctx.Value == 1, new Wait(1))
-            .InjectMainMethod(ctx => Jump(ctx));
+        var jump = new PipelineBuilder<TestContext>()
+            .Add_ShortCircuit(ctx => ctx.Value == 0)
+            .Add_ShortCircuit(ctx => ctx.Value == 1, new Wait(1))
+            .InjectMainMethod(Jump);
         bool Jump(TestContext ctx) => jumpCalled = true;
 
         

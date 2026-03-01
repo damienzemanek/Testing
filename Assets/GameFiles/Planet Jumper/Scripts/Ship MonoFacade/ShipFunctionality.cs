@@ -10,6 +10,7 @@ using UnityEngine.InputSystem;
 using static CamEX;
 using static CamEX.CurveValue;
 using static EMILtools.Timers.TimerUtility;
+using static StepType;
 
 public class ShipFunctionality : Functionalities<ShipController, ShipContext>
 {
@@ -34,7 +35,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             facade.Blackboard.cannonMouseLook.Input = facade.Input;
         }
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.usingCannonCam);
 
         public override bool ExecutionImplementation(ShipContext ctx)
         {
@@ -78,7 +79,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
         }
         
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.usingCannonCam || !isActive);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.usingCannonCam || !isActive);
 
         public override bool ExecutionImplementation(ShipContext ctx)
         {
@@ -166,7 +167,7 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
 
         public SteerModule(PersistentAction<bool> action, ShipController facade) : base(action, facade) { }
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
-            => builder.ExitIf(_ => !isActive, new Callback(StopSteering));
+            => builder.Add_ShortCircuit(_ => !isActive, new Callback(StopSteering));
 
         public override bool ExecutionImplementation(ShipContext ctx)
         {

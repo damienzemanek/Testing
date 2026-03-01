@@ -10,6 +10,7 @@ using static EMILtools.Extensions.NumEX;
 using static ITwoD_Blackboard;
 using static Ledge;
 using static PilotConfig.PilotAnims;
+using static StepType;
 using static TwoD_InputAuthority;
 using static TwoD_SharedModules;
 
@@ -88,7 +89,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public MouseModule(TwoD_PilotController facade) : base(facade) { }
         
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => facade.Blackboard.isMantled);
+            => builder.Add_ShortCircuit(_ => facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Input.MouseInputZones.CheckAllZones(facade.Input.mouse); return true; }
         public void OnUpdateTick() => Execute();
@@ -99,7 +100,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public MountTitan(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.canMount);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.canMount);
 
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.hasRequestedMount = true; return true; }
     }
@@ -132,7 +133,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.titanReady);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.titanReady);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -153,8 +154,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public DoubleJumpModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.hasJumped)
-                      .ExitIf(_ => facade.Blackboard.hasDblJumped);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.hasJumped)
+                      .Add_ShortCircuit(_ => facade.Blackboard.hasDblJumped);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -188,7 +189,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public ClimbModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder) 
-            => builder.ExitIf(_ => !facade.Blackboard.isMantled);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -214,8 +215,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
     {
         public MantleModule(PersistentAction action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.canMantle)
-                      .ExitIf(_ => facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.canMantle)
+                      .Add_ShortCircuit(_ => facade.Blackboard.ledgeData.dir != facade.Blackboard.facingDir);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -250,7 +251,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         
         public LandModule(PersistentAction _action, TwoD_PilotController facade) : base(_action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => {
+            => builder.Add_ShortCircuit(_ => {
                 bool isBlocked = !facade.Blackboard.phys.isGrounded.Value;
                 Debug.Log($"[LandModule] Pipeline Check: landed={facade.Blackboard.phys.isGrounded.Value}, isBlocked={isBlocked}");
                 return isBlocked;
@@ -288,11 +289,11 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             facade.InitTimer(facade.Blackboard.jumpDelay, true);
         }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => facade.Blackboard.isMantled, new Callback(() => facade.Actions.ClimbLedge.Invoke()))
-                      .ExitIf(_ => facade.Blackboard.canMantle, new Callback(() => facade.Actions.MantleLedge.Invoke()))
-                      .ExitIf(_ => facade.Blackboard.hasJumped, new Callback(() => facade.Actions.DoubleJump.Invoke()))
-                      .ExitIf(_ => facade.Blackboard.jumpOnCooldown)
-                      .ExitIf(_ => !facade.Blackboard.phys.isGrounded);
+            => builder.Add_ShortCircuit(_ => facade.Blackboard.isMantled, new Callback(() => facade.Actions.ClimbLedge.Invoke()))
+                      .Add_ShortCircuit(_ => facade.Blackboard.canMantle, new Callback(() => facade.Actions.MantleLedge.Invoke()))
+                      .Add_ShortCircuit(_ => facade.Blackboard.hasJumped, new Callback(() => facade.Actions.DoubleJump.Invoke()))
+                      .Add_ShortCircuit(_ => facade.Blackboard.jumpOnCooldown)
+                      .Add_ShortCircuit(_ => !facade.Blackboard.phys.isGrounded);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -310,7 +311,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public class Setter : SettableTemplate<bool> { }
         public LookModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => facade.Blackboard.isMantled);
+            => builder.Add_ShortCircuit(_ => facade.Blackboard.isMantled);
         protected override void Awake() => facade.Blackboard.mouseLook.cam = facade.Blackboard.camContext.camera;
         public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
 
@@ -324,8 +325,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public class Setter : SettableTemplate<bool> {  }
         public ShootModule(PersistentAction<bool> action, TwoD_PilotController facade) : base(action, facade) { }
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !isActive)
-                      .ExitIf(_ => facade.Blackboard.isMantled);
+            => builder.Add_ShortCircuit(_ => !isActive)
+                      .Add_ShortCircuit(_ => facade.Blackboard.isMantled);
         
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -394,8 +395,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.ExitIf(_ => !isActive)
-                      .ExitIf(_ => facade.Blackboard.isMantled);
+            => builder.Add_ShortCircuit(_ => !isActive)
+                      .Add_ShortCircuit(_ => facade.Blackboard.isMantled);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {

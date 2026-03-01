@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using static EnemyOneBlackboard;
 using static EnemyOneConfig.EnemyOneAnims;
+using static StepType;
 using static TwoD_SharedModules;
 
 public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOneContext>
@@ -57,7 +58,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
     {
         public AimAtTarget(EnemyOneController facade) : base(facade) { }
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.canSeeAndFire);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.canSeeAndFire);
         
         public override bool ExecutionImplementation(EnemyOneContext ctx)
         {
@@ -83,7 +84,7 @@ public class EnemyOneFunctionality : Functionalities<EnemyOneController, EnemyOn
     {
         public WhichDirectionIsTargetIn(EnemyOneController facade) : base(facade) { }
         public override PipelineBuilder<EnemyOneContext> InjectSteps(PipelineBuilder<EnemyOneContext> builder)
-            => builder.ExitIf(_ => !facade.Blackboard.canSeeAndFire);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.canSeeAndFire);
 
         public override bool ExecutionImplementation(EnemyOneContext ctx)
         {

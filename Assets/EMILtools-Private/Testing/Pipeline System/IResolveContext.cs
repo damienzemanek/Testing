@@ -4,73 +4,112 @@ using EMILtools.Timers;
 using UnityEngine;
 using static EMILtools.Timers.TimerUtility;
 
+
+/// <summary>
+/// Context for ResolveContexts, used to pass data and control the flow of the pipeline
+/// </summary>
 public interface IResolveContext
 {
     public virtual void Reset() { }
-    public bool Resolve<TContext>(PipelineStepDelegate<TContext> del, in TContext ctx) where TContext : struct;
-    public virtual Task WaitUntilResolved() => Task.CompletedTask;
-    public virtual bool canDelay => false;
+    public bool Resolve<TContext>(in TContext ctx) where TContext : struct;
+}
+
+/// <summary>
+/// Represents an interface for waitable resolve operations in the pipeline.
+/// This interface enables components to await asynchronous resolution
+/// while maintaining the non-blocking nature of the resolve process.
+/// </summary>
+public interface IResolveWaitable
+{
+    bool waiting { get; set; }
+    public Task WaitUntilResolved(bool reenacting = false)
+    {
+        Debug.Log("WaitUntilResolved Called");
+        if (reenacting) waiting = true;
+        return cachedWaitTask;
+    }
+    public Task cachedWaitTask { get; set; }
 }
 
 public class Callback : IResolveContext
 {
+    static readonly bool ContinueResolving = true;
     public readonly Action Action;
     public Callback(Action _action) => Action = _action;
 
-    public bool Resolve<TContext>(PipelineStepDelegate<TContext> del, in TContext ctx) where TContext : struct
+    public bool Resolve<TContext>(in TContext ctx) where TContext : struct
     {
+        Debug.Log("CALLBACK");
         Action?.Invoke();
-        return del.Invoke(ctx);
+        return ContinueResolving;
     }
 }
 
 public class Timed : IResolveContext, ITimerUser
 {
+    bool ShortCircuitIfNotFinished => false; // Is not intended to be read as FALSe short circuit, just for readibiliy in the Resolve()
+    bool ContinueResolving => true;
+    public CountdownTimer Timer => timer;
     CountdownTimer timer;
-    
     public Timed(float sec)
     {
         timer = new CountdownTimer(sec);
         this.InitTimer(timer, isFixed: true);
     }
-    public void Pause() => timer.Pause();
-    public void Resume() => timer.Resume();
-    public void Reset() => timer.Reset();
-    
-    public bool Resolve<TContext>(PipelineStepDelegate<TContext> del, in TContext ctx) where TContext : struct
+    public bool Resolve<TContext>(in TContext ctx) where TContext : struct
     {
         if(!timer.isRunning && !timer.isFinished()) timer.Start();
-        return !timer.isFinished(); // Blocked if not finished
+        return timer.isFinished() ? ContinueResolving : ShortCircuitIfNotFinished;
     }
 }
 
-public class Wait : IResolveContext, ITimerUser
+public class Wait : IResolveContext, ITimerUser, IResolveWaitable
 {
+    // --- static ----
+    static bool ContinueResolving = true;
+    
+    // --- Privates ----
     CountdownTimer timer;
-    TaskCompletionSource<bool> tcs = new();
+    TaskCompletionSource<bool> tcs;
     
-    public Task WaitUntilResolved() => tcs.Task;
-    public bool canDelay => true;
+    // --- API ----
+    public bool waiting { get; set; } = false;
+    public Task cachedWaitTask { get; set; }
+    public CountdownTimer Timer => timer;
     
+    // --- Ctor ----
     public Wait(float sec)
     {
         timer = new CountdownTimer(sec);
         this.InitTimer(timer, isFixed: true);
-        timer.OnTimerStop.Add(() => tcs.TrySetResult(true));
+        tcs = new();
+        cachedWaitTask = tcs.Task;
+        timer.OnTimerStop.Add(TimerStopped);
+        Debug.Log("Wait Timer Initialized");
     }
-    public void Pause() => timer.Pause();
-    public void Resume() => timer.Resume();
-
+    
+    void TimerStopped()
+    {
+        tcs.TrySetResult(true);
+        waiting = false;
+        Debug.Log("Wait Timer Finished");
+    }
+    
     public void Reset()
     {
-        tcs.TrySetResult(false);
+        tcs = new();
+        cachedWaitTask = tcs.Task;
         timer.Reset();
     }
     
-    public bool Resolve<TContext>(PipelineStepDelegate<TContext> del, in TContext ctx) where TContext : struct
+    public bool Resolve<TContext>(in TContext ctx) where TContext : struct
     {
-        if(!timer.isRunning && !timer.isFinished()) timer.Start();
-        return false;
+        if (!timer.isRunning && !timer.isFinished())
+        {
+            timer.Start();
+            Debug.Log("Started Wait Timer");
+        }
+        return ContinueResolving;
     }
 }
 
