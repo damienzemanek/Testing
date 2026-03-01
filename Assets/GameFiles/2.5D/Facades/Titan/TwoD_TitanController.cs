@@ -4,7 +4,6 @@ using EMILtools.Timers;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static IInputSubordinate<TwoD_InputAuthority.TwoD_InputMap,TwoD_InputAuthority.Subordinates>;
-using static ITwoD_Blackboard;
 using static TwoD_InputAuthority;
 
 

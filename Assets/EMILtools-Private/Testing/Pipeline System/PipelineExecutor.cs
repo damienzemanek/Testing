@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using UnityEngine;
 
 
 /// <summary>
-/// Frame-Agnostic Async Execution Pipeline
+/// Frame-Agnostic Async Pipeline Executor
+/// SRP: Execution
 /// </summary>
 public static class PipelineExecutor
 {
@@ -35,7 +35,15 @@ public static class PipelineExecutor
     
 
     /// <summary>
-    /// Slightly more performant option
+    /// Main API for executing pipelines,
+    /// FLUENT API-lite, call pipelines like your "Trying to" "Do something"
+    /// ---------------------------------
+    /// Usage:
+    /// var jump = PipelineBuilder...
+    /// TryTo(jump, jumpContext);
+    /// ---------------------------------
+    /// Slightly more performant option via "in" keyword
+    /// SRP: API
     /// </summary>
     /// <param name="pipeline"></param>
     /// <param name="ctx"></param>
@@ -44,10 +52,19 @@ public static class PipelineExecutor
     public static Task TryTo<TContext>(Pipeline<TContext> pipeline, in TContext ctx)
         where TContext : struct, IPipelineContext
     => Execute(pipeline, ctx);
-    
+
+
 
     /// <summary>
-    /// Regular option
+    /// Secondary API for executing pipelines,
+    /// FLUENT API-lite, call pipelines like your "Trying to" "Do something"
+    /// ---------------------------------
+    /// Usage:
+    /// var jump = PipelineBuilder...
+    /// jumpContext.TryTo(jump);
+    /// ---------------------------------
+    /// Slightly less performant option via "this" (this is pass by value for value-types)
+    /// SRP: API
     /// </summary>
     /// <param name="ctx"></param>
     /// <param name="pipeline"></param>
@@ -55,16 +72,13 @@ public static class PipelineExecutor
     /// <returns></returns>
     public static Task TryTo<TContext>(this TContext ctx, Pipeline<TContext> pipeline)
         where TContext : struct, IPipelineContext
-    => Execute(pipeline, ctx);
-    
-    
-    
-    
-    
-    /// Commented version
+        => Execute(pipeline, ctx);
+
+
+    /// Commented version of Executor for Debugging
     ///
-    //      public static async Task Execute<TContext>(Pipeline<TContext> pipeline, TContext ctx)
-    // where TContext : struct, IPipelineContext
+    //  public static async Task Execute<TContext>(Pipeline<TContext> pipeline, TContext ctx)
+    //      where TContext : struct, IPipelineContext
     // {
     //     // For loop for structs,
     //     // - Has no mutations to TContext

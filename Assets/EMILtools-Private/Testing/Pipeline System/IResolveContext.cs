@@ -7,6 +7,7 @@ using static EMILtools.Timers.TimerUtility;
 
 /// <summary>
 /// Context for ResolveContexts, used to pass data and control the flow of the pipeline
+/// Resolves happen BEFORE execution
 /// </summary>
 public interface IResolveContext
 {
@@ -31,6 +32,9 @@ public interface IResolveWaitable
     public Task cachedWaitTask { get; set; }
 }
 
+/// <summary>
+/// Represents a callback mechanism that can be invoked before pipeline step execution
+/// </summary>
 public class Callback : IResolveContext
 {
     static readonly bool ContinueResolving = true;
@@ -45,9 +49,14 @@ public class Callback : IResolveContext
     }
 }
 
+/// <summary>
+/// Timed resolving context that integrates with a pipeline execution flow.
+/// Will ShortCircuit if the timer is not finished (Only If the StepType is a ShortCircuit)
+/// </summary>
 public class Timed : IResolveContext, ITimerUser
 {
-    bool ShortCircuitIfNotFinished => false; // Is not intended to be read as FALSe short circuit, just for readibiliy in the Resolve()
+    // Is not intended to be read as ShortCircuit FALSE, used just for readability in the Resolve()
+    bool ShortCircuitIfNotFinished => false; 
     bool ContinueResolving => true;
     public CountdownTimer Timer => timer;
     CountdownTimer timer;
@@ -63,6 +72,11 @@ public class Timed : IResolveContext, ITimerUser
     }
 }
 
+/// <summary>
+/// Represents a waitable component used in the pipeline that incorporates a countdown timer.
+/// Provides functionality to wait asynchronously until the timer completes (Stays in UnityTime)
+/// Used when delays are necessary before progressing within the pipeline.
+/// </summary>
 public class Wait : IResolveContext, ITimerUser, IResolveWaitable
 {
     // --- static ----

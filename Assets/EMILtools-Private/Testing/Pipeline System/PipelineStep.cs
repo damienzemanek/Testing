@@ -1,9 +1,21 @@
 ﻿using System;
-using System.Threading.Tasks;
+
 
 /// <summary>
-/// Represents a step in a pipeline, defining the type of step, its execution logic, and its associated resolution contexts.
-/// - ReadOnly, to be created ONCE in initialization via PipelineBuilder
+/// Represents a delegate that defines the execution logic for a step in the pipeline.
+/// Used to process a specific context within the pipeline's execution flow.
+/// SRP: Execution logic for pipeline steps.
+/// </summary>
+/// <typeparam name="TContext">
+/// The type of context used in the pipeline. Must be a struct.
+/// </typeparam>
+public delegate bool PipelineStepDelegate<in TContext>(TContext context);
+
+
+/// <summary>
+/// Represents a step in a pipeline,
+/// Defines the type of step, its execution logic, and its associated resolution contexts.
+/// SRP: Storage
 /// </summary>
 /// <typeparam name="TContext">
 /// The type of context used in the pipeline. Must be a struct.
@@ -11,54 +23,63 @@ using System.Threading.Tasks;
 public readonly struct PipelineStep<TContext>
     where TContext : struct
 {
-    static readonly bool ResolveSuccessfull = true;
+    const bool ResolveSuccessfull = true;
 
+
+    // ------ Variables --------
     public readonly PipelineStepDelegate<TContext> Execute;
-
     public readonly IResolveContext[] resolveContexts;
     public readonly StepType StepType;
 
+    
+    // ------ Ctors ------
     public PipelineStep(StepType stepType, PipelineStepDelegate<TContext> execute, IResolveContext[] resolveContexts)
     {
         this.Execute = execute;
         this.resolveContexts = resolveContexts ?? Array.Empty<IResolveContext>();
         StepType = stepType;
     }
-    
     public PipelineStep(PipelineStepDelegate<TContext> mainMethod)
     {
         Execute = mainMethod;
         resolveContexts = Array.Empty<IResolveContext>();
         StepType = StepType.MainMethod;
     }
-    
-    public async Task<bool> ResolveContext(TContext context)
-    {
-        foreach (var resolve in resolveContexts)
-        {
-            if (resolve.Resolve(context) != ResolveSuccessfull) return !ResolveSuccessfull;
-            if (resolve is IResolveWaitable canWait && !canWait.waiting) await canWait.WaitUntilResolved();
-        }
-        return ResolveSuccessfull;
-    }
-    
 }
 
+
+/// <summary>
+/// Represents the type of a step within a pipeline.
+/// Defines the role and behavior of a step during pipeline execution.
+/// SRP: Classification of step roles.
+/// </summary>
 public enum StepType
 {
     /// <summary>
-    /// Default type, will execute and allow the pipeline to continue if not blocked by the ResolveContext
+    /// Allows execution to continue regardless of the return state
+    ///
+    /// Usage: Add_Middleware(ctx => { DoSomething(ctx); return false; });
     /// </summary>
     Middleware, 
-    ShortCircuit, 
+    
+    /// <summary>
+    /// Short-circuits execution if return state is false (Early Exit)
+    /// Typically used with validation steps to ensure that the main logic is only executed when certain conditions are met.
+    ///
+    /// Usage: Add_ShortCircuit(ctx => isSomethingValid(ctx)); 
+    /// </summary>
+    ShortCircuit,
+
+    /// <summary>
+    /// Represents the primary execution step in a pipeline.
+    /// This step defines the main logic to be executed within the process
+    /// and is typically the final operation in the pipeline sequence.
+    ///
+    /// Usage: Add_MainMethod(ctx => { DoSomething(ctx); });
+    /// </summary>
     MainMethod
 }
 
-
-
-
-
-public delegate bool PipelineStepDelegate<in TContext>(TContext context);
 
 
 

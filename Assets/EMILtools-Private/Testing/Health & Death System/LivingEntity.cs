@@ -1,11 +1,9 @@
-using System;
 using System.Collections;
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using static EMILtools.Extensions.NumEX;
 using static IDamageable;
-using Object = System.Object;
 
 public class LivingEntity : Entity,
     IDamageable
