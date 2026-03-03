@@ -5,6 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using EMILtools.Signals;
 using EMILtools.Timers;
+using UnityEngine.Serialization;
 using static EMILtools.Signals.ModifierStrategies;
 using static EMILtools.Extensions.NumEX;
 using static EMILtools.Signals.StatTags;
@@ -39,14 +40,16 @@ namespace EMILtools.Extensions
         public struct JumpSettings
         {
             public ForceMode forceMode;
-            public Vector3 direction;
-            [SerializeField] public Ref<float> mult;
+            public bool useLocal;
+            public bool useGlobal;
+            
+            [ShowIf("useLocal")] public Vector3 localDirection;
+            [ShowIf("useLocal")] public Transform localOrigin;
+            [ShowIf("useGlobal")] [FormerlySerializedAs("direction")] public Vector3 globalDirection;
             [SerializeField] public Ref<float> cooldown;
             public bool complexJump;
             [ShowInInspector, InlineProperty, ShowIf("complexJump")] public AnimationCurve forceCurve;
             [SerializeField, ShowIf("complexJump")]                  public Ref<float> inputMaxDuration;
-            
-            public Vector3 jumpForce { get => direction * mult; }
         }
 
         [Serializable]
@@ -112,20 +115,26 @@ namespace EMILtools.Extensions
 
         public static void Jump(this Rigidbody rb, JumpSettings jump)
         {
-            Vector3 dir = jump.direction * jump.mult;
-            Debug.Log(jump.direction * jump.mult);
-            rb.AddForce(dir, jump.forceMode);
-        }
-        
+            Vector3 force = Vector3.zero;
+            if (jump.useGlobal) force += jump.globalDirection;
+            if (jump.useLocal && jump.localOrigin != null) force += jump.localOrigin.InverseTransformDirection(jump.localDirection);
 
+            rb.AddForce(force, jump.forceMode);
+        }
+
+        /// <summary>
+        /// Broken atm
+        /// </summary>
+        /// <param name="rb"></param>
+        /// <param name="jump"></param>
+        /// <param name="progress"></param>
         public static void JumpComplex(this Rigidbody rb, JumpSettings jump, float progress)
         {
             float mult = ZeroF;
-            if (!jump.complexJump) mult = jump.mult;
-            else mult = jump.mult * jump.forceCurve.Evaluate(Flip01(progress));
+             mult = jump.forceCurve.Evaluate(Flip01(progress));
            
-            Vector3 dir = jump.direction * mult;
-            Debug.Log(jump.direction * mult);
+            Vector3 dir = jump.globalDirection;
+            Debug.Log(jump.globalDirection);
             rb.AddForce(dir, jump.forceMode);
         }
 

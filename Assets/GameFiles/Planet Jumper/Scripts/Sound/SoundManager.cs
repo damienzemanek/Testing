@@ -8,7 +8,7 @@ public class SoundManager : PersistantSingleton<SoundManager>
 {
     public AudioSource source;
     public Dictionary<Enum, AudioClip> clips = new();
-    
+
     public AudioClip RequestClip<TEnum>(TEnum type)
         where TEnum : Enum
     {
@@ -24,9 +24,20 @@ public class SoundManager : PersistantSingleton<SoundManager>
             source.PlayOneShot(RequestClip(type));
             Debug.Log("Playing clip");
         };
-
+    }
+    
+    public Action<TEnum> PlayRequest<TEnum>(TEnum type) where TEnum : Enum
+    {
+        return @enum =>
+        {
+            source.clip = RequestClip(type);
+            source.Play();
+            source.loop = true;
+            Debug.Log("Playing clip");
+        };
     }
     public void PlayRequest() => source.Play();
+    public void PlayOneShotEasy(AudioClip clip) => source.PlayOneShot(clip);
 
     public static void CacheAudioClip<TEnum>(TEnum type, AudioClip clip) where TEnum : Enum
     {

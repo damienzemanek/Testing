@@ -111,7 +111,7 @@ public class AnimHandle<TAnimEnum, TAnimBlendEnum>
         float normalizedTime = NegativeInfinity)
     {
         if (states == null) Initialize();
-        if (animator == null) { Debug.LogError("Animator Null"); return false;}
+        if (animator == null) { Debug.LogWarning("Animator Null"); return false;}
         if (States == null) { Debug.LogError("States Null"); return false;}
         if (layer < 0 || layer >= animator.layerCount)  { Debug.LogError("Layer Out of Index Range"); return false;}
         if(states == null) { Debug.LogError("States Dictionary Null"); return false;}

@@ -4,5 +4,5 @@ using UnityEngine;
 public class Score : MonoBehaviour
 {
     public TextMeshProUGUI text;
-    public void UpdateScore(int score) => text.text = "" + score;
+    public void UpdateGas(float gas) => text.text = "" + gas;
 }

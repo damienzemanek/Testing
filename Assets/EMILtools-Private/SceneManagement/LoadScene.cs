@@ -38,7 +38,7 @@ public class LoadScene : MonoBehaviour
     public void LoadSceneFadeScreenToOpaque(int indx)
     {
         if (fade.targ == null) fade.targ = FaderUI.Instance.targ;
-        StartCoroutine(C_FadeToOpaque(fade, () => StartCoroutine(Load(indx))));
+        StartCoroutine(C_FadeToOpaque(fade, () => StartCoroutine(Load(indx, true))));
     }
 
     public GameObject[] LoadingScreenObjects;
@@ -46,22 +46,20 @@ public class LoadScene : MonoBehaviour
 
     
 
-    IEnumerator Load(int indx)
+    IEnumerator Load(int indx, bool unlockMouse = true)
     {
         LoadingScreenObjects.SetAllActive(true);
         disables.SetAllActive(false);
         yield return null;
         StartCoroutine(LoadSceneAsync(indx));
     }
-    IEnumerator LoadSceneAsync(int indx)
+    IEnumerator LoadSceneAsync(int indx, bool unlockMouse = true)
     {
-        int currentScene = SceneManager.GetActiveScene().buildIndex;
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(loadScreenIndx, LoadSceneMode.Additive);
         
         while(!loadOp.isDone)
             yield return null;
         
-        SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(currentScene));
         
         yield return new WaitForSeconds(minTimeLoading);
         
@@ -82,6 +80,16 @@ public class LoadScene : MonoBehaviour
         mainOp.allowSceneActivation = true;
         otherSceneOps.ForEach(op => op.allowSceneActivation = true);
 
+        if (unlockMouse)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
         fade.SetAlpha(0);
     }
 }

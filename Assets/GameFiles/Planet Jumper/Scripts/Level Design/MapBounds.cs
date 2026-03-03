@@ -19,8 +19,9 @@ public class MapBounds : MonoBehaviour, ITimerUser
     
     public Ref<float> boundsMaxTime;
     public CountdownTimer boundsTimter;
-
-    public int frontEndMenuIndx = 1;
+    public LoadSceneConnector loadAdpater;
+    
+    public int loseScreenIndex;
 
     void Awake()
     {
@@ -37,9 +38,7 @@ public class MapBounds : MonoBehaviour, ITimerUser
         playerExplEffect.transform.parent = null;
         player.SetActive(false);
         yield return new WaitForSeconds(0.25f);
-        var loader = FindAnyObjectByType<LoadScene>();
-        if (loader == null) yield break;
-        loader.LoadSceneFadeScreenToOpaque(frontEndMenuIndx);
+        loadAdpater.Load(loseScreenIndex);
     }
 
     private void OnTriggerExit(Collider other)

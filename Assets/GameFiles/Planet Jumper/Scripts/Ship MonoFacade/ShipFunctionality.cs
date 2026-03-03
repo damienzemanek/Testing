@@ -35,7 +35,8 @@ public class ShipFunctionality : Functionalities<ShipController, ShipContext>
             facade.Blackboard.cannonMouseLook.Input = facade.Input;
         }
         public override PipelineBuilder<ShipContext> InjectSteps(PipelineBuilder<ShipContext> builder)
-            => builder.Add_ShortCircuit(_ => !facade.Blackboard.usingCannonCam);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.usingCannonCam)
+                      .Add_ShortCircuit(_ => !isActive);
 
         public override bool ExecutionImplementation(ShipContext ctx)
         {

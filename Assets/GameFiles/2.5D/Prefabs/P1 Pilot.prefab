@@ -2407,7 +2407,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2735
+  m_VersionIndex: 2744
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3734,7 +3734,7 @@ MonoBehaviour:
       val: 0
   groundedSettings:
     feetPoint: {fileID: 8309066660576041432}
-    checkDist: 0.3
+    checkDist: 1.2
     mask:
       serializedVersion: 2
       m_Bits: 8
@@ -3945,7 +3945,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6102052169739827894}
   - component: {fileID: 7513418536903675795}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Facing Direction
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3981,13 +3981,13 @@ BoxCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 384
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.05, z: 1}
+  m_Size: {x: 0.01, y: 0.01, z: 0.01}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4620539242884372404
 GameObject:

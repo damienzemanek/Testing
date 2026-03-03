@@ -161,7 +161,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         {
             Debug.Log("Double Jumping");
             facade.Config.animHandle.Play(facade.Blackboard.animator, DoubleJump);
-            facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.jumpForce * facade.Config.jump.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
+            facade.Blackboard.rb.AddForce(facade.Blackboard.phys.jumpSettings.globalDirection * facade.Config.jump.dblJumpMult, facade.Blackboard.phys.jumpSettings.forceMode);
             facade.Blackboard.hasDblJumped = true;
             return true;
         }
