@@ -43,8 +43,8 @@ MonoBehaviour:
       blendEnum: 0
       hash: -823668238
   <camSettings>k__BackingField:
-    followOffset: {x: 0, y: 12, z: -75}
-    targetOffset: {x: 0, y: 5, z: 0}
+    followOffset: {x: 0, y: 14, z: -75}
+    targetOffset: {x: 0, y: 7, z: 0}
   <mount>k__BackingField:
     <duration>k__BackingField: 2
     <dismountDuration>k__BackingField: 0.75

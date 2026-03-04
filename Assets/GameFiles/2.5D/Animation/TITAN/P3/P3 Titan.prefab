@@ -10295,7 +10295,7 @@ MonoBehaviour:
       targetPosition: {x: 0, y: 0, z: 0}
     <mouseLook>k__BackingField:
       cam: {fileID: 0}
-      core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
+      core: {fileID: 11400000, guid: fcfdea0c3bcd5a641971a2e660468605, type: 2}
       rotatingObjects:
       - rotateScaler: 1
         transform: {fileID: 6454532127600640234}
@@ -10321,6 +10321,7 @@ MonoBehaviour:
       CM: {fileID: 0}
       follow: {fileID: 0}
       rotComposer: {fileID: 0}
+      mouseCenter: {fileID: 0}
   <inputSubordinateContext>k__BackingField:
     Subordinate:
       underlyingValue: {fileID: 605392587582940924}

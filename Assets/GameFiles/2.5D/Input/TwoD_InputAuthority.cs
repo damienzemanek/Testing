@@ -65,5 +65,6 @@ public class TwoD_InputAuthority : InputAuthority< TwoD_InputReader, TwoD_InputM
         public CinemachineCamera CM;
         public CinemachineFollow follow;
         public CinemachineRotationComposer rotComposer;
+        public Transform mouseCenter;
     }
 }

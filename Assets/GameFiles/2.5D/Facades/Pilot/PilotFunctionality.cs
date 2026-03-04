@@ -319,7 +319,7 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.Add_ShortCircuit(_ => facade.Blackboard.isMantled);
         protected override void Awake() => facade.Blackboard.mouseLook.cam = facade.Blackboard.camContext.camera;
-        public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(facade.Blackboard.mouseLookCenter); return true; }
+        public override bool ExecutionImplementation(PilotContext ctx) { facade.Blackboard.mouseLook.Execute(facade.Blackboard.camContext.mouseCenter); return true; }
 
         public void OnLateTick() => Execute();
     }

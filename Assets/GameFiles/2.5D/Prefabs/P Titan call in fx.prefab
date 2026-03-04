@@ -103,7 +103,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ConstantRotateModule:
     active: 1
-    rotation: {x: 1, y: 0, z: 0}
+    rotation: {x: 0, y: 1, z: 0}
     transform: {fileID: 5469621696948532611}
   RandomRotationModule:
     active: 0

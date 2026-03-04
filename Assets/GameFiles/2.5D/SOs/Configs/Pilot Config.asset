@@ -75,7 +75,7 @@ MonoBehaviour:
   <jump>k__BackingField:
     <delay>k__BackingField:
       val: 0.1
-    <dblJumpMult>k__BackingField: 6
+    <dblJumpMult>k__BackingField: 1
   <camSettings>k__BackingField:
     followOffset: {x: 0, y: 3, z: -50}
     targetOffset: {x: 0, y: 1, z: 0}

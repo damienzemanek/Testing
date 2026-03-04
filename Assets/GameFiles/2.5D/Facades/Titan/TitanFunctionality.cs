@@ -42,7 +42,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         public MouseLookModule(TwoD_TitanController facade) : base(facade) { }
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.Add_ShortCircuit(_ => !facade.Blackboard.hasMounted);
-        public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(); return true; }
+        public override bool ExecutionImplementation(TitanContext ctx) { facade.Blackboard.mouseLook.Execute(facade.Blackboard.camContext.mouseCenter); return true; }
         public void OnLateTick() => Execute();
     }
     
@@ -231,6 +231,7 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             myContext.follow = injectedContext.follow;
             myContext.rotComposer = injectedContext.rotComposer;
             myContext.camera = injectedContext.camera;
+            myContext.mouseCenter = injectedContext.mouseCenter;
         }
     }
     
