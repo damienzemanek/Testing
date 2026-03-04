@@ -12,11 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81c638eb2d3d1a6449d56fb87520989a, type: 3}
   m_Name: MouseToWorldSpace
   m_EditorClassIdentifier: 
-  maximumLength: 33.37
+  maximumLength: 100
   lookAtCollisions: 0
   lookAtPlane: 1
   lookAtPlaneMask:
     serializedVersion: 2
     m_Bits: 64
-  contactPoint: {x: -67.75204, y: 25.13174, z: -19.241146}
+  contactPoint: {x: 0, y: 0, z: 0}
   direction: {x: -5.823696, y: -14.977764, z: -18.572393}
+  regularOffset: {x: 0, y: 0, z: 0}
+  offsetRelative: 1
+  offsetRelativeTo:
+    scalar: 0.12
+    x: 0
+    y: 1
+    z: 0

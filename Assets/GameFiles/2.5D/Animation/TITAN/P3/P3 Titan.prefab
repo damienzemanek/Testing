@@ -10341,9 +10341,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   jumpSettings:
     forceMode: 0
-    direction: {x: 0, y: 0, z: 0}
-    mult:
-      val: 0
+    useGlobal: 0
+    globalDirection: {x: 0, y: 0, z: 0}
     cooldown:
       val: 0
     complexJump: 0
@@ -23580,7 +23579,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.05, z: 1}
+  m_Size: {x: 0.01, y: 0.01, z: 0.01}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2541775436175837220
 GameObject:

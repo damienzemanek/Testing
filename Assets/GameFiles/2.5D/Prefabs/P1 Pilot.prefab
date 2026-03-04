@@ -2407,7 +2407,7 @@ MonoBehaviour:
   m_PreserveMeshAssetOnDestroy: 0
   assetGuid: 
   m_Mesh: {fileID: 0}
-  m_VersionIndex: 2780
+  m_VersionIndex: 2813
   m_IsSelectable: 1
   m_SelectedFaces: 
   m_SelectedEdges: []
@@ -3647,13 +3647,14 @@ MonoBehaviour:
       CM: {fileID: 0}
       follow: {fileID: 0}
       rotComposer: {fileID: 0}
-    <camFollowTransform>k__BackingField: {fileID: 824366286133522292}
+    <camFollowTransform>k__BackingField: {fileID: 3415698236778258420}
+    <mouseLookCenter>k__BackingField: {fileID: 0}
     <mouseLook>k__BackingField:
       cam: {fileID: 0}
       core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
       rotatingObjects:
       - rotateScaler: 1
-        transform: {fileID: 2541346553628246554}
+        transform: {fileID: 7037154394731170020}
         swapXWithZ: 0
         rotateX: 1
         rotateY: 0
@@ -3685,6 +3686,7 @@ MonoBehaviour:
     isShooting: 0
     hasDblJumped: 0
     hasRequestedMount: 0
+    titanAlive: 0
     titanReady:
       _value: 0
     isRunning:
@@ -3704,6 +3706,7 @@ MonoBehaviour:
     Authority:
       underlyingValue: {fileID: 0}
     key: 0
+  activeTitanThroughBoundsCheck: 1
 --- !u!114 &1336606993760701638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3794,7 +3797,7 @@ MonoBehaviour:
     - {fileID: 6680253834578972900}
   isDead: 0
   deathStatus: 0
-  animator: {fileID: 4377285558546433578}
+  animator: {fileID: 8486952036131827341}
   deathAnimHandle:
     States:
     - name: die
@@ -6179,6 +6182,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8486952036131827341}
   m_SourcePrefab: {fileID: 100100000, guid: f86916153da950b4a9159a3df123679f, type: 3}
+--- !u!4 &3415698236778258420 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 731733025025489038, guid: f86916153da950b4a9159a3df123679f, type: 3}
+  m_PrefabInstance: {fileID: 2684528273375389562}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7037154394731170020 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4965678867861712798, guid: f86916153da950b4a9159a3df123679f, type: 3}

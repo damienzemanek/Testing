@@ -167,8 +167,8 @@ namespace EMILtools.Extensions
 
 
 
-            public void Execute()
-            => RotateToMouseDirection(rotatingObjects, core.GetHitPoint(cam));
+            public void Execute(Transform center = null)
+            => RotateToMouseDirection(rotatingObjects, core.GetHitPoint(cam, center));
 
             void RotateToMouseDirection (RotatingObject[] transform, Vector3 destination)
             {
