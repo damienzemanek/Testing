@@ -40,11 +40,7 @@ namespace EMILtools.Extensions
         public struct JumpSettings
         {
             public ForceMode forceMode;
-            public bool useLocal;
             public bool useGlobal;
-            
-            [ShowIf("useLocal")] public Vector3 localDirection;
-            [ShowIf("useLocal")] public Transform localOrigin;
             [ShowIf("useGlobal")] [FormerlySerializedAs("direction")] public Vector3 globalDirection;
             [SerializeField] public Ref<float> cooldown;
             public bool complexJump;
@@ -116,9 +112,7 @@ namespace EMILtools.Extensions
         public static void Jump(this Rigidbody rb, JumpSettings jump)
         {
             Vector3 force = Vector3.zero;
-            if (jump.useGlobal) force += jump.globalDirection;
-            if (jump.useLocal && jump.localOrigin != null) force += jump.localOrigin.InverseTransformDirection(jump.localDirection);
-
+            force += jump.globalDirection;
             rb.AddForce(force, jump.forceMode);
         }
 
