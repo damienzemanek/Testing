@@ -25,4 +25,4 @@ MonoBehaviour:
       hash: -601574123
     BlendTreeVariables: []
   <pilotAimOffset>k__BackingField: {x: 0, y: 0, z: 0}
-  <titanAimOffset>k__BackingField: {x: 0, y: 16, z: 0}
+  <titanAimOffset>k__BackingField: {x: 0, y: 8, z: 0}
