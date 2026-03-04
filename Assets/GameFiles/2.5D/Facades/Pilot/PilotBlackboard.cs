@@ -52,6 +52,7 @@ public class PilotBlackboard : Blackboard, ITwoD_Blackboard
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool isShooting = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasDblJumped = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool hasRequestedMount = false;
+    [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public bool titanAlive = false;
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> titanReady = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> isRunning = new ReactiveIntercept<bool>(false);
     [BoxGroup("ReadOnly")] [ShowInInspector, ReadOnly] public ReactiveIntercept<bool> isMantled = new ReactiveIntercept<bool>(false);

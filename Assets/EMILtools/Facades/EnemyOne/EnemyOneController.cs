@@ -37,13 +37,13 @@ public class EnemyOneController : MonoFacade<
         Functionality.Unbind();
     }
     
-    public void OnEnterBounds(Collider other)
+    public void OnEnterBounds(Collider collidedWith, BoundsChecker sender)
     {
         Debug.Log("entered bounds");
-        Actions.TrackTarget.Invoke(true, other.transform);
+        Actions.TrackTarget.Invoke(true, collidedWith.transform);
     }
 
-    public void OnExitBounds(Collider other)
+    public void OnExitBounds(Collider collidedWith, BoundsChecker sender)
     {
         Actions.TrackTarget.Invoke(false, null);
     }

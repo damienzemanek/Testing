@@ -133,7 +133,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
-            => builder.Add_ShortCircuit(_ => !facade.Blackboard.titanReady);
+            => builder.Add_ShortCircuit(_ => !facade.Blackboard.titanReady)
+                      .Add_ShortCircuit(_ => facade.Blackboard.titanAlive);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -145,7 +146,12 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
         }
 
         public void TitanReady() => facade.Blackboard.titanReady.Value = true;
-        public void SpawnTitan() => GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
+
+        public void SpawnTitan()
+        {
+            GameObject.Instantiate(facade.Config.titan.prefab, spawnPointInAir, Quaternion.identity);
+            facade.Blackboard.titanAlive = true;
+        }
     }
 
     public class DoubleJumpModule : 

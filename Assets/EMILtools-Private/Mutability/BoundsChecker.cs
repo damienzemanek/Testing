@@ -42,12 +42,12 @@ public class BoundsChecker : MonoBehaviour
         {
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
             if (!collisions.Add(msgReceiver)) return;
-            msgReceiver.OnEnterBounds(other);
+            msgReceiver.OnEnterBounds(other, this);
         }
 
         if (SelectedReceiver)
         {
-            selectedReceiver.Value.OnEnterBounds(other);
+            selectedReceiver.Value.OnEnterBounds(other, this);
             Debug.Log("Entered");
         }
     }
@@ -61,9 +61,9 @@ public class BoundsChecker : MonoBehaviour
         {
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
             if (!collisions.Remove(msgReceiver)) return;
-            msgReceiver.OnExitBounds(other);
+            msgReceiver.OnExitBounds(other, this);
         }
-        if(SelectedReceiver) selectedReceiver.Value.OnExitBounds(other);
+        if(SelectedReceiver) selectedReceiver.Value.OnExitBounds(other, this);
     }
 
     private void OnTriggerStay(Collider other)
@@ -74,15 +74,15 @@ public class BoundsChecker : MonoBehaviour
         if (ThingCollidedWith)
         {
             if (!other.TryGetComponent(out IBoundsCheckMsgReceiver msgReceiver)) return;
-            msgReceiver.OnStayBounds(other);
+            msgReceiver.OnStayBounds(other, this);
         }
-        if(SelectedReceiver) selectedReceiver.Value.OnStayBounds(other);
+        if(SelectedReceiver) selectedReceiver.Value.OnStayBounds(other, this);
     }
 }
 
 public interface IBoundsCheckMsgReceiver
 {
-    public virtual void OnEnterBounds(Collider other) { }
-    public virtual void OnExitBounds(Collider other) { }
-    public virtual void OnStayBounds(Collider other) { }
+    public virtual void OnEnterBounds(Collider collidedWith, BoundsChecker sender) { }
+    public virtual void OnExitBounds(Collider collidedWith, BoundsChecker sender) { }
+    public virtual void OnStayBounds(Collider collidedWith, BoundsChecker sender) { }
 }

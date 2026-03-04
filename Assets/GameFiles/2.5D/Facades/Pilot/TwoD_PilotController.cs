@@ -14,20 +14,22 @@ public class TwoD_PilotController : MonoFacade<
         PilotContext,
         PilotActionMap>,
     ITimerUser,
-    IInputSubordinate<TwoD_InputMap, Subordinates>
+    IInputSubordinate<TwoD_InputMap, Subordinates>,
+    IBoundsCheckMsgReceiver
 {
     
     [field: ShowInInspector] [field: NonSerialized] [field: ReadOnly] public TwoD_InputMap Input { get; set; }
     [field: PropertyOrder(-1)] [field: ShowInInspector] [field: SerializeField] public SubordinateContext inputSubordinateContext { get; set; }
     
     public TwoD_InputMap InjectInputMap() => new("Pilot");
-    
 
+    public bool activeTitanThroughBoundsCheck = true;
+    
     public void InitSubordinate()
     {
         InitializeFacade();
         Blackboard.moveDecay.Start();
-        Blackboard.titanProgressTimer.Start();
+        if(!activeTitanThroughBoundsCheck) Blackboard.titanProgressTimer.Start();
     }
 
     public void OnAuthorityReceived()
@@ -51,6 +53,13 @@ public class TwoD_PilotController : MonoFacade<
     private void OnDisable()
     {
         Functionality.Unbind();
+    }
+
+    public void OnEnterBounds(Collider collidedWith, BoundsChecker sender)
+    {
+        if (!sender.CompareTag("TitanCallInZone")) return;
+        if (!activeTitanThroughBoundsCheck) return;
+        Blackboard.titanProgressTimer.OnTimerStop.Invoke();
     }
     
 
