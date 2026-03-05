@@ -100,13 +100,17 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
         void IAPI_Dependant<MouseModuleContext>.GrabDependancies(MouseModuleContext injectedContext)
             => facade.Blackboard.mouseLook.cam = injectedContext.cam;
     }
-    
-    
-    
+
+
+    public interface ILocomotion : IAPI_Module
+    {
+        public void StopMoving();
+    }
     
     public class LocomotionModule : 
         BoundSetFunctionality< TwoD_TitanController, TitanContext, LocomotionModule.Setter>, 
-        FIXED_UPDATE
+        FIXED_UPDATE,
+        ILocomotion
     {
         [Serializable]
         public struct Config
@@ -121,13 +125,13 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
     
         }
         public class Setter : SettableTemplate<bool, Vector2> 
-            { [ShowInInspector] public Vector2 moveVector => unnamedStoredValue2; }
+            { [ShowInInspector] public Vector2 moveVector { get => unnamedStoredValue2; set => unnamedStoredValue2 = value;} }
         
         public LocomotionModule(PersistentAction<bool, Vector2> action, TwoD_TitanController facade) : base(action, facade) { }
 
         public override PipelineBuilder<TitanContext> InjectSteps(PipelineBuilder<TitanContext> builder)
             => builder.Add_ShortCircuit(_ => !isActive)
-                      .Add_ShortCircuit(_ => facade.Blackboard.isMountingOrDismounting);
+                      .Add_ShortCircuit(_ => facade.Blackboard.isMountingOrDismounting, new Callback(ResetSpeed));
 
         protected override void Awake()
         {
@@ -173,7 +177,20 @@ public class TitanFunctionality : Functionalities<TwoD_TitanController, TitanCon
             return true;
         }
 
+        public void ResetSpeed()
+        {
+            //facade.Blackboard.rb.linearVelocity = Vector3.zero;
+            //facade.Blackboard.rb.angularVelocity = Vector3.zero;
+            
+        }
+
         public void OnFixedTick() => Execute();
+        public void StopMoving()
+        {
+            SetContext.moveVector = Vector2.zero;
+            facade.Blackboard.rb.linearVelocity = Vector3.zero;
+            facade.Blackboard.rb.angularVelocity = Vector3.zero;
+        }
     }
     
     

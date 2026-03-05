@@ -44,7 +44,11 @@ public class TwoD_TitanController : MonoFacade<
 
     protected override void Update()
     {
-        if (!Blackboard.hasMounted || Blackboard.isMountingOrDismounting) return;
+        if (!Blackboard.hasMounted || Blackboard.isMountingOrDismounting)
+        {
+            GetFunctionality<TitanFunctionality.ILocomotion>().StopMoving();
+            return;
+        }
         base.Update();
         Config.animHandle.UpdateAnimBlendFloat(Blackboard.animator, TitanConfig.TitanAnimBlends.Speed, Blackboard.speedAlpha);
     }

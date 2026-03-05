@@ -5,6 +5,7 @@ using UnityEngine;
 public class FinishPoint : MonoBehaviour
 {
    public LoadSceneConnector loadAdapater;
+   public int loadIndx = 3;
    void OnTriggerEnter(Collider other)
    {
       if (!other.CompareTag("Player")) return;
@@ -14,6 +15,6 @@ public class FinishPoint : MonoBehaviour
    [Button]
    public void Win()
    {
-      loadAdapater.Load(3);
+      loadAdapater.Load(loadIndx);
    }
 }

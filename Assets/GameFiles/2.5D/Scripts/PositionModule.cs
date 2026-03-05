@@ -15,14 +15,13 @@ public class PositionModule : MonoBehaviour
     [Serializable]
     public struct Constrain : IPositionModule
     {
-        [field: SerializeField] public bool active { get; set; }
+        [field: SerializeField] public bool active { get; set; } 
         public Transform transform;
         public bool local;
         public bool x, y, z;
-        
-        public float constraintX;
-        public float constraintY;
-        public float constraintZ;
+        [ShowIf("x")] public float constraintX;
+        [ShowIf("y")] public float constraintY;
+        [ShowIf("z")] public float constraintZ;
         public void Execute()
         {
             Vector3 position = transform.position;

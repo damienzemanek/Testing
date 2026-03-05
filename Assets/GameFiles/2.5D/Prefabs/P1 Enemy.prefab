@@ -95,7 +95,7 @@ MonoBehaviour:
     z: 1
     constraintX: -0.76
     constraintY: 0.47
-    constraintZ: 0.82
+    constraintZ: 0.8
   forceMaintainPosition:
     <active>k__BackingField: 0
     transform: {fileID: 0}
