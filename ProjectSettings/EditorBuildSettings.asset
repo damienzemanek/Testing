@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperUI.unity
     guid: 51e34ad91b25830419535c5442c9e2fd
   - enabled: 1
+    path: Assets/GameFiles/Scenes/2D/2D FrontEndMenu.unity
+    guid: 8abf2565694ed8f4e959be61b6e22922
+  - enabled: 1
     path: Assets/GameFiles/Scenes/Planet Jumper/PlanetJumperLoadingScreen.unity
     guid: 72386ec144c955b458157c615b4e2b91
   - enabled: 0
@@ -23,9 +26,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/GameFiles/Scenes/Planet Jumper/LoseScreen.unity
     guid: c7fac3a86bc7ad843ab290958597fc78
-  - enabled: 1
-    path: Assets/GameFiles/Scenes/2D/2D FrontEndMenu.unity
-    guid: 8abf2565694ed8f4e959be61b6e22922
   - enabled: 1
     path: Assets/GameFiles/Scenes/2D/2D Level 1.unity
     guid: 446ed426f28a32548937a8fbc65b7bd9

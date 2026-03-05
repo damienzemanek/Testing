@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DesignPatterns.CreationalPatterns;
 using EMILtools.Extensions;
 using Extensions;
 using UnityEngine;
@@ -8,19 +9,13 @@ using UnityEngine.SceneManagement;
 using static EMILtools.Extensions.FadeEX;
 
 
-public class LoadScene : MonoBehaviour
+public class LoadScene : ReplacerSingleton<LoadScene>
 {
     [SerializeField] float minTimeLoading = 1f;
     [SerializeField] FadeSettings fade;
 
     public int loadScreenIndx;
     [SerializeField] public List<IntList> scenesToLoad = new();
-
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
-    
 
     [Serializable]
     public class IntList

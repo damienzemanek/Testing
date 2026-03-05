@@ -806,6 +806,7 @@ GameObject:
   - component: {fileID: 956076663}
   - component: {fileID: 956076662}
   - component: {fileID: 956076661}
+  - component: {fileID: 956076664}
   m_Layer: 5
   m_Name: Fade
   m_TagString: Untagged
@@ -870,6 +871,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &956076664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 956076660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aeecab5ea1ebb74dabe053b38bc5aa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targ: {fileID: 956076660}
 --- !u!1 &1050177351
 GameObject:
   m_ObjectHideFlags: 0

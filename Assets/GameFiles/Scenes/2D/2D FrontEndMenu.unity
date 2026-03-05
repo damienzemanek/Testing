@@ -201,9 +201,11 @@ MonoBehaviour:
   loadScreenIndx: 0
   scenesToLoad:
   - name: Menu
-    values: 01000000
+    values: 00000000
   - name: Level 1
     values: 02000000
+  - name: Win
+    values: 03000000
   LoadingScreenObjects: []
   disables: []
 --- !u!4 &78704700
