@@ -2,6 +2,7 @@ using System.Collections;
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using static EMILtools.Extensions.NumEX;
 using static IDamageable;
 
@@ -26,7 +27,8 @@ public class LivingEntity : Entity,
     public AnimHandle<DamageLocation, NoBlends> damageLocationAnimHandle;
     [HideInInspector] public PersistentAction<DeathType> OnDeath = new();
 
-
+    public UnityEvent OnDie = new UnityEvent();
+    
     void Awake()
     {
         health = new ReactiveIntercept<float>(maxHealth);
@@ -66,6 +68,7 @@ public class LivingEntity : Entity,
         OnDeath.Invoke(deathStatus);
         deathAnimHandle.PlayWeightSet(animator, deathStatus, 1, deathLayer, FromBeginning);
         disablesOnDeath.DisableAll();
+        OnDie?.Invoke();
         if (destroyOnDeath) StartCoroutine(DestroyOnDeath());
     }
 

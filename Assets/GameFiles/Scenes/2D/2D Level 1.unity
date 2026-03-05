@@ -6226,7 +6226,7 @@ PrefabInstance:
       objectReference: {fileID: 197847625}
     - target: {fileID: 180470531594801271, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
       propertyPath: m_VersionIndex
-      value: 2828
+      value: 2831
       objectReference: {fileID: 0}
     - target: {fileID: 2627198852050910255, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
       propertyPath: m_Mesh
@@ -6307,6 +6307,34 @@ PrefabInstance:
     - target: {fileID: 7409989172020263161, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1756366065}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Load
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: LoadSceneConnector, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7550139519431744556, guid: c2375c24cfc2049498221baa9e32766a, type: 3}
+      propertyPath: OnDie.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
