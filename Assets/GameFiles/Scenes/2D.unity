@@ -33313,13 +33313,33 @@ PrefabInstance:
       propertyPath: m_Name
       value: P1 Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 1845976384306893155, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_Size.x
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1845976384306893155, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1845976384306893155, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: m_Size.z
+      value: 0.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 2682313964535678023, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: <Blackboard>k__BackingField.aimPivot
+      value: 
+      objectReference: {fileID: 1342761292}
+    - target: {fileID: 2682313964535678023, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+      propertyPath: <Blackboard>k__BackingField.animator
+      value: 
+      objectReference: {fileID: 1342761291}
     - target: {fileID: 6050888146841865473, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 22.178074
       objectReference: {fileID: 0}
     - target: {fileID: 6050888146841865473, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.76
       objectReference: {fileID: 0}
     - target: {fileID: 6050888146841865473, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -33358,6 +33378,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+--- !u!95 &1342761291 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5869989437461732928, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+  m_PrefabInstance: {fileID: 1342761290}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1342761292 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 788191068780492240, guid: 4c8c0580d13ec164d8ff4453c166fa6e, type: 3}
+  m_PrefabInstance: {fileID: 1342761290}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1344713717
 PrefabInstance:
   m_ObjectHideFlags: 0
