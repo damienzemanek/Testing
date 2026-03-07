@@ -1,7 +1,5 @@
 using System;
 using EMILtools.Core;
-using EMILtools.Extensions;
-using EMILtools.Mouse;
 using Unity.Cinemachine;
 using UnityEngine;
 using static ITwoD_Blackboard;

@@ -1,5 +1,4 @@
 using EMILtools.Extensions;
-using EMILtools.Mouse;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.InputSystem;

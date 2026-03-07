@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using EMILtools.Mouse;
-using static EMILtools.Mouse.MouseCallbackZones;
+using static MouseCallbackZones;
 
 namespace EMILtools.Extensions
 {
