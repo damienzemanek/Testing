@@ -4,7 +4,8 @@ using System.Runtime.CompilerServices;
 using EMILtools.Core;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using static EMILtools.Extensions.MouseCallbackZones;
+using EMILtools.Mouse;
+using static EMILtools.Mouse.MouseCallbackZones;
 
 namespace EMILtools.Extensions
 {

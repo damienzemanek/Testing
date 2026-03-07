@@ -2,7 +2,7 @@
 using static EMILtools.Extensions.NumEX;
 
 [CreateAssetMenu(fileName = "TurnSlowDown", menuName = "ScriptableObjects/Movement/TurnSlowDown", order = 1)]
-public class TurnSlowDown : AugmentMovement
+public class TurnSlowDown : ScriptableObject
 {
     public AnimationCurve Curve(bool isGrounded) => (isGrounded ? curveGrounded : curveInAir);
     

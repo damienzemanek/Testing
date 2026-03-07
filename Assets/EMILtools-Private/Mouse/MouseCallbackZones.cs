@@ -5,7 +5,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 
-namespace EMILtools.Extensions
+namespace EMILtools.Mouse
 {
     [CreateAssetMenu(fileName = "Mouse Callback Zones", menuName = "ScriptableObjects/Mouse/Callback Zones")]
     public class MouseCallbackZones
@@ -26,12 +26,7 @@ namespace EMILtools.Extensions
             {
                 EnsureInit();
                 bool inside = zone.Contains(mousePos);
-                if (inside && !wasInside)
-                {
-                    callback.Invoke();
-                    //Debug.Log("Invoking " + callback.Count);
-                    //callback.PrintInvokeListNames();
-                }
+                if (inside && !wasInside) callback.Invoke();
                 wasInside = inside;
             }
 
@@ -45,15 +40,8 @@ namespace EMILtools.Extensions
 
         public void CheckAllZones(Vector2 mousePos)
         {
-            //Debug.Log("checking zoneszx");
             if(callbackZones == null) Debug.LogError("No callback zones found, make sure to add some with AddInitialZones or AddZone");
-           // Debug.Log(callbackZones.Count);
-
-            foreach (var zone in callbackZones)
-            {
-                //Debug.Log(zone);
-                zone.CheckZone(mousePos);
-            }
+            foreach (var zone in callbackZones) zone.CheckZone(mousePos);
         }
             
         [BoxGroup("References")] public List<CallbackZone> callbackZones;

@@ -71,7 +71,7 @@ MonoBehaviour:
     <progressTime>k__BackingField:
       val: 100
     <spawnTime>k__BackingField:
-      val: 5
+      val: 1
   <jump>k__BackingField:
     <delay>k__BackingField:
       val: 0.1

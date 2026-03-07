@@ -134,7 +134,8 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
 
         public override PipelineBuilder<PilotContext> InjectSteps(PipelineBuilder<PilotContext> builder)
             => builder.Add_ShortCircuit(_ => !facade.Blackboard.titanReady)
-                      .Add_ShortCircuit(_ => facade.Blackboard.titanAlive);
+                .Add_ShortCircuit(_ => facade.Blackboard.titanAlive)
+                .Add_ShortCircuit(_ => facade.Blackboard.spawnTitanTimer.isRunning);
 
         public override bool ExecutionImplementation(PilotContext ctx)
         {
@@ -145,7 +146,11 @@ public class PilotFunctionality : Functionalities<TwoD_PilotController, PilotCon
             return true;
         }
 
-        public void TitanReady() => facade.Blackboard.titanReady.Value = true;
+        public void TitanReady()
+        {
+            facade.Blackboard.titanReady.Value = true;
+            facade.Blackboard.titanReadyDisplay.SetActive(true);
+        }
 
         public void SpawnTitan()
         {

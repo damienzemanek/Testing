@@ -37,6 +37,7 @@ public class PilotBlackboard : Blackboard, ITwoD_Blackboard
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public AugmentPhysEX phys { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public CameraContext camContext { get; private set; }
     [field: BoxGroup("References")] [field: SerializeField] [field: Required] public Transform camFollowTransform { get; private set; }
+    [field: BoxGroup("References")] [field: SerializeField] public GameObject titanReadyDisplay { get; private set; }
 
 
     [BoxGroup("Orientation")] [field: SerializeField] [field: Required] public RotateToMouseWorldSpace mouseLook { get; private set; }

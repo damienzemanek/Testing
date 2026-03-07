@@ -493,11 +493,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 5
   destroyOnDeath: 1
-  disablesOnDeath:
-    behaviours:
-    - {fileID: 2682313964535678023}
-    colliders:
-    - {fileID: 3395399891910081361}
+  behaviours:
+  - {fileID: 2682313964535678023}
+  colliders:
+  - {fileID: 3395399891910081361}
+  deathFloorCollider: {fileID: 1845976384306893155}
   isDead: 0
   deathStatus: 0
   animator: {fileID: 5869989437461732928}
@@ -513,6 +513,9 @@ MonoBehaviour:
       animEnum: 0
       hash: 1523721793
     BlendTreeVariables: []
+  OnDie:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1759328715081741714
 GameObject:
   m_ObjectHideFlags: 0
@@ -566,8 +569,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.02, y: 0.02, z: 0.02}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.1, y: 0.03, z: 0.1}
+  m_Center: {x: 0, y: 0.08, z: 0}
 --- !u!1 &2424319901313470884
 GameObject:
   m_ObjectHideFlags: 0

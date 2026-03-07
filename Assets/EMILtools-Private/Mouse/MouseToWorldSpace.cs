@@ -1,8 +1,9 @@
 using System;
+using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace EMILtools.Extensions
+namespace EMILtools.Mouse
 {
     [Serializable]
     [CreateAssetMenu(fileName = "MouseToWorldSpace", menuName = "ScriptableObjects/Mouse/MouseToWorldSpace")]
@@ -52,8 +53,8 @@ namespace EMILtools.Extensions
                     return contactPoint = hit.point;
                 }
             }
+            
             // Looks at the direction max length point by default
-                
             var pos = rayMouse.GetPoint(maximumLength);
             contactPoint = Vector3.zero;
             return pos;

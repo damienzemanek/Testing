@@ -3647,8 +3647,8 @@ MonoBehaviour:
       CM: {fileID: 0}
       follow: {fileID: 0}
       rotComposer: {fileID: 0}
+      mouseCenter: {fileID: 0}
     <camFollowTransform>k__BackingField: {fileID: 3415698236778258420}
-    <mouseLookCenter>k__BackingField: {fileID: 0}
     <mouseLook>k__BackingField:
       cam: {fileID: 0}
       core: {fileID: 11400000, guid: 798d48810fff2a648b4ccce22a7c77e4, type: 2}
@@ -3790,11 +3790,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 20
   destroyOnDeath: 0
-  disablesOnDeath:
-    behaviours:
-    - {fileID: 6852239174198850126}
-    colliders:
-    - {fileID: 6680253834578972900}
+  behaviours:
+  - {fileID: 6852239174198850126}
+  colliders:
+  - {fileID: 6680253834578972900}
+  deathFloorCollider: {fileID: 7513418536903675795}
   isDead: 0
   deathStatus: 0
   animator: {fileID: 8486952036131827341}
@@ -3810,6 +3810,9 @@ MonoBehaviour:
       animEnum: 0
       hash: 1523721793
     BlendTreeVariables: []
+  OnDie:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &4231936153676528616
 GameObject:
   m_ObjectHideFlags: 0
@@ -3990,8 +3993,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.01, y: 0.01, z: 0.01}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.1, y: 0.03, z: 0.1}
+  m_Center: {x: 0, y: 0.03, z: 0}
 --- !u!1 &4620539242884372404
 GameObject:
   m_ObjectHideFlags: 0

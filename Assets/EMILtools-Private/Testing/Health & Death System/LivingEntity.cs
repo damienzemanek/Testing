@@ -1,5 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
+using EMILtools_Private.Testing.Disabler;
 using EMILtools.Core;
+using EMILtools.Extensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,7 +17,10 @@ public class LivingEntity : Entity,
     public float maxHealth;
 
     public bool destroyOnDeath = false;
-    public Disabler disablesOnDeath;
+    public List<Behaviour> behaviours = new();
+    public List<Collider> colliders = new();
+    public Collider deathFloorCollider;
+    public List<GameObject> enableOnDeathAndUnparents = new();
     
     [ShowInInspector, ReadOnly] public bool isDead = false;
     [ShowInInspector, ReadOnly] ReactiveIntercept<float> health;
@@ -31,6 +37,7 @@ public class LivingEntity : Entity,
     
     void Awake()
     {
+        deathFloorCollider.enabled = false;
         health = new ReactiveIntercept<float>(maxHealth);
         health.Intercepts.Add(value => value < ZeroF ? ZeroF : value);
         health.Reactions.Add(CheckDie);
@@ -67,7 +74,10 @@ public class LivingEntity : Entity,
         deathStatus = DeathType.Regular;
         OnDeath.Invoke(deathStatus);
         deathAnimHandle.PlayWeightSet(animator, deathStatus, 1, deathLayer, FromBeginning);
-        disablesOnDeath.DisableAll();
+        foreach (var b in behaviours) b.enabled = false;
+        foreach (var c in colliders) c.enabled = false;
+        deathFloorCollider.enabled = true;
+        foreach (var g in enableOnDeathAndUnparents) g.SetActiveThen(true).transform.parent = null;
         OnDie?.Invoke();
         if (destroyOnDeath) StartCoroutine(DestroyOnDeath());
     }
