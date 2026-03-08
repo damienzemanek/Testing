@@ -14,5 +14,5 @@ namespace EMILtools.Core {
         public void Raise(T val) => unityEvent?.Invoke(val);
     }
     
-    public class EventListener : EventListener<Empty> {}
+    public class EventListener : EventListener<Void> {}
 }

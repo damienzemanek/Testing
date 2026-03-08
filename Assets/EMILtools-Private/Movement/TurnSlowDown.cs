@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using static EMILtools.Extensions.NumEX;
 
-[CreateAssetMenu(fileName = "TurnSlowDown", menuName = "ScriptableObjects/Movement/TurnSlowDown", order = 1)]
+[CreateAssetMenu(fileName = "TurnSlowDown", menuName = "EMILtools/ScriptableObjects/Movement/TurnSlowDown")]
 public class TurnSlowDown : ScriptableObject
 {
     public AnimationCurve Curve(bool isGrounded) => (isGrounded ? curveGrounded : curveInAir);

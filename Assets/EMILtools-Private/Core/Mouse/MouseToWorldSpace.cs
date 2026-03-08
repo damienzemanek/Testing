@@ -4,7 +4,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
-[CreateAssetMenu(fileName = "MouseToWorldSpace", menuName = "ScriptableObjects/Mouse/MouseToWorldSpace")]
+[CreateAssetMenu(fileName = "MouseToWorldSpace", menuName = "EMILtools/ScriptableObjects/Mouse/MouseToWorldSpace")]
 public class MouseToWorldSpace : ScriptableObject
 {
     [Serializable]

@@ -17,8 +17,12 @@ namespace EMILtools.Core {
         public void Unregister(EventListener<T> observer) => observers.Remove(observer);
     }
 
-    public readonly struct Empty{}
+    public readonly struct Void{}
     
-    [CreateAssetMenu(fileName = "EventChannel", menuName = "EMILtools/EventChannel")]
-    public class EventChannel : EventChannel<Empty> {}
+    /// <summary>
+    /// Used when no value is needed to be passed to the event listeners
+    /// For Example: Player was killed
+    /// </summary>
+    [CreateAssetMenu(fileName = "VoidEventChannel", menuName = "EMILtools/Event Channel/Void")]
+    public class VoidEventChannel : EventChannel<Void> {}
 }

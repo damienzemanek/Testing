@@ -6,7 +6,7 @@ using UnityEngine;
 using Extensions;
 using static EMILtools.Extensions.PhysEX;
 
-[CreateAssetMenu(fileName = "New Player Data", menuName = "ScriptableObjects/Player Data")]
+[CreateAssetMenu(fileName = "New Player Data", menuName = "EMILtools/Deprecated/ScriptableObjects/Player Data")]
 public class PlayerData : ScriptableObject
 {
     [TitleGroup("Physics")]
